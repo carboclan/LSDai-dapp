@@ -1,0 +1,39 @@
+{
+  "name": "rdai",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@portis/web3": "^2.0.0-beta.34",
+    "@walletconnect/web3-subprovider": "^1.0.0-beta.30",
+    "ethers": "^4.0.33",
+    "fortmatic": "^0.8.2",
+    "randomfill": "^1.0.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "trezor-connect": "^7.0.3",
+    "web3": "^1.0.0-beta.55",
+    "web3-react": "^5.0.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

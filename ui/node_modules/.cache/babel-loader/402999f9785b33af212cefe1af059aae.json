@@ -1,0 +1,1 @@
+{"ast":null,"code":"const getRandomId = require('./random-id.js');\n\nconst extend = require('xtend');\n\nmodule.exports = createPayload;\n\nfunction createPayload(data) {\n  return extend({\n    // defaults\n    id: getRandomId(),\n    jsonrpc: '2.0',\n    params: [] // user-specified\n\n  }, data);\n}","map":null,"metadata":{},"sourceType":"script"}
