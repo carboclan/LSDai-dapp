@@ -1,1 +1,0 @@
-{"ast":null,"code":"exports.parse = require('./lib/parse');\nexports.stringify = require('./lib/stringify');","map":null,"metadata":{},"sourceType":"script"}
