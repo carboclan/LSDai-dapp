@@ -1,0 +1,3 @@
+[submodule "ethereum/contracts"]
+	path = ethereum/contracts
+	url = git@github.com:decentral-ee/rdai-contracts.git
