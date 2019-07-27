@@ -1,6 +1,6 @@
 {
-  "name": "rdai",
-  "version": "0.1.0",
+  "name": "@decentral.ee/rdai-ui",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@portis/web3": "^2.0.0-beta.34",

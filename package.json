@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "@decentral.ee/rdai",
-    "version": "0.1.0",
+    "version": "0.0.1",
     "description": "Redeemable Dai with detached principal and interests",
     "repository": {
         "type": "git",
