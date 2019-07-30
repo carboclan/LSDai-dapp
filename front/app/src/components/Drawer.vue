@@ -3,41 +3,40 @@
   <v-list
     dense
   >
+    <v-subheader>
+      <strong>Your Balances</strong>
+    </v-subheader>
     <template v-for="(item, i) in items">
-      <v-layout
-        v-if="item.heading"
-        :key="i"
-        align-center
-      >
-        <v-flex text-sm-center v-if="item.heading">
-          {{ item.heading }}
-        </v-flex>
-      </v-layout>
-      <v-divider
-        v-else-if="item.divider"
-        :key="i"
-        dark
-        class="my-4"
-      ></v-divider>
       <v-list-item
-        v-else
         :key="i"
         @click=""
-      >
-        <v-list-item-action class="mr-5">
+        :ripple=false
+        >
+        <v-list-item-avatar>
           <token-svg :symbol="item.icon" :size="30" />
-        </v-list-item-action>
+        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="grey--text text-xs-justify">
             {{ item.text }}<strong> {{ item.balance.toFixed(4)}}</strong>
           </v-list-item-title>
         </v-list-item-content>
+        <v-list-item-action v-if="item.icon !== 'eth'">
+          <v-btn
+            icon
+            x-small
+            @click="item.locked=false"
+            :disabled="!item.locked"
+            >
+            <v-icon v-if="item.locked">fa fa-lock</v-icon>
+            <v-icon v-else>fa fa-unlock</v-icon>
+          </v-btn>
+        </v-list-item-action>
       </v-list-item>
     </template>
     <v-list-item>
       <v-list-item-content>
-        <v-btn class="grey--text">
-          Withdraw Interest now
+        <v-btn color="primary" outlined>
+          Withdraw Interest
         </v-btn>
       </v-list-item-content>
     </v-list-item>
@@ -49,17 +48,11 @@
   export default {
     name: 'app-drawer',
     data: () => ({
-      drawer: null,
       items: [
-        { heading: 'Your Balances' },
-        { icon: 'rdai', text: 'rDAI', balance: 100 },
-        { divider: true },
-        { icon: 'dai', text: ' DAI' , balance: 1000},
-        { divider: true },
-        { icon: 'cdai', text: 'cDAI', balance: 0},
-        { divider: true },
-        { icon: 'eth', text: ' ETH', balance: 0.05},
-        { divider: true },
+        { icon: 'rdai', text: 'rDAI', balance: 100, locked: true },
+        { icon: 'dai', text: ' DAI' , balance: 1000, locked: true},
+        { icon: 'cdai', text: 'cDAI', balance: 0, locked: true},
+        { icon: 'eth', text: ' ETH', balance: 0.05, locked: false},
       ],
     }),
   }

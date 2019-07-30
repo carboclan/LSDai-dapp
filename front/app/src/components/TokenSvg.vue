@@ -1,6 +1,6 @@
-Rr<template>
+<template>
   <v-flex>
-    <img v-if="rdai || cdai" :src="path" :width="size" />
+    <v-img v-if="rdai || cdai" :src="path" :max-width="size" contain />
     <cryptoicon v-else :symbol="symbol" :size="size" />
   </v-flex>
 </template>

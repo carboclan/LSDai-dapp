@@ -1,6 +1,11 @@
 @import url(fontawesome-all.min.css);
-@import 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400';
-@import url('https://fonts.googleapis.com/css?family=Concert+One|Knewave|Patua+One&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Concert+One|Knewave|Exo:600i|Gugi|PT+Sans+Caption&display=swap');
+/*
+	Knewave 								for the top equation
+	Gugi 										for the subtitle
+	Exo 										for all Titles
+	PT Sans Caption 				for all the rest of the text
+*/
 
 :root{
 	--primary: #6644ff;
@@ -130,7 +135,7 @@ input, select, textarea {
 	}
 
 	body, input, select, textarea {
-		font-family: "Source Sans Pro", Helvetica, sans-serif;
+		font-family: "Pt Sans Caption", sans-serif;
 		font-size: 21pt;
 		font-weight: 300;
 		line-height: 1.65;
@@ -203,6 +208,7 @@ input, select, textarea {
 		line-height: 1.5;
 		margin: 0 0 0.7em 0;
 		letter-spacing: -0.025em;
+		font-family: 'Exo', sans-serif;
 	}
 
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -2794,7 +2800,10 @@ input, select, textarea {
  .code.box{
 	 background-color: #000;
 	 text-align: left;
+	 font-family: "Courier New", monospace;
 	 font-weight: 400;
+	 font-size: 0.9em;
+	 line-height: 1.75;
  }
  .code .header{
 
@@ -2945,7 +2954,7 @@ input, select, textarea {
 			letter-spacing: -0.025em;
 			font-size: 1.7em;
 			font-weight: 900;
-			font-family: 'Patua One';
+	    font-family: 'Gugi', cursive;
 		}
 
 		#header.alt {

@@ -33,11 +33,12 @@
       clipped
       color="white"
       :mobile-break-point="640"
+      class="elevation-3"
       >
       <app-drawer />
     </v-navigation-drawer>
 
-    <v-footer absolute ma-2 app>
+    <v-footer fixed ma-2 app>
       <a href="https://twitter.com/get_rdai" target="_blank" style="text-decoration: none;color:rgb(29, 161, 242)"><v-icon style="color:rgb(29, 161, 242)">fab fa-twitter</v-icon>@get_rDai</a>
       <v-spacer />
       <span class="text-sm-right grey--text">
