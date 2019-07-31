@@ -1,6 +1,8 @@
 <template>
-  <v-layout center wrap mt-5>
-    <v-flex sm5 shrink ml-auto>
+  <v-layout center mt-5
+    :class="{'wrap': $vuetify.breakpoint.smAndDown, 'nowrap': $vuetify.breakpoint.mdAndUp}"
+    >
+    <v-flex xs12 sm5 shrink ml-auto>
       <v-text-field
         v-model="amount"
         placeholder="DAI deposit amount"
@@ -13,10 +15,10 @@
         </template>
       </v-text-field>
     </v-flex>
-    <v-flex sm1 shrink pt-3>
+    <v-flex xs2 sm1 shrink pt-3 mx-2>
       <v-icon>fa fa-exchange-alt</v-icon>
     </v-flex>
-    <v-flex sm5 shrink mr-auto>
+    <v-flex xs9 sm5 shrink mr-auto>
       <v-text-field
         :value="formattedAmount"
         placeholder="rDAI receive amount"

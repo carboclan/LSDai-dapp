@@ -30,7 +30,8 @@
               :value="i"
             >
               <template v-if="i==='deposit'">
-                <app-create-hat :preselect="preselect"/>
+                <app-create-hat v-if="preselect==='Custom'" :preselect="preselect"/>
+                <app-chosen-hat v-else :preselect="preselect"/>
                 <v-divider />
                 <app-deposit/>
               </template>
@@ -56,6 +57,7 @@ import Deposit from '../components/Deposit.vue';
 import Redeem from '../components/Redeem.vue';
 import Withdraw from '../components/Withdraw.vue';
 import CreateHat from '../components/CreateHat.vue';
+import ChosenHat from '../components/ChosenHat.vue';
 
 export default {
   name: 'interface',
@@ -63,6 +65,7 @@ export default {
     'app-deposit': Deposit,
     'app-redeem': Redeem,
     'app-withdraw': Withdraw,
+    'app-chosen-hat': ChosenHat,
     'app-create-hat': CreateHat
   },
   data: () => ({
@@ -72,6 +75,7 @@ export default {
   }),
   mounted(){
     this.preselect = this.$route.params.shortTitle;
+    console.log("this.$store:", this.$store);
   }
 }
 </script>
