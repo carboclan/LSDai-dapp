@@ -10,8 +10,8 @@ const contracts = {
         const contracts = sdk.load(web3.currentProvider);
         this.IRToken = contracts.IRToken;
         this.IERC20 = contracts.IERC20;
-        this.functions = await this.RToken.at(tokens.rdai);
-        var tokensTemp = {}
+        this.functions = await this.IRToken.at(tokens.rdai);
+        var tokensTemp = {};
         Object.keys(tokens).forEach(async token => {
             tokensTemp[token] = await this.IERC20.at(tokens[token]);
         });
