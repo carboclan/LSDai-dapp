@@ -1,14 +1,14 @@
 import * as sdk from "./../../../../ethereum/contracts";
 
 const contracts = {
-    RToken: null,
+    IRToken: null,
     IERC20: null,
     tokens: null,
     functions: null,
 
     init: async function(web3, tokens) {
         const contracts = sdk.load(web3.currentProvider);
-        this.RToken = contracts.RToken;
+        this.IRToken = contracts.IRToken;
         this.IERC20 = contracts.IERC20;
         this.functions = await this.RToken.at(tokens.rdai);
         var tokensTemp = {}
