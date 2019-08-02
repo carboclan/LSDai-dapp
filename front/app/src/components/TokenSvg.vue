@@ -1,6 +1,6 @@
 <template>
   <v-flex>
-    <v-img v-if="rdai || cdai" :src="path" :max-width="size" contain />
+    <v-img v-if="importedSvg" :src="path" :max-width="size" contain />
     <cryptoicon v-else :symbol="symbol" :size="size" />
   </v-flex>
 </template>
@@ -9,25 +9,27 @@
 import Vue from 'vue';
 import Rdai from '../assets/rdai.svg';
 import Cdai from '../assets/cdai.svg';
+import Dai from '../assets/dai.svg';
+import Metamask from "../assets/metamask.svg";
 
 export default {
   name: 'token-svg',
   components: {
     Rdai,
-    Cdai
+    Cdai,
+    Dai,
+    Metamask
   },
   props: {
     symbol: String,
     size: Number
   },
   data: () => ({
+    allowed: [ 'rdai', 'cdai', 'dai',  'metamask']
   }),
   computed:{
-    rdai(){
-      return this.symbol.toUpperCase() === "RDAI";
-    },
-    cdai(){
-      return this.symbol.toUpperCase() === "CDAI";
+    importedSvg(){
+      return this.allowed.includes(this.symbol);
     },
     path(){
       return require( `@/assets/${this.symbol.toLowerCase()}.svg`)

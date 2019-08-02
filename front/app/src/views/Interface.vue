@@ -30,7 +30,7 @@
               :value="i"
             >
               <template v-if="i==='deposit'">
-                <app-create-hat v-if="preselect==='Custom'" :preselect="preselect"/>
+                <app-create-hat v-if="preselect==='custom'" :preselect="preselect"/>
                 <app-chosen-hat v-else :preselect="preselect"/>
                 <v-divider />
                 <app-deposit/>
@@ -58,6 +58,7 @@ import Redeem from '../components/Redeem.vue';
 import Withdraw from '../components/Withdraw.vue';
 import CreateHat from '../components/CreateHat.vue';
 import ChosenHat from '../components/ChosenHat.vue';
+import router from "../router.js";
 
 export default {
   name: 'interface',
@@ -73,9 +74,16 @@ export default {
     tabs: ['deposit', 'redeem', 'withdraw'],
     preselect: ''
   }),
+  watch:{
+    tab(newVal){
+      const hat = this.preselect || "custom";
+      if(newVal === "deposit") this.$router.replace(`/${newVal}/${hat}`);
+      else this.$router.push(`/${newVal}`);
+    }
+  },
   mounted(){
-    this.preselect = this.$route.params.shortTitle;
-    console.log("this.$store:", this.$store);
-  }
+    this.preselect = this.$route.params.hat || 'custom';
+    this.tab = this.$route.name;
+  },
 }
 </script>

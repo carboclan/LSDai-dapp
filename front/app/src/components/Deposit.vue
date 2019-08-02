@@ -1,38 +1,50 @@
 <template>
-  <v-layout center mt-5
-    :class="{'wrap': $vuetify.breakpoint.smAndDown, 'nowrap': $vuetify.breakpoint.mdAndUp}"
-    >
-    <v-flex xs12 sm5 shrink ml-auto>
-      <v-text-field
-        v-model="amount"
-        placeholder="DAI deposit amount"
-        outlined
-        label="deposit DAI"
+  <v-container>
+    <v-layout center mt-5
+      :class="{'wrap': $vuetify.breakpoint.smAndDown, 'nowrap': $vuetify.breakpoint.mdAndUp}"
       >
-        <template slot="append">
-          <div  @click="amount+=100" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
-          <token-svg symbol="dai" :size="24"></token-svg>
-        </template>
-      </v-text-field>
-    </v-flex>
-    <v-flex xs2 sm1 shrink pt-3 mx-2>
-      <v-icon>fa fa-exchange-alt</v-icon>
-    </v-flex>
-    <v-flex xs9 sm5 shrink mr-auto>
-      <v-text-field
-        :value="formattedAmount"
-        placeholder="rDAI receive amount"
-        outlined
-        disabled
-        label="receive rDAI"
-      >
-        <token-svg slot="append" symbol="rdai" :size="24"></token-svg>
-      </v-text-field>
-    </v-flex>
-    <v-flex sm8 mx-auto>
-      <v-btn color="primary">Start Donating</v-btn>
-    </v-flex>
-  </v-layout>
+      <v-flex xs12 sm5 shrink ml-auto>
+        <v-text-field
+          v-model="amount"
+          placeholder="DAI deposit amount"
+          outlined
+          label="deposit DAI"
+        >
+          <template slot="append">
+            <div  @click="amount+=100" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
+            <token-svg symbol="dai" :size="24"></token-svg>
+          </template>
+        </v-text-field>
+      </v-flex>
+      <v-flex xs2 sm1 shrink pt-3 mx-2>
+        <v-icon>fa fa-exchange-alt</v-icon>
+      </v-flex>
+      <v-flex xs9 sm5 shrink mr-auto>
+        <v-text-field
+          :value="formattedAmount"
+          placeholder="rDAI receive amount"
+          outlined
+          disabled
+          label="receive rDAI"
+        >
+          <token-svg slot="append" symbol="rdai" :size="24"></token-svg>
+        </v-text-field>
+      </v-flex>
+    </v-layout>
+    <v-layout center mt-5>
+      <v-flex xs12 mx-auto>
+        <web3-btn
+          action="mint"
+          :params="{amount}"
+          color="primary"
+          symbolAppend="dai"
+          :disabled="amount<=0"
+          >
+          Start Donating
+        </web3-btn>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <style lang="css" scoped>
@@ -43,6 +55,8 @@
 
 <script>
 import Vue from 'vue';
+import vuex from 'vuex';
+import {mapActions} from 'vuex';
 
 export default {
   name: 'app-deposit',
@@ -59,6 +73,9 @@ export default {
       if(a % 1 >= 0 && a % 1 < 0.0001) return a.toFixed(2);
       else return a;
     }
+  },
+  methods: {
+    ...mapActions(['mint'])
   }
 }
 </script>

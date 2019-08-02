@@ -30,7 +30,17 @@
       </v-text-field>
     </v-flex>
     <v-flex sm8 mx-auto>
-      <v-btn color="primary">Redeem rDAI</v-btn>
+      <web3-btn
+        color="primary"
+        action="redeem"
+        :params="{amount}"
+        :disabled="amount===0"
+        @then=""
+        @catch=""
+        symbolAppend="dai"
+        >
+        Redeem rDAI
+      </web3-btn>
     </v-flex>
   </v-layout>
 </template>
@@ -43,6 +53,8 @@
 
 <script>
 import Vue from 'vue';
+import vuex from 'vuex';
+import {mapActions} from 'vuex';
 
 export default {
   name: 'app-redeem',
@@ -57,6 +69,9 @@ export default {
       if(a % 1 >= 0 && a % 1 < 0.0001) return a.toFixed(2);
       else return a;
     }
+  },
+  methods:{
+    ...mapActions(['redeem'])
   }
 }
 </script>

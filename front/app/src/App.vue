@@ -16,10 +16,14 @@
       <v-spacer></v-spacer>
       <span class="subtitle">Unlock your DAI<span class="hidden-sm-and-down">'s true potential</span></span>
       <v-spacer></v-spacer>
-      <v-flex @click="drawer = !drawer" text-sm-right class="cursor">
-        <v-icon color="green" small class="mr-2">fas fa-circle</v-icon><span :class="{'caption': $vuetify.breakpoint.xs}">0x0855...f991</span>
+      <v-flex text-sm-right class="cursor">
+        <template @click.stop="drawer = !drawer" v-if="userAddress.length>0" >
+          <v-icon color="green" small class="mr-2">fas fa-circle</v-icon><span :class="{'caption': $vuetify.breakpoint.xs}">{{userAddress | formatAddress}}</span>
+        </template>
+        <template v-else>
+          <v-btn @click="activateWeb3">ENABLE WEB3</v-btn>
+        </template>
       </v-flex>
-
     </v-app-bar>
 
     <v-content>
@@ -37,7 +41,7 @@
       >
       <app-drawer />
     </v-navigation-drawer>
-
+    <app-snackbar />
     <v-footer fixed ma-2 app>
       <a href="https://twitter.com/get_rdai" target="_blank" style="text-decoration: none;color:rgb(29, 161, 242)"><v-icon style="color:rgb(29, 161, 242)">fab fa-twitter</v-icon>@get_rDai</a>
       <v-spacer />
@@ -59,17 +63,27 @@
 
 <script>
   import Drawer from './components/Drawer.vue';
-
+  import Snackbar from './components/Snackbar.vue';
+  import Vuex from 'vuex';
+  import {mapState, mapActions, mapGetters} from 'vuex';
   export default {
     props: {
       source: String,
     },
     components: {
-      'app-drawer': Drawer
+      'app-drawer': Drawer,
+      'app-snackbar': Snackbar
     },
     data: () => ({
-      drawer: true
+      drawer: true,
+      ...mapState(['account'])
     }),
+    computed: {
+      ...mapGetters(['userAddress'])
+    },
+    methods: {
+      ...mapActions(['activateWeb3'])
+    }
   }
 </script>
 

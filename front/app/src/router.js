@@ -7,13 +7,18 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: "/",
-      name: "donation",
-      component: () => import(/* webpackChunkName: "donations" */ "./views/Donations.vue")
+      path: "/deposit/:hat?",
+      name: "deposit",
+      component: () => import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
     },
     {
-      path: "/deposit",
-      name: "deposit",
+      path: "/withdraw",
+      name: "withdraw",
+      component: () => import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
+    },
+    {
+      path: "/redeem",
+      name: "redeem",
       component: () => import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
     },
     {
@@ -24,6 +29,11 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: "about" */ "./views/About.vue")
-    }
+    },
+    {
+      path: "*",
+      name: "donation",
+      component: () => import(/* webpackChunkName: "donations" */ "./views/Donations.vue")
+    },
   ]
 });

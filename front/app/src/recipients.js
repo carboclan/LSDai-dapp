@@ -51,7 +51,7 @@ const recipients = [
     {
         image: require("./assets/building.jpg"),
         title: "rDAI is for buidlers!",
-        shortTitle: "Custom",
+        shortTitle: "custom",
         description:
             "Set a custom beneficiary and give the interest to anyone you want!",
         address: "0x0",

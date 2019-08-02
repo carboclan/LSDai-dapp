@@ -63,7 +63,7 @@ export default {
   }),
   methods: {
     open( shortTitle ){
-      this.$router.push({ name: 'deposit', params: { shortTitle } })
+      this.$router.push({ name: 'deposit', params: { hat: shortTitle } })
       // gotta change the logic here. When they open, they are opening a hat, not choosing an address
     }
   }
