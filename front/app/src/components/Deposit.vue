@@ -11,7 +11,7 @@
           label="deposit DAI"
         >
           <template slot="append">
-            <div  @click="amount+=100" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
+            <div  @click="amount=balances.dai" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
             <token-svg symbol="dai" :size="24"></token-svg>
           </template>
         </v-text-field>
@@ -31,18 +31,19 @@
         </v-text-field>
       </v-flex>
     </v-layout>
-    <v-layout center mt-5>
+    <v-layout center mt-5 wrap>
       <v-flex xs12 mx-auto>
         <web3-btn
-          action="mint"
+          :action="mintOrWhat"
           :params="{amount}"
           color="primary"
           symbolAppend="dai"
-          :disabled="amount<=0"
+          :disabled="amount <= 0 || (mintOrWhat==='mintWithNewHat' && !customHat)"
           >
-          Start Donating
+          Start Donating to {{ chosenHat }}
         </web3-btn>
       </v-flex>
+      <v-flex xs12 mx-auto v-if="mintOrWhat!=='mint'" class="caption">Please choose (or create) a pool, and then deposit DAI</v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -56,7 +57,7 @@
 <script>
 import Vue from 'vue';
 import vuex from 'vuex';
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
   name: 'app-deposit',
@@ -67,6 +68,22 @@ export default {
     amount: 0  //preload with maximum balanceq
   }),
   computed:{
+    chosenHat(){
+      if(this.mintOrWhat === 'mint'){
+        //first check if it's a hat we have saved in recipients file
+
+        //then return formatted hat ID
+
+      }
+      else{
+        return "to Custom Pool"
+      }
+    },
+    ...mapGetters(['userHat', 'userBalances', 'customHat']),
+    mintOrWhat(){
+      if(this.userHat && this.userHat.hatID > 0) return "mint";
+      else return "mintWithNewHat";
+    },
     formattedAmount(){
       if(this.amount.length < 1) return '';
       var a = parseFloat(this.amount);

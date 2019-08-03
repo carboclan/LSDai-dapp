@@ -33,7 +33,7 @@ export default new Router({
     {
       path: "*",
       name: "donation",
-      component: () => import(/* webpackChunkName: "donations" */ "./views/Donations.vue")
+      component: () => import(/* webpackChunkName: "donations" */ "./views/Donations2.vue")
     },
   ]
 });

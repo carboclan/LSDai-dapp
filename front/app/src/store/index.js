@@ -64,7 +64,8 @@ export default new Vuex.Store({
                 proportions: []
             }
         },
-        customHat: {}
+        customHat: {},
+        allHats: []
     },
     mutations: {
         SHOWSNACKBAR: state => {
@@ -79,11 +80,14 @@ export default new Vuex.Store({
         SETALLOWANCE: (state, { symbol, all }) => {
             Vue.set(state.account.allowances, symbol, fromDec(all, symbol));
         },
-        SETCURRENTHAT: (state, hat) => {
+        SETUSERHAT: (state, hat) => {
             Vue.set(state.account, "hat", hat);
         },
         SETCUSTOMHAT: (state, newHat) => {
             state.customHat = newHat;
+        },
+        SETALLHATS: (state, allHats) => {
+            state.allHats = allHats;
         },
         ERROR: (state, payload) => {
             const { type, text, icon, timeout } = payload;
@@ -178,7 +182,8 @@ export default new Vuex.Store({
                 dispatch("setupWeb3Listeners");
                 dispatch("getBalances");
                 dispatch("getAllowances");
-                dispatch("setCurrentHat");
+                dispatch("setuserHat");
+                dispatch("getAllHats");
                 return true;
             } catch (err) {
                 commit("ERROR", {
@@ -195,6 +200,15 @@ export default new Vuex.Store({
             Object.keys(TOKENS[HARDCODED_CHAIN]).forEach(key => {
                 dispatch("getAllowance", key);
             })
+        },
+        getAllHats({ dispatch, commit }) {
+            const allHats = []
+            for (var i = 1; i++; i < 20) {
+                dispatch("getHatByID", i)
+                    .then(r => allHats.push(r))
+                    .catch(() => (i = 20));
+            }
+            commit("SETALLHATS", allHats);
         },
         setupWeb3Listeners({ commit, dispatch }) {
             const ethereum = window.ethereum;
@@ -217,10 +231,10 @@ export default new Vuex.Store({
             if(symbol === "eth") return;
             new Promise(resolve => {
                 const getBalance = async () => {
-                    const tokens = contracts.tokens;
+                    const myTokens = contracts.tokens;
                     setTimeout(async () => {
-                        const token = tokens[symbol];
-                        const rawBal = await token.balanceOf(
+                        const myToken = myTokens[symbol];
+                        const rawBal = await myToken.balanceOf(
                             state.account.address
                         );
                         const bal = fromDec(rawBal, symbol);
@@ -231,32 +245,33 @@ export default new Vuex.Store({
                         }
                         commit("SETBALANCE", { symbol, bal });
                         return true;
-                    }, 1000);
+                    }, 2000);
 
                 };
                 resolve(getBalance());
             });
         },
         getAllowance({ commit, state }, symbol) {
+            if(symbol === "eth") return;
             new Promise(resolve => {
                 const getAllowance = async () => {
-                    const tokens = contracts.tokens;
+                    const myTokens = contracts.tokens;
                     setTimeout(async () => {
-                        const token = tokens[symbol];
-                        const all = await token.allowance(
+                        const myToken = myTokens[symbol];
+                        const all = await myToken.allowance(
                             state.account.address,
                             TOKENS[HARDCODED_CHAIN].rdai
                         );
                         commit("SETALLOWANCE", { symbol, all });
                         return true;
-                    }, 1500);
+                    }, 200);
                 };
                 resolve(getAllowance());
             });
         },
-        setCurrentHat({ commit, dispatch }) {
+        setuserHat({ commit, dispatch }) {
             dispatch("getHatByAddress").then(r => {
-                commit("SETCURRENTHAT", r);
+                commit("SETUSERHAT", r);
             });
         },
         getHatByAddress({ state }, address = state.account.address) {
@@ -302,15 +317,11 @@ export default new Vuex.Store({
                     });
             })
         },
-        getHatByID({ commit, state }, id) {
-            new Promise(resolve => {
-                const getHatByID = async () => {
-                    const result = await contracts.functions.getHatByAddress(
-                        id
-                    )
-                    return true;
-                };
-                resolve(getHatByID());
+        getHatByID(id) {
+            return new Promise(async (resolve, reject) => {
+                contracts.functions.getHatByID(id)
+                    .then(r => resolve(r))
+                    .catch(e => reject(e));
             });
         },
         createHat({ commit, state }, { switchToThisHat = true }) {
@@ -440,13 +451,20 @@ export default new Vuex.Store({
                         resolve(true);
                     });
             })
-        },
-
+        }
     },
     getters: {
         hasWeb3: state => state.account.address.length === 42,
         userAddress: state => state.account.address,
-        balances: state => state.account.balances,
-        currentHat: state => state.account.hat
+        userBalances: state => state.account.balances,
+        userHat: state =>
+            typeof state.account.hat.hatID !== "undefined"
+                ? state.account.hat
+                : false,
+        customHat: state =>
+            state.customHat.hasOwnProperty("recipients") &&
+            state.customHat.recipients.length > 0
+                ? state.customHat
+                : false
     }
 });

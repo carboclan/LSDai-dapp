@@ -34,13 +34,13 @@
         </v-list-item-action>
       </v-list-item>
     </template>
-    <template v-if="currentHat.recipients.length>0">
+    <template v-if="userHat && userHat.recipients.length>0">
       <v-subheader>
         <v-list-item-title>Current Pool</v-list-item-title>
       </v-subheader>
-      <v-list-item v-for="index in currentHat.recipients.length">
-        <v-list-item-title>{{ (currentHat.recipients[index-1]) | formatAddress }}</v-list-item-title>
-        <v-list-item-action>{{ Math.round(currentHat.proportions[index-1]/totalProportions*100) }}%</v-list-item-action>
+      <v-list-item v-for="index in userHat.recipients.length">
+        <v-list-item-title>{{ (userHat.recipients[index-1]) | formatAddress }}</v-list-item-title>
+        <v-list-item-action>{{ Math.round(userHat.proportions[index-1]/totalProportions*100) }}%</v-list-item-action>
       </v-list-item>
     </template>
   </v-list>
@@ -62,9 +62,9 @@
     }),
     computed: {
       ...mapState(['account']),
-      ...mapGetters(['currentHat']),
+      ...mapGetters(['userHat']),
       totalProportions(){
-          return this.currentHat.proportions.reduce( (a , b) => a + b);
+          return this.userHat.proportions.reduce( (a , b) => a + b);
       },
       fullItems(){
         return this.items.map(i=>{
@@ -81,7 +81,6 @@
         const index = this.items.findIndex( i => i.symbol === symbol );
         this.items[index].loading = true;
         const result = await this.approve(symbol)
-        console.log("approve was successful: ", result);
         this.items[index].loading = false;
       }
     }

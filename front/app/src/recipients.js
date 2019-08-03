@@ -5,17 +5,17 @@ const recipients = [
         shortTitle: "MolochDAO",
         description:
             "MolochDAO was created with the specific purpose of financing ETH 2.0 development. ",
-        address: "0x08550C75707DA817c68F7e31A9659f0B3963f99s",
+        address: "",
         color: "#ff0000",
         id: 0
     },
     {
-        image: require("./assets/aragon.jpeg"),
-        title: "ETH 1.x community fund",
-        shortTitle: "ETH 1.x fund",
+        image: require("./assets/ethhub.png"),
+        title: "EthHub.io donation",
+        shortTitle: "EthHub",
         description:
-            "This fund was recently started to fund ETH 1.x developers",
-        address: "0x08550C75707DA817c68F7e31A9659f0B3963f99a",
+            "EthHub.io is an invaluable resource for all things ethereum",
+        address: "0xA19FCDaD77C1F0fd184689aca88BabCF68010347",
         color: "#00ff00",
         id: 1
     },
@@ -25,7 +25,7 @@ const recipients = [
         shortTitle: "Giveth2",
         description:
             "Giveth is a community built around the ideas of altruism and giving ",
-        address: "0x08550C75707DA817c68F7e31A9659f0B3963f99e",
+        address: "",
         color: "#2f0340",
         id: 2
     },
@@ -35,7 +35,7 @@ const recipients = [
         shortTitle: "Giveth3",
         description:
             "Giveth is a community built around the ideas of altruism and giving ",
-        address: "0x08550C75707DA817c68F7e31As9659f0B396df99e",
+        address: "",
         color: "#330044",
         id: 3
     },
@@ -45,7 +45,7 @@ const recipients = [
         shortTitle: "Giveth",
         description:
             "Giveth is a community built around the ideas of altruism and giving ",
-        address: "0x08550C75707DA817c68F7ea31A9659f0B3963f99e",
+        address: "",
         id: 4
     },
     {
