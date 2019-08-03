@@ -11,7 +11,7 @@ const contracts = {
         this.IRToken = contracts.IRToken;
         this.IERC20 = contracts.IERC20;
         this.functions = await this.IRToken.at(tokens.rdai);
-        var tokensTemp = {}
+        var tokensTemp = {};
         Object.keys(tokens).forEach(async token => {
             tokensTemp[token] = await this.IERC20.at(tokens[token]);
         });
