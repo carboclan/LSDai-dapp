@@ -1,4 +1,4 @@
-import * as sdk from "./../../../../ethereum/contracts";
+import * as sdk from "@decentral.ee/rtoken-contracts";
 
 const contracts = {
     IRToken: null,

@@ -16,7 +16,7 @@ const TOKENS = {
     4: {
         dai: "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
         cdai: "0x6d7f0754ffeb405d23c51ce938289d4835be3b14",
-        rdai: "0x93bC2F0A49716B8fdfdA29993e56c085F3F29487"
+        rdai: "0xaeC3A696D38bB6099Cc265e7931d4952Cb9cBDF4"
     },
     decimals: {
         dai: 18,
