@@ -16,21 +16,22 @@
           <token-svg :symbol="item.symbol" :size="30" />
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title class="grey--text text-xs-justify">
+          <v-list-item-title class="text-xs-justify">
             {{ item.text }}<strong> {{ item.balance }}</strong>
           </v-list-item-title>
         </v-list-item-content>
         <v-list-item-action v-if="item.symbol !== 'eth'">
-          <v-btn
-            icon
-            x-small
-            @click="callApprove(item.symbol)"
+          <web3-btn
+            :icon="true"
+            size="x-small"
+            action="approve"
+            :params="{symbol: item.symbol}"
             :disabled="item.allowance > 100"
-            :loading="item.loading"
+            @then="unlock(symbol)"
             >
             <v-icon v-if="item.allowance < 100">fa fa-lock</v-icon>
             <v-icon v-else>fa fa-unlock</v-icon>
-          </v-btn>
+          </web3-btn>
         </v-list-item-action>
       </v-list-item>
     </template>
@@ -38,10 +39,7 @@
       <v-subheader>
         <v-list-item-title>Current Pool</v-list-item-title>
       </v-subheader>
-      <v-list-item v-for="index in userHat.recipients.length">
-        <v-list-item-title>{{ (userHat.recipients[index-1]) | formatAddress }}</v-list-item-title>
-        <v-list-item-action>{{ Math.round(userHat.proportions[index-1]/totalProportions*100) }}%</v-list-item-action>
-      </v-list-item>
+      <proportions :hat="userHat" />
     </template>
   </v-list>
 </template>
@@ -63,9 +61,6 @@
     computed: {
       ...mapState(['account']),
       ...mapGetters(['userHat']),
-      totalProportions(){
-          return this.userHat.proportions.reduce( (a , b) => a + b);
-      },
       fullItems(){
         return this.items.map(i=>{
           const bal = this.account.balances[i.symbol];
@@ -75,15 +70,6 @@
         })
       }
     },
-    methods: {
-      ...mapActions(['approve']),
-      async callApprove(symbol){
-        const index = this.items.findIndex( i => i.symbol === symbol );
-        this.items[index].loading = true;
-        const result = await this.approve(symbol)
-        this.items[index].loading = false;
-      }
-    }
   }
 </script>
 

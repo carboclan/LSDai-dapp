@@ -30,8 +30,9 @@
               :value="i"
             >
               <template v-if="i==='deposit'">
-                <app-create-hat v-if="preselect==='custom'" :preselect="preselect"/>
-                <app-chosen-hat v-else :preselect="preselect"/>
+                <app-create-hat v-if="choice==='create'" />
+                <app-custom-hat v-else-if="typeof choice==='number' " :choice="choice"/>
+                <app-chosen-hat v-else :choice="choice"/>
                 <v-divider />
                 <app-deposit/>
               </template>
@@ -53,10 +54,14 @@
   }
 </style>
 <script>
+import Vue from 'vuex';
+import vuex from 'vuex';
+import {mapState} from 'vuex';
 import Deposit from '../components/Deposit.vue';
 import Redeem from '../components/Redeem.vue';
 import Withdraw from '../components/Withdraw.vue';
 import CreateHat from '../components/CreateHat.vue';
+import CustomHat from '../components/CustomHat.vue';
 import ChosenHat from '../components/ChosenHat.vue';
 import router from "../router.js";
 
@@ -67,22 +72,32 @@ export default {
     'app-redeem': Redeem,
     'app-withdraw': Withdraw,
     'app-chosen-hat': ChosenHat,
-    'app-create-hat': CreateHat
+    'app-create-hat': CreateHat,
+    'app-custom-hat': CustomHat
   },
   data: () => ({
     tab: 'deposit',
     tabs: ['deposit', 'redeem', 'withdraw'],
-    preselect: ''
+    preselect: '',
+    hatID: false,
+    shortTitle: ''
   }),
+  computed: {
+    ...mapState(['allHats']),
+    choice(){
+      return this.hatID || this.shortTitle || "create"
+    }
+  },
   watch:{
     tab(newVal){
-      const hat = this.preselect || "custom";
+      const hat = this.preselect || "create";
       if(newVal === "deposit") this.$router.replace(`/${newVal}/${hat}`);
       else this.$router.push(`/${newVal}`);
     }
   },
   mounted(){
-    this.preselect = this.$route.params.hat || 'custom';
+    this.shortTitle = this.$route.params.shortTitle || false;
+    this.hatID = this.$route.params.hatID || false;
     this.tab = this.$route.name;
   },
 }

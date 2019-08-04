@@ -25,7 +25,7 @@
           elevation="7"
           class="text-sm-center ma-3 pa-4"
           >
-          <!--v-flex px-5 py-0>
+          <v-flex px-5 py-0>
             <v-img
               class="round my-2 mx-auto"
               :max-width="180"
@@ -36,14 +36,14 @@
               />
           </v-flex>
           <h3>{{ i.title }}</h3>
-          <p>{{i.description}}</p-->
+          <p>{{i.description}}</p>
 
           <h3>{{ i.hatID }}</h3>
-          <p v-for="(b, index) in i.recipients.length">{{i.recipients[index] | formatAddress}}&nbsp;&nbsp;&nbsp;{{i.proportions[index]}}</p>
+          <proportions :hat="i" />
           <v-btn
             color="primary"
             class="mb-2"
-            @click="open(i.hatID)"
+            @click="open(i.shortTitle || i.hatID)"
             >
             Donate Now!
           </v-btn>
@@ -61,18 +61,26 @@
 import vue from 'vue';
 import vuex from 'vuex';
 import {mapState, mapGetters} from 'vuex';
-import recipients from '../recipients.js';
+import featured from '../featured.js';
 export default {
   name: 'donations',
   data: () => ({
 
   }),
   computed: {
-    ...mapState(['allHats'])
+    ...mapState(['allHats']),
   },
   methods: {
-    open( shortTitle ){
-      this.$router.push({ name: 'deposit', params: { hat: shortTitle } })
+    open( value ){
+      if(typeof value === 'string') this.openByShortTitle(value);
+      else this.openById(value);
+    },
+    openById(hatID){
+      this.$router.push({ name: 'deposit', params: { hatID } })
+      // gotta change the logic here. When they open, they are opening a hat, not choosing an address
+    },
+    openByShortTitle(shortTitle){
+      this.$router.push({ name: 'deposit', params: { shortTitle } })
       // gotta change the logic here. When they open, they are opening a hat, not choosing an address
     }
   }

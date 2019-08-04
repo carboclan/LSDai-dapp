@@ -1,5 +1,15 @@
 const recipients = [
     {
+        image: require("./assets/rdai.svg"),
+        title: "rToken DEV fund",
+        shortTitle: "rDAI devs",
+        description:
+            "The rToken dev fund was created to build and maintain the rToken protocol into the future of DeFi.",
+        address: "0x08550C75707DA817c68F7e31A9659f0B3963f991",
+        color: "#3333ff",
+        id: 0
+    },
+    {
         image: require("./assets/moloch.png"),
         title: "MolochDAO community fund",
         shortTitle: "MolochDAO",

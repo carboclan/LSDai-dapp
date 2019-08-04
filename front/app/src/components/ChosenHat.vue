@@ -56,18 +56,18 @@
 </style>
 
 <script>
-import recipients from "../recipients.js";
+import featured from "../featured.js";
 
 export default {
   name: 'app-create-hat',
   props: {
-    preselect: {
-      type: String,
+    choice: {
+      type: Number,
       default: "MolochDAO"
     }
   },
   data: () => ({
-    recipients: recipients,
+    featured: featured,
     commission: {
       color: "#F7997C",
       share: 1,
@@ -78,10 +78,9 @@ export default {
   }),
   computed: {
     elevate(){ return this.showCustom ? 4 : 0},
-    titles(){ return this.recipients.filter(i=> i.shortTitle!== "Custom Address").map(i => i.shortTitle)},
     recipient(){
       return {
-        ...this.recipients.filter( i => i.shortTitle === this.preselect )[0],
+        ...this.featured.filter( i => i.shortTitle === this.choice )[0],
         share : 19
       };
     },

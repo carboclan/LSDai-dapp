@@ -55,11 +55,11 @@
   }
 </style>
 <script>
-import recipients from '../recipients.js';
+import featured from '../featured.js';
 export default {
   name: 'donations',
   data: () => ({
-    hats: recipients
+    hats: featured
   }),
   methods: {
     open( shortTitle ){

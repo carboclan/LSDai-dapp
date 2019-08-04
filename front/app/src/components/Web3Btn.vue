@@ -1,6 +1,9 @@
 <template>
-  <v-btn @click="execute" :outlined="outlined" :color="color" :disabled="mergedDisable" :loading="loading">
-    <slot>
+  <v-btn :icon="icon" @click="execute" :outlined="outlined" :color="color" :disabled="mergedDisable" :loading="loading">
+    <template v-if="!hasWeb3 && !icon">
+      Please Enable Web3
+    </template>
+    <slot v-else>
     </slot>
     <template v-if="symbolAppend.length>0">&nbsp;
       <token-svg v-if="hasWeb3" :size="24" :symbol="symbolAppend" />
@@ -35,17 +38,34 @@ export default {
       symbolAppend: {
         type: String,
         default: ''
+      },
+      icon: {
+        type: Boolean,
+        default: false
       }
   },
   data: () => {
       return {
-          loading: false
+          loading: false,
+          hasWeb3: false
       }
   },
   computed: {
-      ...mapGetters(['userAddress', 'hasWeb3']),
+      ...mapGetters({
+        userAddress: 'userAddress',
+        web3: 'hasWeb3'
+      }),
       mergedDisable(){
-         return this.disabled || !this.userAddress;
+         return this.disabled || !this.hasWeb3
+      }
+  },
+  watch: {
+      web3(newVal){
+        this.loading = true;
+        setTimeout(()=> {
+            this.hasWeb3 = newVal
+            this.loading = false;
+        }, 3000);
       }
   },
   methods: {
@@ -61,9 +81,14 @@ export default {
                   this.$emit("catch", error);
               })
               .finally(()=>{
-                  this.loading = false;
+                  setTimeout( () => {
+                      this.loading = false;
+                  }, 1000);
               })
       }
+  },
+  mounted(){
+      this.hasWeb3 = this.web3;
   }
 }
 </script>

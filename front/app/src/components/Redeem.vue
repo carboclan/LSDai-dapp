@@ -10,7 +10,7 @@
         label="redeem rDAI"
       >
         <template slot="append">
-          <div @click="amount+=100" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
+          <div @click="amount=userBalances.rdai" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
           <token-svg symbol="rdai" :size="24"></token-svg>
         </template>
       </v-text-field>
@@ -54,7 +54,7 @@
 <script>
 import Vue from 'vue';
 import vuex from 'vuex';
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
   name: 'app-redeem',
@@ -64,6 +64,7 @@ export default {
     amount: 0
   }),
   computed:{
+    ...mapGetters(['userBalances']),
     formattedAmount(){
       var a = parseFloat(this.amount);
       if(a % 1 >= 0 && a % 1 < 0.0001) return a.toFixed(2);

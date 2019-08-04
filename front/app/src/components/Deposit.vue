@@ -11,7 +11,7 @@
           label="deposit DAI"
         >
           <template slot="append">
-            <div  @click="amount=balances.dai" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
+            <div  @click="amount=userBalances.dai" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
             <token-svg symbol="dai" :size="24"></token-svg>
           </template>
         </v-text-field>
@@ -35,12 +35,13 @@
       <v-flex xs12 mx-auto>
         <web3-btn
           :action="mintOrWhat"
-          :params="{amount}"
+          :params="params"
           color="primary"
           symbolAppend="dai"
-          :disabled="amount <= 0 || (mintOrWhat==='mintWithNewHat' && !customHat)"
+          :disabled="(!needsUnlock && amount <= 0) || (mintOrWhat==='mintWithNewHat' && !customHat)"
           >
-          Start Donating to {{ chosenHat }}
+          <template v-if="needsUnlock">Please unlock DAI</template>
+          <template v-else>Donate to {{ chosenHat }}</template>
         </web3-btn>
       </v-flex>
       <v-flex xs12 mx-auto v-if="mintOrWhat!=='mint'" class="caption">Please choose (or create) a pool, and then deposit DAI</v-flex>
@@ -68,20 +69,27 @@ export default {
     amount: 0  //preload with maximum balanceq
   }),
   computed:{
+    ...mapGetters(['userAllowances']),
+    needsUnlock() { return this.userAllowances.dai.length <= (this.amount.toString()).length},
+    params(){
+      if(this.needsUnlock) return { symbol: "dai"};
+      else return { amount: this.amount }
+    },
     chosenHat(){
       if(this.mintOrWhat === 'mint'){
         //first check if it's a hat we have saved in recipients file
 
         //then return formatted hat ID
-
+        return "Chosen Pool"
       }
       else{
-        return "to Custom Pool"
+        return "New Pool"
       }
     },
     ...mapGetters(['userHat', 'userBalances', 'customHat']),
     mintOrWhat(){
-      if(this.userHat && this.userHat.hatID > 0) return "mint";
+      if(this.needsUnlock) return "approve";
+      else if(this.userHat && this.userHat.hatID > 0) return "mint";
       else return "mintWithNewHat";
     },
     formattedAmount(){

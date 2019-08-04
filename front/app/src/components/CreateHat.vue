@@ -102,15 +102,11 @@
 </style>
 
 <script>
-import recipients from "../recipients.js";
 import vuex from "vuex";
 import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: 'app-create-hat',
-  props: {
-    preselect: String
-  },
   data: () => ({
     newAddress: '',
     recipients: [],
@@ -142,7 +138,7 @@ export default {
       handler(newVal){
         this.total = newVal.reduce((a,b) => a + b.share, 0) - this.commission.share;
         const newCommission = Math.round(this.total / 19);
-        if(newCommission === this.commission.share) return this.$store.dispatch("setCustomHat", newVal);
+        if(newCommission === this.commission.share) return this.$store.dispatch("setInterfaceHat", newVal);
         this.$set(this.commission, "share", newCommission);
       },
       deep: true

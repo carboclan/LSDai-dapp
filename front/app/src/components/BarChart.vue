@@ -5,37 +5,50 @@
       :color="i.color"
       height="15"
       value="100"
-      :style="{width: i.share*width/total + 'px'}"
+      :style="{width: Math.round(i.share*width/total) + 'px'}"
     ></v-progress-linear>
   </v-layout>
 </template>
 
 <script>
+
 import Vue from 'vue';
+import featured from '../featured.js'
+import colors from '../colors.js';
 export default {
   name: "bar-chart",
   props: {
-    proportions: Array
+    hat: Object
   },
   data: () => ({
-    width: 0,
-    total: 0
+    width: 0
   }),
-  watch: {
-    proportions: {
-      handler: function(newVal){
-        if(newVal.length < 1) return false;
-        this.total = newVal.reduce((a,b) => a + b.share, 0);
-      },
-      deep: true
+  computed:{
+    total(){
+      return this.hat.totalProportions;
+    },
+    proportions(){
+      var x = 0;
+      const {proportions, recipients} = this.hat;
+      const p = proportions.map((i, index)=>{
+        const a = { share: i};
+        const inFeatured = featured.filter( b => b.address === recipients[index] )
+        if(inFeatured.length>0) a.color = inFeatured[0].color;
+        else{
+          a.color = colors[x];
+          x++;
+        }
+        return a;
+      });
+      return p;
     }
   },
   mounted() {
+    console.log("colors: ", colors);
     const mutationHandler = () => {
       this.width = this.$refs.barContainer.offsetWidth;
     };
     mutationHandler();
-
     const mo = new MutationObserver(mutationHandler);
     try{
       mo.observe(this.$refs.barContainer, {
@@ -46,8 +59,6 @@ export default {
     } catch(e){
       console.log(e);
     }
-    if(this.proportions.length < 1) return false;
-    this.total = this.proportions.reduce((a,b) => a + b.share, 0);
   }
 }
 </script>
