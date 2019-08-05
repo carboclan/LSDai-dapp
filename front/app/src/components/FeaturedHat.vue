@@ -29,11 +29,12 @@
             :alt="recipient.title"
             />
         </v-flex>
-
       </v-layout>
-      <v-flex xs12 sm11 mx-auto mt-3>
-        <bar-chart :proportions="mergeSelection"/>
-        <v-flex class="caption text-right mr-1">5% is directed to the rDAI dev DAO&nbsp;&nbsp;<v-icon small>fa fa-arrow-up</v-icon></v-flex>
+      <bar-chart :hat="recipient" showCommission/>
+      <v-flex xs12 v-if="recipient.hatID !== userHat.hatID">
+        <web3-btn action="changeHat" :params="{hatID: recipient.hatID}">
+          Switch to this pool
+        </web3-btn>
       </v-flex>
     </v-sheet>
   </v-container>
@@ -56,37 +57,22 @@
 </style>
 
 <script>
-import featured from "../featured.js";
+import {mapState, mapGetters} from "vuex";
 
 export default {
-  name: 'app-create-hat',
+  name: 'app-featured-hat',
   props: {
-    choice: {
-      type: Number,
-      default: "MolochDAO"
+    hat: Object
+  },
+  computed: {
+    ...mapState(['allHats']),
+    ...mapGetters(['userHat']),
+    recipient(){
+      return this.allHats.filter( i => i.hasOwnProperty("shortTitle") && i.shortTitle === this.hat.shortTitle)[0];
     }
   },
-  data: () => ({
-    featured: featured,
-    commission: {
-      color: "#F7997C",
-      share: 1,
-      shortTitle: "rDAI dev DAO",
-      address: "0x08550C75707DA817c68F7e31A9659f0B3963f991",
-      commission: true
-    }
-  }),
-  computed: {
-    elevate(){ return this.showCustom ? 4 : 0},
-    recipient(){
-      return {
-        ...this.featured.filter( i => i.shortTitle === this.choice )[0],
-        share : 19
-      };
-    },
-    mergeSelection(){
-      return [this.recipient, this.commission];
-    },
+  mounted(){
+    this.$store.commit("SETINTERFACEHAT", this.recipient);
   }
 }
 </script>

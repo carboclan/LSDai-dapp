@@ -30,9 +30,9 @@
               :value="i"
             >
               <template v-if="i==='deposit'">
-                <app-create-hat v-if="choice==='create'" />
-                <app-custom-hat v-else-if="typeof choice==='number' " :choice="choice"/>
-                <app-chosen-hat v-else :choice="choice"/>
+                <app-create-hat v-if="$route.name==='create'" />
+                <app-custom-hat v-else-if="$route.name==='deposit' " :hat="$route.params" />
+                <app-featured-hat v-else :hat="$route.params" />
                 <v-divider />
                 <app-deposit/>
               </template>
@@ -62,7 +62,7 @@ import Redeem from '../components/Redeem.vue';
 import Withdraw from '../components/Withdraw.vue';
 import CreateHat from '../components/CreateHat.vue';
 import CustomHat from '../components/CustomHat.vue';
-import ChosenHat from '../components/ChosenHat.vue';
+import FeaturedHat from '../components/FeaturedHat.vue';
 import router from "../router.js";
 
 export default {
@@ -71,34 +71,19 @@ export default {
     'app-deposit': Deposit,
     'app-redeem': Redeem,
     'app-withdraw': Withdraw,
-    'app-chosen-hat': ChosenHat,
+    'app-featured-hat': FeaturedHat,
     'app-create-hat': CreateHat,
     'app-custom-hat': CustomHat
   },
   data: () => ({
     tab: 'deposit',
-    tabs: ['deposit', 'redeem', 'withdraw'],
-    preselect: '',
-    hatID: false,
-    shortTitle: ''
+    tabs: ['deposit', 'redeem', 'withdraw']
   }),
   computed: {
     ...mapState(['allHats']),
-    choice(){
-      return this.hatID || this.shortTitle || "create"
-    }
-  },
-  watch:{
-    tab(newVal){
-      const hat = this.preselect || "create";
-      if(newVal === "deposit") this.$router.replace(`/${newVal}/${hat}`);
-      else this.$router.push(`/${newVal}`);
-    }
   },
   mounted(){
-    this.shortTitle = this.$route.params.shortTitle || false;
-    this.hatID = this.$route.params.hatID || false;
-    this.tab = this.$route.name;
-  },
+    console.log(this.$route);
+  }
 }
 </script>

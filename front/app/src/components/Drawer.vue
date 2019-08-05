@@ -2,6 +2,7 @@
 
   <v-list
     dense
+    nav
   >
     <v-subheader>
       <strong>Your Balances</strong>
@@ -36,14 +37,50 @@
       </v-list-item>
     </template>
     <template v-if="userHat && userHat.recipients.length>0">
-      <v-subheader>
-        <v-list-item-title>Current Pool</v-list-item-title>
-      </v-subheader>
-      <proportions :hat="userHat" />
+      <v-divider />
+      <v-list-item  v-if="!userHat.shortTitle" >
+        <v-avatar>
+          <v-icon large>fas fa-cubes</v-icon>
+        </v-avatar>
+        <v-list-item-content class="pl-4">
+          <v-list-item-subtitle>Current Pool:</v-list-item-subtitle>
+          <v-list-item-title>Pool #{{ userHat.hatID }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <router-link :to="{ path: '/' }">
+            <v-btn icon>
+              <v-icon>fas fa-exchange-alt</v-icon>
+            </v-btn>
+          </router-link>
+        </v-list-item-action>
+      </v-list-item>
+      <v-list-item v-else two-line>
+        <v-avatar>
+          <v-img
+            :src="userHat.image"
+            :alt="userHat.title"
+            />
+        </v-avatar>
+        <v-list-item-content class="pl-4">
+          <v-list-item-subtitle>Current Pool:</v-list-item-subtitle>
+          <v-list-item-title>{{ userHat.shortTitle }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <router-link :to="{ path: '/' }">
+            <v-btn icon>
+              <v-icon>fas fa-exchange-alt</v-icon>
+            </v-btn>
+          </router-link>
+        </v-list-item-action>
+      </v-list-item>
     </template>
   </v-list>
 </template>
-
+<style lang="css" scoped>
+.round{
+  border-radius: 100%
+}
+</style>
 <script>
   import Vuex from 'vuex';
   import {mapActions, mapState, mapGetters} from 'vuex';
@@ -72,6 +109,3 @@
     },
   }
 </script>
-
-<style lang="css" scoped>
-</style>

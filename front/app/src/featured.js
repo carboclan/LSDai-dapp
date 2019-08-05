@@ -1,4 +1,10 @@
-const recipients = [
+/*
+  remember these are NOT hats. as soon as they are published,
+  we should give them a correct HatID,
+  but always pull actual data from web3
+*/
+
+const featured = [
     {
         image: require("./assets/rdai.svg"),
         title: "rToken DEV fund",
@@ -6,8 +12,7 @@ const recipients = [
         description:
             "The rToken dev fund was created to build and maintain the rToken protocol into the future of DeFi.",
         address: "0x08550C75707DA817c68F7e31A9659f0B3963f991",
-        color: "#3333ff",
-        id: 0
+        color: "#F7997C"
     },
     {
         image: require("./assets/moloch.png"),
@@ -15,9 +20,10 @@ const recipients = [
         shortTitle: "MolochDAO",
         description:
             "MolochDAO was created with the specific purpose of financing ETH 2.0 development. ",
-        address: "",
+        address: "0xA153b8891E77f1aE037026514C927530d877FaB8",
         color: "#ff0000",
-        id: 0
+        hatID: 1
+        // this one doesn't/shouldn't exist
     },
     {
         image: require("./assets/ethhub.png"),
@@ -26,37 +32,17 @@ const recipients = [
         description:
             "EthHub.io is an invaluable resource for all things ethereum",
         address: "0xA19FCDaD77C1F0fd184689aca88BabCF68010347",
-        color: "#00ff00",
-        id: 1
+        color: "#0a0036",
+        hatID: 2
     },
     {
         image: require("./assets/giveth.png"),
-        title: "Giveth community fund",
-        shortTitle: "Giveth2",
-        description:
-            "Giveth is a community built around the ideas of altruism and giving ",
-        address: "",
-        color: "#2f0340",
-        id: 2
-    },
-    {
-        image: require("./assets/giveth.png"),
-        title: "Giveth community fund",
-        shortTitle: "Giveth3",
-        description:
-            "Giveth is a community built around the ideas of altruism and giving ",
-        address: "",
-        color: "#330044",
-        id: 3
-    },
-    {
-        image: require("./assets/giveth.png"),
-        title: "Giveth community fund",
+        title: "Giveth DAC",
         shortTitle: "Giveth",
         description:
-            "Giveth is a community built around the ideas of altruism and giving ",
-        address: "",
-        id: 4
+            "Giveth is an open source platform for charitable donations.",
+        address: "0x8f951903c9360345b4e1b536c7f5ae8f88a64e79",
+        color: "#2f0340"
     },
     {
         image: require("./assets/building.jpg"),
@@ -65,7 +51,25 @@ const recipients = [
         description:
             "Set a custom beneficiary and give the interest to anyone you want!",
         address: "0x0",
-        id: 5
+        hatID: 0
+    },
+    {
+        image: require("./assets/BFVI.jpg"),
+        title: "Bitcoin For Venezuela Initiative",
+        shortTitle: "Bitcoin Venezuela",
+        description:
+            "Bitcoin for Venezuela Initiative is a non profit project bringing food and medicines to Venezuela",
+        address: "0x5f48465bb9a29a3904a8d320146e78640df0e96e",
+        color: "#f79430"
+    },
+    {
+        image: require("./assets/ethberlinzwei.svg"),
+        title: "ETHBerlinZwei Beer Fund",
+        shortTitle: "EthBerlin",
+        description:
+            "The team behind rTokens will be at Eth Berlin! Any funds in this pool will be used for drinks. Promise",
+        address: "",
+        color: "#ffd200"
     }
 ];
-export default recipients;
+export default featured;

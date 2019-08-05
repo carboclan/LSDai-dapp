@@ -28,14 +28,11 @@
           <v-divider hidden-md-and-up />
         </template>
       </v-layout>
-      <v-flex xs12 mx-auto mt-3 >
-        <bar-chart v-if="customHat.length>1" :hat="customHat" />
-        <!--v-flex
-          class="caption text-right mr-1"
-          >
-          5% is directed to the rDAI dev DAO&nbsp;&nbsp;
-          <v-icon small>fa fa-arrow-up</v-icon>
-        </v-flex-->
+      <bar-chart v-if="customHat.length>1" :hat="customHat" />
+      <v-flex xs12 v-if="customHat.hatID !== userHat.hatID">
+        <web3-btn action="changeHat" :params="{hatID: customHat.hatID}">
+          Switch to this pool
+        </web3-btn>
       </v-flex>
     </v-sheet>
   </v-container>
@@ -67,34 +64,33 @@
 import vuex from "vuex";
 import {mapActions, mapGetters, mapState} from "vuex";
 import featured from '../featured';
+import randomColor from '../colors';
 
 export default {
   name: 'app-custom-hat',
   props: {
-    choice: Number
+    hat: Object
   },
-  data: () => ({
-    newAddress: '',
-    recipients: [],
-    showCustom: false,
-    additions: [],
-    length: 1900,
-    total: 0,
-    switchToThisHat: true,
-  }),
   computed: {
-    ...mapGetters(['userAddress', 'hasWeb3']),
+    ...mapGetters(['userAddress', 'hasWeb3', 'userHat']),
     ...mapState(['allHats']),
     customHat(){
-      const p = this.allHats.filter(i => i.hatID === this.choice)[0];
-      const pf = p.recipients.map(i => {
+      const p = this.allHats.filter(i => parseInt(i.hatID) === parseInt(this.hat.hatID))[0];
+      p.featured = p.recipients.map(i => {
         const f = (featured.filter(b => b.address === i))[0];
         return typeof f !== 'undefined' ? f.title : false;
       });
-      console.log(pf);
-      p.featured = pf;
+      const colors = []
+      p.recipients.forEach(i => {
+        const f = (featured.filter(b => b.address === i))[0];
+        colors.push(typeof f !== 'undefined' ? f.color : randomColor(colors));
+      });
+      p.colors = colors;
       return p;
     }
+  },
+  mounted(){
+    this.$store.commit("SETINTERFACEHAT", this.customHat);
   }
 }
 </script>

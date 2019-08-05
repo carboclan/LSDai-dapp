@@ -34,17 +34,26 @@
     <v-layout center mt-5 wrap>
       <v-flex xs12 mx-auto>
         <web3-btn
+          v-if="needsUnlock"
+          color="primary"
+          action="approve"
+          symbolAppend="dai"
+          :params="{ symbol: 'dai'}"
+          >
+          Please unlock DAI
+        </web3-btn>
+        <web3-btn
+          v-else
           :action="mintOrWhat"
-          :params="params"
+          :params="{ amount }"
           color="primary"
           symbolAppend="dai"
-          :disabled="(!needsUnlock && amount <= 0) || (mintOrWhat==='mintWithNewHat' && !customHat)"
+          :disabled="( amount <= 0 || !hatSelected)"
           >
-          <template v-if="needsUnlock">Please unlock DAI</template>
-          <template v-else>Donate to {{ chosenHat }}</template>
+           {{ chosenHat }}
         </web3-btn>
       </v-flex>
-      <v-flex xs12 mx-auto v-if="mintOrWhat!=='mint'" class="caption">Please choose (or create) a pool, and then deposit DAI</v-flex>
+      <v-flex xs12 mx-auto class="caption">You keep rDAI, interest goes to {{interfaceHat.shortTitle || 'your chosen pool'}}</v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -58,7 +67,7 @@
 <script>
 import Vue from 'vue';
 import vuex from 'vuex';
-import {mapActions, mapGetters} from 'vuex';
+import {mapActions, mapState, mapGetters} from 'vuex';
 
 export default {
   name: 'app-deposit',
@@ -69,27 +78,33 @@ export default {
     amount: 0  //preload with maximum balanceq
   }),
   computed:{
-    ...mapGetters(['userAllowances']),
+    ...mapState(['interfaceHat']),
+    ...mapGetters(['userHat', 'userBalances','userAllowances']),
+    hatSelected() { return this.interfaceHat.proportions.length >= 2},
     needsUnlock() { return this.userAllowances.dai.length <= (this.amount.toString()).length},
-    params(){
-      if(this.needsUnlock) return { symbol: "dai"};
-      else return { amount: this.amount }
-    },
+    hatKind(){
+      if(this.interfaceHat.hasOwnProperty("shortTitle")) return "featured";
+      if(this.interfaceHat.hasOwnProperty("hatID")) return "custom";
+      else return "create"
+     },
     chosenHat(){
-      if(this.mintOrWhat === 'mint'){
-        //first check if it's a hat we have saved in recipients file
-
-        //then return formatted hat ID
-        return "Chosen Pool"
-      }
-      else{
-        return "New Pool"
+      switch (this.mintOrWhat) {
+        case "mint":
+          if(this.hatKind === "featured") return `Donate more interest to ${this.interfaceHat.shortTitle}`;
+          else return `Donate more interest to Pool #${this.interfaceHat.hatID}`
+          break;
+        case "mintWithSelectedHat":
+          if(this.hatKind === "featured") return `Switch and Donate more interest to ${this.interfaceHat.shortTitle}`;
+          else return `Switch and Donate more interest to Pool #${this.interfaceHat.hatID}`;
+        default:
+          return 'Donate to NEW pool';
       }
     },
-    ...mapGetters(['userHat', 'userBalances', 'customHat']),
     mintOrWhat(){
-      if(this.needsUnlock) return "approve";
-      else if(this.userHat && this.userHat.hatID > 0) return "mint";
+      if(this.userHat && this.interfaceHat.hasOwnProperty("hatID")){
+         if(this.userHat.hatID === this.interfaceHat.hatID) return "mint";
+         else return "mintWithSelectedHat";
+      }
       else return "mintWithNewHat";
     },
     formattedAmount(){

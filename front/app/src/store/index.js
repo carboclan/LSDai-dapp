@@ -1,16 +1,22 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import contracts from "./contracts";
+import featured from "../featured.js";
 import Web3 from "web3";
 import { toWei, fromWei, toBN } from "web3-utils";
 import BN from "bn.js";
-import { round,
+import {
+    round,
     fromDecimals,
     toDecimals
 } from "./../../../../ethereum/contracts/lib/math-utils";
 
 Vue.use(Vuex);
 
+const SELF_HAT_ID = new BN("10", 2)
+    .pow(new BN("100", 16))
+    .sub(new BN("1", 2))
+    .toString();
 const HARDCODED_CHAIN = 4; //rinkeby
 const TOKENS = {
     4: {
@@ -23,22 +29,20 @@ const TOKENS = {
         rdai: 18,
         cdai: 8
     }
-}
+};
 const toDec = function(num, symbol = "dai", format = "string") {
     const number = typeof num === "string" ? num : num.toString();
     const fixed = toDecimals(number, TOKENS.decimals[symbol]);
     if (format === "number") return parseFloat(fixed);
     else return fixed;
-
-}
+};
 const fromDec = function(num, symbol = "dai", format = "string") {
     const number = typeof num === "string" ? num : num.toString();
     const fixed = fromDecimals(number, TOKENS.decimals[symbol]);
     if (format === "number") return parseFloat(fixed);
     else return fixed;
-
-}
-const fillHat = function(hat, hatID){
+};
+const fillHat = function(hat, hatID) {
     const id = hatID || hat.hatID.toNumber();
     const { recipients, proportions } = hat;
     const cleanedResult = {
@@ -48,10 +52,11 @@ const fillHat = function(hat, hatID){
         proportions: proportions.map(i => i.toNumber())
     };
     cleanedResult.totalProportions = cleanedResult.proportions.reduce(
-        (a, b) => parseInt(a) + parseInt(b)
+        (a, b) => parseInt(a) + parseInt(b),
+        0
     );
     return cleanedResult;
-}
+};
 export default new Vuex.Store({
     state: {
         snackbar: {
@@ -69,16 +74,23 @@ export default new Vuex.Store({
             },
             allowances: {
                 rdai: 1000000000000000000,
-                cdai: '',
-                dai: ''
+                cdai: "",
+                dai: ""
             },
             hat: {
                 hatID: undefined,
                 recipients: [],
-                proportions: []
+                proportions: [],
+                totalProportions: undefined
             }
         },
-        interfaceHat: {},
+        interfaceHat: {
+            totalProportions: undefined,
+            recipients: [],
+            proportions: [],
+            colors: [],
+            length: 0
+        },
         allHats: []
     },
     mutations: {
@@ -144,14 +156,7 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        setInterfaceHat({ commit }, interfaceHat) {
-            const newHat = {
-                recipients: interfaceHat.map(i => i.address),
-                proportions: interfaceHat.map(i => i.share)
-            };
-            commit("SETINTERFACEHAT", newHat);
-        },
-        async activateWeb3({ commit, state, dispatch }) {
+        async activateWeb3({ commit, dispatch }) {
             try {
                 if (window.ethereum) {
                     window.web3 = new Web3(ethereum);
@@ -169,7 +174,8 @@ export default new Vuex.Store({
                 } else {
                     // Non-dapp browsers...
                     commit("ERROR", {
-                        text: "To use this app, you will need a web3 enabled browser"
+                        text:
+                            "To use this app, you will need a web3 enabled browser"
                     });
                     console.log("error here");
                     return false;
@@ -200,34 +206,54 @@ export default new Vuex.Store({
                 dispatch("getAllHats");
                 return true;
             } catch (err) {
-                console.log("error in activateWeb3:",  err);
+                console.log("error in activateWeb3:", err);
                 commit("ERROR", {
                     text: "Please allow access to our app: " + err.toString()
                 });
             }
         },
         getBalances({ dispatch }) {
-            return new Promise( resolve =>{
+            return new Promise(resolve => {
                 Object.keys(TOKENS[HARDCODED_CHAIN]).forEach(async key => {
                     await dispatch("getBalance", key);
-                })
+                });
                 resolve(true);
             });
         },
         getAllowances({ dispatch }) {
-            return new Promise( resolve => {
+            return new Promise(resolve => {
                 Object.keys(TOKENS[HARDCODED_CHAIN]).forEach(async key => {
                     await dispatch("getAllowance", key);
-                })
+                });
                 resolve(true);
             });
         },
         async getAllHats({ dispatch, commit }) {
             const allHats = [];
-            console.log("inside getAllHats");
+            var maxHat = 20;
             try {
-                for (var hatID = 1; hatID < 20; hatID++) {
-                    allHats.push(await dispatch("getHatByID", { hatID}));
+                maxHat = await contracts.functions.getMaximumHatID();
+            } catch (e) {
+                console.log(" error trying to get max hat number", e);
+            }
+            try {
+                for (var hatID = 1; hatID < maxHat + 1; hatID++) {
+                    const rawHat = await dispatch("getHatByID", { hatID });
+                    rawHat.loans = await Promise.all(
+                        rawHat.recipients.map(i =>
+                            dispatch("receivedLoanOf", i)
+                        )
+                    );
+                    rawHat.loans = rawHat.loans.map(i => fromDec(i));
+                    rawHat.totalLoan = rawHat.loans.reduce(
+                        (a, b) => parseInt(a) + parseInt(b),
+                        0
+                    );
+                    const fullHat = {
+                        ...rawHat,
+                        ...featured.filter(i => i.hatID === hatID)[0]
+                    };
+                    allHats.push(fullHat);
                 }
             } catch (e) {
                 console.log("dispatch threw error e: ", e);
@@ -252,7 +278,7 @@ export default new Vuex.Store({
             }
         },
         getBalance({ commit, state }, symbol) {
-            if(symbol === "eth") return;
+            if (symbol === "eth") return;
             new Promise(resolve => {
                 const getBalance = async () => {
                     const myTokens = contracts.tokens;
@@ -270,13 +296,12 @@ export default new Vuex.Store({
                         commit("SETBALANCE", { symbol, bal });
                         return true;
                     }, 2000);
-
                 };
                 resolve(getBalance());
             });
         },
         getAllowance({ commit, state }, symbol) {
-            if(symbol === "eth" || symbol === "rdai") return;
+            if (symbol === "eth" || symbol === "rdai") return;
             new Promise(resolve => {
                 const getAllowance = async () => {
                     const myTokens = contracts.tokens;
@@ -294,10 +319,13 @@ export default new Vuex.Store({
             });
         },
         getUserHat({ commit, dispatch, state }) {
-            console.log("in getUserHat. user address: ", state.account.address)
+            console.log("in getUserHat. user address: ", state.account.address);
             dispatch("getHatByAddress", { address: state.account.address })
                 .then(r => {
-                    commit("SETUSERHAT", r);
+                    commit("SETUSERHAT", {
+                        ...r,
+                        ...featured.filter(i => i.hatID === r.hatID)[0]
+                    });
                 })
                 .catch(e => {
                     console.log("error in getUserHat, e:", e);
@@ -305,16 +333,15 @@ export default new Vuex.Store({
         },
         getHatByAddress({}, { address }) {
             return new Promise(resolve => {
-                contracts.functions
-                    .getHatByAddress(address)
-                    .then(result => {
-                        resolve(fillHat(result))
-                    });
+                contracts.functions.getHatByAddress(address).then(result => {
+                    resolve(fillHat(result));
+                });
             });
         },
         getHatByID({}, { hatID }) {
             return new Promise(async (resolve, reject) => {
-                contracts.functions.getHatByID(toBN(hatID))
+                contracts.functions
+                    .getHatByID(toBN(hatID))
                     .then(result => resolve(fillHat(result, hatID)))
                     .catch(e => reject(e));
             });
@@ -341,21 +368,14 @@ export default new Vuex.Store({
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
-                        if(switchToThisHat) dispatch("getUserHat");
+                        if (switchToThisHat) dispatch("getUserHat");
                         resolve(true);
                     });
             });
         },
         approve({ commit, state, dispatch }, { symbol }) {
             return new Promise((resolve, reject) => {
-                var a = new BN("100", 16);
-                var b = new BN("10", 2);
-                var c = new BN("1", 2);
-                const maximum = b
-                    .pow(a)
-                    .sub(c)
-                    .toString();
-                console.log("maximum: ", maximum);
+                const maximum = SELF_HAT_ID;
                 contracts.tokens[symbol]
                     .approve(TOKENS[HARDCODED_CHAIN].rdai, maximum, {
                         from: state.account.address
@@ -398,7 +418,7 @@ export default new Vuex.Store({
                         dispatch("getBalance", "rdai");
                         resolve(true);
                     });
-            })
+            });
         },
         mintWithNewHat({ commit, state, dispatch }, { amount }) {
             return new Promise(resolve => {
@@ -427,11 +447,62 @@ export default new Vuex.Store({
                         dispatch("getUserHat");
                         resolve(true);
                     });
-            })
+            });
+        },
+        mintWithSelectedHat({ commit, state, dispatch }, { amount, hatID }) {
+            return new Promise(resolve => {
+                contracts.functions
+                    .mintWithNewHat(toWei(amount.toString()), toBN(hatID), {
+                        from: state.account.address
+                    })
+                    .on("transactionHash", hash => {
+                        console.log("hash of tx: ", hash);
+                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                    })
+                    .on("error", err => {
+                        console.warn("mintWithSelectedHat failed", err);
+                        commit("ERROR", { type: "transaction" });
+                        return "error";
+                    })
+                    .then(receipt => {
+                        console.log("now what? receipt: ", receipt);
+                        dispatch("getBalance", "dai");
+                        dispatch("getBalance", "rdai");
+                        dispatch("getUserHat");
+                        resolve(true);
+                    });
+            });
+        },
+        changeHat({ commit, state, dispatch }, { hatID }) {
+            return new Promise(resolve => {
+                contracts.functions
+                    .changeHat(toBN(hatID), {
+                        from: state.account.address
+                    })
+                    .on("transactionHash", hash => {
+                        console.log("hash of tx: ", hash);
+                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                    })
+                    .on("error", err => {
+                        console.warn("changeHat failed", err);
+                        commit("ERROR", { type: "transaction" });
+                        return "error";
+                    })
+                    .then(receipt => {
+                        console.log("now what? receipt: ", receipt);
+                        dispatch("getUserHat");
+                        resolve(true);
+                    });
+            });
         },
         redeem({ commit, state, dispatch }, { amount }) {
             return new Promise(resolve => {
-                console.log("amount: ", amount, " cleaned for web3: ", toDec(amount));
+                console.log(
+                    "amount: ",
+                    amount,
+                    " cleaned for web3: ",
+                    toDec(amount)
+                );
                 contracts.functions
                     .redeem(toDec(amount), {
                         from: state.account.address
@@ -451,19 +522,19 @@ export default new Vuex.Store({
                         dispatch("getBalance", "rdai");
                         resolve(true);
                     });
-            })
+            });
         },
         interestPayableOf({ state }, { address = state.account.address }) {
             return new Promise(async (resolve, reject) => {
                 const result = await contracts.functions.interestPayableOf(
                     address
-                )
+                );
                 if (result > 0) resolve(fromDec(result, "rdai", "number"));
                 else reject(fromDec(result, "rdai", "number"));
             });
         },
         payInterest({ state }, { address = state.account.address }) {
-            return new Promise((resolve, reject) =>{
+            return new Promise((resolve, reject) => {
                 contracts.functions
                     .payInterest(address, {
                         from: state.account.address
@@ -481,8 +552,32 @@ export default new Vuex.Store({
                         console.log("now what? receipt: ", receipt);
                         resolve(true);
                     });
-            })
+            });
         },
+        getAccountStats({ state }, { address = state.account.address }) {
+            return new Promise(async resolve => {
+                const result = await contracts.functions.getAccountStats(
+                    address
+                );
+                resolve(result);
+            });
+        },
+        receivedSavingsOf({ state }, { address = state.account.address }) {
+            return new Promise(async resolve => {
+                const result = await contracts.functions.receivedSavingsOf(
+                    address
+                );
+                resolve(result);
+            });
+        },
+        receivedLoanOf({ state }, { address = state.account.address }) {
+            return new Promise(async resolve => {
+                const result = await contracts.functions.receivedLoanOf(
+                    address
+                );
+                resolve(result);
+            });
+        }
     },
     getters: {
         hasWeb3: state => state.account.address.length === 42,

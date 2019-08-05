@@ -13,31 +13,31 @@
         <v-flex class="text-sm-center title my-auto pr-1">Select Beneficiaries</v-flex>
       </v-layout>
       <v-layout wrap align-center mr-4 subtitle-2>
-        <template v-for="(item, i) in mergeSelection" md12>
-          <v-flex xs12 row v-if="!item.commission">
+        <template v-for="(item, i) in hatInCreation.proportions" md12 v-if="i!==0">
+          <v-flex xs12 row>
             <v-layout nowrap>
               <v-flex sm1 xs1 d-inline mr-2 class="minus-top-8"
                 >
-                <v-btn icon color="red" small fab dark @click="removeRecord(i)">
+                <v-btn icon color="red" small fab dark @click="removeRecipient(i)">
                   <v-icon>fa fa-minus</v-icon>
                 </v-btn>
               </v-flex>
               <v-flex grow nowrap
                 >
                 <div class="text-center">
-                  {{item.address | formatAddress }}
+                  {{hatInCreation.recipients[i] | formatAddress }}
                 </div>
               </v-flex>
               <v-flex sm7 xs12
                 :class="{'grow': $vuetify.breakpoint.smAndUp}"
                 >
                 <v-slider
-                v-model="item.share"
+                v-model="localProportions[i]"
                 :thumb-size="18"
                 :max="length"
                 :step="19"
                 :min="19"
-                :color="item.color"
+                :color="hatInCreation.colors[i]"
                 />
               </v-flex>
             </v-layout>
@@ -45,7 +45,7 @@
           <v-divider hidden-md-and-up />
         </template>
         <v-flex sm1 xs1 nowrap mr-auto class="minus-top">
-          <v-btn icon color="green" small fab dark @click="addRecord"><v-icon>fa fa-plus</v-icon></v-btn>
+          <v-btn icon color="green" small fab dark @click="addRecipient(newAddress)"><v-icon>fa fa-plus</v-icon></v-btn>
         </v-flex>
         <v-flex sm11 xs11 pl-2 nowrap class="justify-text">
           <v-text-field
@@ -65,15 +65,12 @@
           </v-text-field>
         </v-flex>
       </v-layout>
-      <v-flex xs12 sm11 mx-auto mt-3 v-if="mergeSelection.length > 1" >
-        <bar-chart :proportions="mergeSelection"/>
-        <v-flex class="caption text-right mr-1">5% is directed to the rDAI dev DAO&nbsp;&nbsp;<v-icon small>fa fa-arrow-up</v-icon></v-flex>
-      </v-flex>
+      <bar-chart :hat="hatInCreation" showCommission v-if="hatInCreation.length > 1" />
       <v-flex xs12 mx-auto text-center my-0 >
         <v-switch v-model="switchToThisHat" class="justify-center my-0" :label="label" :disabled="hasWeb3 === false" />
       </v-flex>
       <v-flex xs12 style="margin-top: -1em">
-        <web3-btn action="createHat" :disabled="mergeSelection.length<1" :params="{switchToThisHat}">Create new Pool</web3-btn>
+        <web3-btn action="createHat" :disabled="hatInCreation.length < 2" :params="{switchToThisHat}">Create new Pool</web3-btn>
       </v-flex>
     </v-sheet>
   </v-container>
@@ -104,66 +101,82 @@
 <script>
 import vuex from "vuex";
 import {mapActions, mapGetters} from "vuex";
+import featured from '../featured';
+import randomColor from '../colors';
 
 export default {
   name: 'app-create-hat',
   data: () => ({
     newAddress: '',
-    recipients: [],
-    showCustom: false,
     additions: [],
     length: 1900,
-    total: 0,
     switchToThisHat: true,
-    commission: {
-      color: "#F7997C",
-      share: 0,
-      shortTitle: "rDAI dev DAO",
-      address: "0x08550C75707DA817c68F7e31A9659f0B3963f991",
-      commission: true
-    }
+    localProportions: []
   }),
   computed: {
     ...mapGetters(['userAddress', 'hasWeb3']),
     label(){
       return this.switchToThisHat ? 'Switch to new pool' : 'Keep current pool'
     },
-    mergeSelection(){
-      if(this.additions.length=== 0 ) return []
-      return [...this.additions, this.commission];
+    hatInCreation(){ return this.$store.state.interfaceHat; }
+  },
+  methods: {
+    ...mapActions(['createHat']),
+    setHat(hat){
+      this.localProportions = hat.proportions;
+      this.$store.commit("SETINTERFACEHAT",hat);
     },
+    addRecipient(address){
+      const hat = this.hatInCreation;
+      hat.proportions.push(1900);
+      hat.recipients.push(address);
+      hat.length = hat.proportions.length;
+      hat.totalProportions = hat.proportions.reduce((a,b)=>a+b, 0);
+      const hasColor = featured.filter(i=> i.address === address)[0];
+      if(typeof hasColor !== 'undefined') hat.colors.push(hasColor.color);
+      else hat.colors.push(randomColor(hat.colors));
+      this.setHat(hat)
+    },
+    removeRecipient(index){
+      const hat = this.hatInCreation;
+      hat.proportions.splice(index, 1);
+      hat.recipients.splice(index, 1);
+      hat.colors.splice(index, 1);
+      hat.length-= 1;
+      hat.totalProportions = hat.proportions.reduce((a,b)=>a+b,0);
+      this.setHat(hat);
+    }
   },
   watch: {
-    mergeSelection:{
-      handler(newVal){
-        this.total = newVal.reduce((a,b) => a + b.share, 0) - this.commission.share;
-        const newCommission = Math.round(this.total / 19);
-        if(newCommission === this.commission.share) return this.$store.dispatch("setInterfaceHat", newVal);
-        this.$set(this.commission, "share", newCommission);
+    hatInCreation:{
+      handler: function( newVal ){
+        const hat = newVal;
+        if(newVal.proportions[0] === newVal.totalProportions / 20) return;
+        hat.proportions[0] = (newVal.totalProportions - newVal.proportions[0])/ 19;
+        hat.totalProportions = hat.proportions.reduce((a,b)=>a+b,0);
+        this.setHat(hat);
+      },
+      deep: true
+    },
+    localProportions: {
+      handler: function( newVal ){
+        const hat = this.hatInCreation;
+        hat.proportions = newVal;
+        hat.proportions[0] = (newVal.reduce((a,b)=>a+b,0) - newVal[0])/ 19;
+        hat.totalProportions = hat.proportions.reduce((a,b)=>a+b,0);
+        this.$store.commit("SETINTERFACEHAT", hat);
       },
       deep: true
     }
   },
-  methods: {
-    ...mapActions(['createHat']),
-    addRecord(){
-      if(this.newAddress.length !== 42) return false;
-      const newRecord = {
-        address: this.newAddress,
-        share: this.length,
-        color: this.randomColor()
-      };
-      this.additions.push(newRecord);
-      this.newAddress = '';
-    },
-    removeRecord(i){
-      var address = this.mergeSelection[i].address;
-      this.additions = this.additions.filter( a => a.address !== address);
-    },
-    randomColor(){
-      const color = "#" + (Math.random()*0xFFFFFF<<0).toString(16);
-      return (color === "#F7997C" || color === "#FFFFFF") ? this.randomColor() : color;
-    }
+  mounted(){
+    this.setHat( {
+      length:1,
+      proportions: [100],
+      recipients: [featured[0].address],
+      colors: [featured[0].color],
+      totalProportions: 100,
+    });
   }
 }
 </script>

@@ -21,7 +21,7 @@
           <v-icon color="green" small class="mr-2">fas fa-circle</v-icon><span :class="{'caption': $vuetify.breakpoint.xs}">{{userAddress | formatAddress}}</span>
         </template>
         <template v-else>
-          <v-btn @click="activateWeb3">ENABLE WEB3</v-btn>
+          <v-btn @click="activateWeb3" color="primary">ENABLE WEB3</v-btn>
         </template>
       </v-flex>
     </v-app-bar>
@@ -32,6 +32,7 @@
 
     <v-navigation-drawer
       v-model="drawer"
+      v-if="hasWeb3"
       app
       right
       clipped
@@ -79,7 +80,7 @@
       ...mapState(['account'])
     }),
     computed: {
-      ...mapGetters(['userAddress'])
+      ...mapGetters(['userAddress', 'hasWeb3'])
     },
     methods: {
       ...mapActions(['activateWeb3'])
