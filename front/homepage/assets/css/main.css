@@ -312,6 +312,9 @@ input, select, textarea {
 	.align-right {
 		text-align: right;
 	}
+	.float-right{
+		float: right;
+	}
 
 	.underline {
 		text-decoration: underline;
@@ -2239,7 +2242,35 @@ input, select, textarea {
 	}
 
 /* Icon */
-
+	img.medium-icon{
+		width: 4.5em;
+	}
+	i.medium-icon{
+		padding: 0.5em ;
+		font-size: 3em;
+	}
+	.hat-box {
+		display: flex;
+		flex-direction: column;
+	}
+	.hat-box .header{
+		text-align: center;
+	}
+	.hat-box > div{
+		margin-top:0.5em;
+		margin-bottom:1em;
+		display: flex;
+		align-self: center;
+		padding: 1em;
+	}
+	.hat-box > div > div{
+		display: inline-flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.hat-box > div > i, .hat-box > div > div > *{
+		align-self: center;
+	}
 	.icon {
 		text-decoration: none;
 		-moz-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
