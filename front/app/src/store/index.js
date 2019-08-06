@@ -91,7 +91,8 @@ export default new Vuex.Store({
             colors: [],
             length: 0
         },
-        allHats: []
+        allHats: [],
+        exchangeRate: 0
     },
     mutations: {
         SHOWSNACKBAR: state => {
@@ -114,6 +115,9 @@ export default new Vuex.Store({
         },
         SETALLHATS: (state, allHats) => {
             state.allHats = allHats;
+        },
+        SETEXCHANGERATE: (state, rate) => {
+            state.exchangeRate = rate;
         },
         ERROR: (state, payload) => {
             const { type, text, icon, timeout } = payload;
@@ -199,6 +203,7 @@ export default new Vuex.Store({
                     "SETUSERADDRESS",
                     (await web3.eth.getAccounts())[0].toString().toLowerCase()
                 );
+                dispatch("getExchangeRate");
                 dispatch("setupWeb3Listeners");
                 await dispatch("getBalances");
                 await dispatch("getAllowances");
@@ -259,6 +264,15 @@ export default new Vuex.Store({
                 console.log("dispatch threw error e: ", e);
             }
             commit("SETALLHATS", allHats);
+        },
+        async getExchangeRate({ commit, dispatch }) {
+            const rate = await (await fetch(
+                "https://api.compound.finance/api/v2/ctoken?addresses[]=0xf5dce57282a584d2746faf1593d3121fcac444dc"
+            )).json();
+            commit(
+                "SETEXCHANGERATE",
+                parseFloat(rate.cToken[0].borrow_rate.value)
+            );
         },
         setupWeb3Listeners({ commit, dispatch }) {
             const ethereum = window.ethereum;
@@ -564,7 +578,7 @@ export default new Vuex.Store({
         },
         receivedSavingsOf({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.receivedSavingsOf(
+                const result = await contracts.functions.receivedSavingsOf.call(
                     address
                 );
                 resolve(result);
@@ -572,7 +586,7 @@ export default new Vuex.Store({
         },
         receivedLoanOf({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.receivedLoanOf(
+                const result = await contracts.functions.receivedLoanOf.call(
                     address
                 );
                 resolve(result);
@@ -584,6 +598,7 @@ export default new Vuex.Store({
         userAddress: state => state.account.address,
         userBalances: state => state.account.balances,
         userAllowances: state => state.account.allowances,
+        rate: state => Math.round(state.exchangeRate * 10000) / 100 + " %",
         userHat: state =>
             typeof state.account.hat.hatID !== "undefined"
                 ? state.account.hat

@@ -15,17 +15,6 @@ const featured = [
         color: "#F7997C"
     },
     {
-        image: require("./assets/moloch.png"),
-        title: "MolochDAO community fund",
-        shortTitle: "MolochDAO",
-        description:
-            "MolochDAO was created with the specific purpose of financing ETH 2.0 development. ",
-        address: "0xA153b8891E77f1aE037026514C927530d877FaB8",
-        color: "#ff0000",
-        hatID: 1
-        // this one doesn't/shouldn't exist
-    },
-    {
         image: require("./assets/ethhub.png"),
         title: "EthHub.io donation",
         shortTitle: "EthHub",
@@ -64,11 +53,11 @@ const featured = [
     },
     {
         image: require("./assets/ethberlinzwei.svg"),
-        title: "ETHBerlinZwei Beer Fund",
+        title: "ETHBerlinZwei Hackers Fund",
         shortTitle: "EthBerlin",
         description:
-            "The team behind rTokens will be at Eth Berlin! Any funds in this pool will be used for drinks. Promise",
-        address: "",
+            "All funds are sent to ETHBerlin to fund Scholarships for the EthBerlinZwei hackathon.",
+        address: "0x82338B1b27cfC0C27D79c3738B748f951Ab1a7A0",
         color: "#ffd200"
     }
 ];

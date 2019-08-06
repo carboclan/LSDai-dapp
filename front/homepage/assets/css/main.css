@@ -2799,17 +2799,13 @@ input, select, textarea {
 
  .code.box{
 	 background-color: #000;
-	 text-align: left;
-	 font-family: "Courier New", monospace;
 	 font-weight: 400;
 	 font-size: 0.9em;
 	 line-height: 1.75;
- }
- .code .header{
-
+	 text-align: left;
  }
  .code .content{
-	 color: #fff;
+	 color: #eee !important;
  }
  .code .indent{
 	 margin: 0px;
@@ -2821,10 +2817,19 @@ input, select, textarea {
 	 margin-left: 4em;
  }
  .code .purple{
-	 color: #ff00ff;
+	 color: #d34490;
  }
  .code .green{
 	 color: #00ff00;
+ }
+ .code .blue{
+	 color: #29b6bf;
+ }
+ .code .orange{
+	 color: #c3905e;
+ }
+ .code .grey{
+	 color: #aaa;
  }
 /* Spotlight */
 

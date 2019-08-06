@@ -11,19 +11,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script>const HARDCODED_APP = http://localhost:8080/</script>
 	</head>
 	<body class="is-preload">
-
 		<!-- Wrapper -->
 			<div id="wrapper">
-
 				<!-- Header -->
 					<header id="header" class="alt">
 						<span class="logo"><img src="images/logo.svg" alt=""/></span>  <!-- R font is "padmaa bold"  -->
 						<h1>DAI = rDAI + Interest</h1>
 						<p>Unlock your DAI's true potential<br />
 					</header>
-
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
@@ -34,7 +32,6 @@
 							<li><a href="app.html" class="primary">dApp&nbsp;&nbsp;<span class="icon solid fa-external-link-alt"></span></a></li>
 						</ul>
 					</nav>
-
 				<!-- Main -->
 					<div id="main">
 
@@ -45,7 +42,7 @@
 										<header class="major">
 											<h2>Splitting principal and interest</h2>
 										</header>
-										<p class="align-left">rDai (redeemable DAI) allows you to invest your money in a risk free* interest generating pool, while holding on to the amount you invested.
+										<p class="align-left">rDai (redeemable DAI) allows you to invest your money in a risk free* interest generating pool, while holding on to the exact amount you invested.
 											<br><strong>You decide who benefits</strong> from the generated interest: yourself, a community fund, a charity, or a dApp you are using.
 											<br>rDAI is a <strong>fungible ERC20 token</strong>, meaning you can send any amount to any user, and they can always redeem it 1:1 for DAI
 										</p>
@@ -92,32 +89,27 @@
 									<h2>Easy to Buidl with!</h2>
 									<div class="code box">
 										<div class="header"></div>
-										<div class="content">
-											<span class="purple">Contract</span> Coin {<span class="comment">// this function does so and so</span><br>
-									    <div class="indent">
-													<span class="purple">address</span> minter;<br>
-											    <span class="purple">mapping</span> (<span class="purple">address</span> => <span class="purple">uint</span>) balances;<br>
-												  <span class="purple">function</span> Coin() {<span class="comment">// this function does so and so</span><br>
-													<div class="indent">
-														minter = <span class="green">msg.sender</span>;<br>
-													</div>
-											    }<br>
-													<span class="comment">/* this function does so and so   */</span><br>
-											    <span class="purple">function</span> queryBalance(<span class="purple">address</span> addr) <span class="purple">constant returns</span> (<span class="purple">uint</span> balance) {<br>
-													<div class="indent">
-														<span class="purple">return</span> balances[addr];
-													</div>
-											    }
-											</div>
-											}
-										</div>
+<pre class="content"><span class="grey">/**
+ * @notice Sender supplies assets into the market and receives rTokens in exchange
+ * @param mintAmount The amount of the underlying asset to supply
+ * @return uint 0=success, otherwise a failure
+ */</span>
+<span class="purple">function</span> <span class="blue">mint</span>(<span class="orange">uint256</span> mintAmount) <span class="purple">external returns</span> (<span class="orange">bool</span>);
+<span class="grey">
+/**
+ * @notice Sender redeems rTokens in exchange for the underlying asset
+ * @param redeemTokens The number of rTokens to redeem into underlying
+ * @return uint 0=success, otherwise a failure
+ */</span>
+<span class="purple">function</span>  <span class="blue">redeem</span> (<span class="orange">uint256</span>  redeemTokens) <span class="purple">external returns</span>  (<span class="orange">bool</span> );
+</pre>
 									</div>
 									<div class="content">
-										rDAI is more useful if it is widely used. We strive to keep our code well documented and self explanatory. Check out our docs to get started, and if you have any questions contact us on twitter.
+										rDAI is more useful if it is widely used. We strive to keep our code well documented and self explanatory. Check out our GitHub repo to get started, and if you have any questions let us know!.
 									</div>
 								</header>
 								<footer class="major">
-									<a href="generic.html" class="button outline">Read the docs</a>
+									<a href="https://github.com/decentral-ee/rtoken-contracts" target="_blank" class="button outline">See the code!</a>
 								</footer>
 							</section>
 
@@ -125,7 +117,7 @@
 							<section id="donating" class="main special">
 								<header class="major">
 									<h2>Donate for Free</h2>
-									<h3>Current interest rate is <strong class="interest-rate"></strong></h3>
+									<h3>Current interest rate is <strong class="interest-rate">over 15%</strong></h3>
 									<h4>What will you use it for?</h4>
 								</header>
 								<div class="content ">
@@ -135,17 +127,23 @@
 									</p>
 									<ul class="features spotlight images">
 										<li>
-											<span class="image"><img src="images/Moloch.png" alt="DAI is split into rDAI and Compound Interest" /></span>
+											<span class="image">
+												<img src="images/ethhub.png" alt="EthHub.io is an invaluable resource for all things ethereum" />
+											</span>
 											<h3>MolochDAO community fund</h3>
-											<p>MolochDAO was created with the specific purpose of financing ETH 2.0 development. <a href="https://molochdao.com/"><span class="icon solid fa-link"></span></a></p>
+											<p>EthHub.io is an invaluable resource for all things ethereum. <a href="https://EthHub.io/"><span class="icon solid fa-link"></span></a></p>
 										</li>
 										<li>
-											<span class="image"><img src="images/aragon.jpeg" alt="DAI is split into rDAI and Compound Interest" /></span>
-											<h3>ETH 1.x community fund</h3>
-											<p>This fund was recently started to fund ETH 1.x developers <a href="https://molochdao.com/"><span class="icon solid fa-link"></span></a></p>
+											<span class="image">
+												<img src="images/ethberlinzwei.svg" alt="ETHBerlinZwei hackathon fund" />
+											</span>
+											<h3>EthBerlinZwei Hacker Scholarships</h3>
+											<p>All funds are sent to ETHBerlin to fund Scholarships for the EthBerlinZwei hackathon <a href="https://ethberlinzwei.com/"><span class="icon solid fa-link"></span></a></p>
 										</li>
 										<li>
-											<span class="image"><img src="images/giveth.png" alt="DAI is split into rDAI and Compound Interest" /></span>
+											<span class="image">
+												<img src="images/giveth.png" alt="Giveth Community Fund" />
+											</span>
 											<h3>Giveth community fund</h3>
 											<p>Giveth is a community built around the ideas of altruism and giving <a href="https://giveth.io/"><span class="icon solid fa-link"></span></a></p>
 										</li>
@@ -153,7 +151,7 @@
 								</div>
 								<footer class="major">
 									<ul class="actions special">
-										<li><a href="generic.html" class="button primary">Try the app</a></li>
+										<li><a href="http://localhost:8080/" class="button primary">Start Donating</a></li>
 									</ul>
 								</footer>
 							</section>
