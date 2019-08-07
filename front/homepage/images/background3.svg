@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="880.06567mm"
+   height="1016.2128mm"
+   viewBox="0 0 880.06567 1016.2128"
+   version="1.1"
+   id="svg1172"
+   sodipodi:docname="background3.svg"
+   inkscape:version="0.92.4 (f8dce91, 2019-08-02)">
+  <defs
+     id="defs1166">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 148.49999 : 1"
+       inkscape:vp_y="0 : 999.99993 : 0"
+       inkscape:vp_z="210.00001 : 148.49999 : 1"
+       inkscape:persp3d-origin="105 : 98.999993 : 1"
+       id="perspective1220" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2419">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M -223.77251,-26.945001 H 656.29316 V 989.26783 h -880.06567 z"
+         id="path2421"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2423">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M -663.80507,-280.99792 H 216.2606 V 735.21491 h -880.06567 z"
+         id="path2425"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2427">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M 216.26005,-280.99792 H 1096.3257 V 735.21491 H 216.26005 Z"
+         id="path2429"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2431">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M 216.26005,-789.10376 H 1096.3257 V 227.10907 H 216.26005 Z"
+         id="path2433"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2435">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M -223.77251,-1043.1567 H 656.29316 V -26.94385 h -880.06567 z"
+         id="path2437"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2439">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M -663.80507,-789.10376 H 216.2606 V 227.10907 h -880.06567 z"
+         id="path2441"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2443">
+      <path
+         style="opacity:0.56000001;fill:#e6e6e6;fill-opacity:1;stroke-width:0.21818464"
+         mask="none"
+         d="M -223.77251,-535.05084 H 656.29316 V 481.16199 h -880.06567 z"
+         id="path2445"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.088388348"
+     inkscape:cx="1450.5523"
+     inkscape:cy="1697.5728"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="false"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1366"
+     inkscape:window-height="713"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       position="425.54563,508.10549"
+       orientation="0,1"
+       id="guide1198"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="440.03289,493.61823"
+       orientation="1,0"
+       id="guide1200"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="425.54563,1016.2113"
+       orientation="0,1"
+       id="guide2410"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="880.06543,747.67115"
+       orientation="1,0"
+       id="guide2412"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="425.54563,-0.00035951678"
+       orientation="0,1"
+       id="guide2414"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0.00035058714,239.56531"
+       orientation="1,0"
+       id="guide2416"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata1169">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(223.77251,535.05084)">
+    <g
+       id="g1274"
+       clip-path="url(#clipPath2443)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4">
+              <g
+                 id="Group-4-9-2-9-1-7"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="17.699594,18.158464 97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="59.553612,114.75159 57.31377,0.53887012 115.16304,56.650632 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(440.03256,254.05292)"
+       id="g1274-1"
+       clip-path="url(#clipPath2439)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087-8"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0-5"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4-9"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44-7"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4-5">
+              <g
+                 id="Group-4-9-2-9-1-7-3"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6-8"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3-8"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 17.699594,18.158464 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1-3"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7-1"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="115.16304,56.650632 59.553612,114.75159 57.31377,0.53887012 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(0,508.10584)"
+       id="g1274-1-8"
+       clip-path="url(#clipPath2435)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087-8-9"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0-5-6"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4-9-4"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44-7-3"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4-5-3">
+              <g
+                 id="Group-4-9-2-9-1-7-3-3"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6-8-8"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3-8-6"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="72.589721,73.305453 17.699594,98.705177 17.699594,18.158464 97.87114,18.158464 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1-3-0"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7-1-4"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="57.31377,0.53887012 115.16304,56.650632 59.553612,114.75159 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(-440.03256,254.05292)"
+       id="g1274-1-8-8"
+       clip-path="url(#clipPath2431)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087-8-9-8"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0-5-6-8"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4-9-4-9"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44-7-3-7"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4-5-3-7">
+              <g
+                 id="Group-4-9-2-9-1-7-3-3-6"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6-8-8-4"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3-8-6-3"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="17.699594,18.158464 97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1-3-0-0"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7-1-4-3"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="57.31377,0.53887012 115.16304,56.650632 59.553612,114.75159 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(-440.03256,-254.05292)"
+       id="g1274-1-8-8-0"
+       clip-path="url(#clipPath2427)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087-8-9-8-9"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0-5-6-8-2"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4-9-4-9-5"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44-7-3-7-4"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4-5-3-7-0">
+              <g
+                 id="Group-4-9-2-9-1-7-3-3-6-5"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6-8-8-4-9"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3-8-6-3-4"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 17.699594,18.158464 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1-3-0-0-6"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7-1-4-3-9"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="59.553612,114.75159 57.31377,0.53887012 115.16304,56.650632 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(440.03256,-254.05292)"
+       id="g1274-1-8-8-0-2"
+       clip-path="url(#clipPath2423)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087-8-9-8-9-2"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0-5-6-8-2-4"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4-9-4-9-5-7"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44-7-3-7-4-7"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4-5-3-7-0-5">
+              <g
+                 id="Group-4-9-2-9-1-7-3-3-6-5-4"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6-8-8-4-9-8"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3-8-6-3-4-1"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="17.699594,98.705177 17.699594,18.158464 97.87114,18.158464 72.589721,73.305453 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1-3-0-0-6-2"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7-1-4-3-9-8"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="59.553612,114.75159 57.31377,0.53887012 115.16304,56.650632 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(0,-508.10584)"
+       id="g1274-1-8-8-0-2-9"
+       clip-path="url(#clipPath2419)"
+       inkscape:export-xdpi="4.67556"
+       inkscape:export-ydpi="4.67556">
+      <path
+         d="m 509.61543,-26.943508 c 0,-5.867101 -151.75858,256.986468 -146.67752,254.052918 5.08106,-2.93355 -298.436098,-2.93355 -293.35504,0 5.081059,2.93355 -146.67752,-259.920019 -146.67752,-254.052918 0,5.867101 151.758579,-256.986472 146.67752,-254.052922 -5.081058,2.93355 298.4361,2.93355 293.35504,0 -5.08106,-2.93355 146.67752,259.920023 146.67752,254.052922 z"
+         inkscape:randomized="1.0772633e-15"
+         inkscape:rounded="-0.02"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.52359878"
+         sodipodi:arg1="0"
+         sodipodi:r2="254.0529"
+         sodipodi:r1="293.35504"
+         sodipodi:cy="-26.943508"
+         sodipodi:cx="216.26039"
+         sodipodi:sides="6"
+         id="path1087-8-9-8-9-2-3"
+         style="opacity:1;fill:#00003c;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <g
+         id="Page-1-3-1-4-9-0-5-6-8-2-4-6"
+         transform="matrix(0.25555303,0,0,0.25555303,201.78262,-41.909826)"
+         style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
+        <g
+           id="DCS-v5.0.0-5-0-3-1-4-9-4-9-5-7-8"
+           transform="translate(-743,-300)">
+          <g
+             id="logo-gray_head-6-6-1-7-44-7-3-7-4-7-0"
+             transform="translate(742,300)">
+            <g
+               id="Group-6-Copy-4-2-3-4-7-4-5-3-7-0-5-2">
+              <g
+                 id="Group-4-9-2-9-1-7-3-3-6-5-4-1"
+                 style="mix-blend-mode:luminosity">
+                <rect
+                   id="Rectangle-20-1-0-2-1-6-8-8-4-9-8-0"
+                   transform="rotate(45,57.785367,58.43182)"
+                   x="17.699594"
+                   y="18.158464"
+                   width="80.171547"
+                   height="80.546715"
+                   style="fill:#fbba00" />
+                <polygon
+                   id="Rectangle-20-Copy-2-6-0-5-3-8-6-3-4-1-5"
+                   transform="rotate(45,57.785367,58.43182)"
+                   points="17.699594,18.158464 97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 "
+                   style="fill:#f7a600" />
+                <path
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   id="Path-1-7-1-6-9-1-3-0-0-6-2-1"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe" />
+                <polygon
+                   id="Rectangle-1-Copy-2-0-5-8-7-7-1-4-3-9-8-1"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                   transform="rotate(1,86.238406,57.645231)"
+                   points="115.16304,56.650632 59.553612,114.75159 57.31377,0.53887012 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

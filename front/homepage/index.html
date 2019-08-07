@@ -11,16 +11,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<script>const HARDCODED_APP = http://localhost:8080/</script>
+		<script>const HARDCODED_APP = "http://localhost:8080/"</script>
 	</head>
-	<body class="is-preload">
+	<body class="is-preload fixed-blue-bg">
 		<!-- Wrapper -->
 			<div id="wrapper">
 				<!-- Header -->
 					<header id="header" class="alt">
 						<span class="logo"><img src="images/logo.svg" alt=""/></span>  <!-- R font is "padmaa bold"  -->
 						<h1>DAI = rDAI + Interest</h1>
-						<p>Unlock your DAI's true potential<br />
+						<p>
+							Unlock your DAI's true potential:
+							<br>
+							<span class="interest-rate underline ticker">over 10%</span> interest
+						</p>
 					</header>
 				<!-- Nav -->
 					<nav id="nav">
@@ -29,7 +33,8 @@
 							<li><a href="#developers">BUIDL</a></li>
 							<li><a href="#donating">Donating</a></li>
 							<li><a href="#footer">Contact Us</a></li>
-							<li><a href="app.html" class="primary">dApp&nbsp;&nbsp;<span class="icon solid fa-external-link-alt"></span></a></li>
+							<li class="show"><a href="howitworks.html" class="primary">How it works&nbsp;&nbsp;<span class="icon solid fa-chevron-right"></span></a></li>
+							<li class="show"><a href="app.html" class="primary">dApp&nbsp;&nbsp;<span class="icon solid fa-external-link-alt"></span></a></li>
 						</ul>
 					</nav>
 				<!-- Main -->
@@ -47,43 +52,53 @@
 											<br>rDAI is a <strong>fungible ERC20 token</strong>, meaning you can send any amount to any user, and they can always redeem it 1:1 for DAI
 											<br><strong>With rDAI, your DAI never stops compounding.</strong>
 										</p>
-										<ul class="actions">
+										<ul class="actions special">
 											<li><a href="app.html" class="button primary">GET SOME NOW</a></li>
 											<li><a href="howitworks.html#nav" class="button outline">HOW IT WORKS</a></li>
 										</ul>
 									</div>
-									<span class="image"><img src="images/drawing.png" alt="DAI is split into rDAI and Compound Interest" /></span>
+									<span class="image fixed-blue-bg"><img src="images/drawing2.svg" alt="DAI is split into rDAI and Compound Interest" /></span>
 								</div>
 							</section>
 
-							<!-- First Section -->
-								<section id="uses" class="main special">
-									<header class="major">
-										<h2>Use Cases</h2>
-									</header>
-									<ul class="features">
-										<li>
-											<span class="icon major style2 fa-user"></span>
-											<h3>For users</h3>
-											<p>Keep your rDAI safe in cold storage, and keep the interest in a hot wallet for everyday spending.</p>
-										</li>
-										<li>
-											<span class="icon solid major style1 fa-users"></span>
-											<h3>For Communities</h3>
-											<p>Exchange some DAI for rDAI, and set a community DAO as your beneficiary. Transact freely within the community members, and your DAI will always be working for the community.</p>
-										</li>
-										<li>
-											<span class="icon major style5 solid fa-code"></span>
-											<h3>For Buidlers</h3>
-											<p>Monetize your deposits by using rDAI in your dApp instead of simple DAI. While using your app, users will grant you their accrued interest, with no friction.</p>
-										</li>
-										<li>
-											<span class="icon major style3 solid fa-cubes"></span>
-											<h3>For DeFi</h3>
-											<p>Use rDAI as a financial primitive for new and exciting use cases, bringing easy monetization while maintaining frictionless ERC20 transfer capabilities.</p>
-										</li>
-									</ul>
-								</section>
+						<!-- First Section -->
+							<section id="uses" class="main special">
+								<header class="major">
+									<h2>Use Cases</h2>
+								</header>
+								<ul class="features">
+									<li>
+										<span class="icon major solid fa-hand-holding-usd" style="color: orange"></span>
+										<h3>For Charities</h3>
+										<p>Donate for free. Set it and forget it charitable giving where you don't lose a $DAI. When you need the cash back, easily redeem you rDAI for DAI. The world will thank you.</p>
+									</li>
+									<li>
+										<span class="icon major solid fa-user" style="color: #ddd"></span>
+										<h3>For users</h3>
+										<p>Keep your rDAI safe in cold storage, and keep the interest in a hot wallet for everyday spending. Easily keep track of your ROI and exit your investment rapidly.</p>
+									</li>
+									<li>
+										<span class="icon solid major fa-users" style="color: #e2fc33"></span>
+										<h3>For Communities</h3>
+										<p>Exchange some DAI for rDAI, and set a community DAO as your beneficiary. Transact freely amongst community members in rDAI. Your DAI will be compounding for the community in the background.</p>
+									</li>
+									<li>
+										<span class="icon major solid fa-code" style="color: #719df4"></span>
+										<h3>For Buidlers</h3>
+										<p>Monetize your deposits by using rDAI in your dApp instead of simple DAI. While using your app, users can easily grant you their accrued interest, with no friction.</p>
+									</li>
+									<li>
+										<span class="icon major solid fa-bolt" style="color:gold"></span>
+										<h3>For Payment protocols</h3>
+										<p>Do you have a layer 2 payment solution? Use rDAI instead of DAI, and monetize your users' deposits. Maybe you could use the extra cash to pay for the exit meta-txs?!</p>
+									</li>
+									<li>
+										<span class="icon major solid fa-cubes" style="color: beige"></span>
+										<h3>For DeFi</h3>
+										<p>Use rDAI as a financial primitive for new and exciting use cases, bringing easy monetization while maintaining frictionless ERC20 transfer capabilities.</p>
+									</li>
+								</ul>
+							</section>
 
 						<!-- Second Section -->
 							<section id="developers" class="main special">
@@ -105,69 +120,74 @@
  */</span>
 <span class="purple">function</span>  <span class="blue">redeem</span> (<span class="orange">uint256</span>  redeemTokens) <span class="purple">external returns</span>  (<span class="orange">bool</span> );
 </pre>
-									</div>
-									<div class="content">
-										rDAI is more useful if it is widely used. We strive to keep our code well documented and self explanatory. Check out our GitHub repo to get started, and if you have any questions let us know!.
-									</div>
-								</header>
-								<footer class="major">
+								</div>
+								<div class="content">
+									rDAI is more useful if it is widely used. We strive to keep our code well documented and self explanatory. Check out our GitHub repo to get started, and if you have any questions let us know!.
+								</div>
+							</header>
+							<ul class="actions special">
+								<li>
 									<a href="https://github.com/decentral-ee/rtoken-contracts" target="_blank" class="button outline">See the code!</a>
-								</footer>
-							</section>
+								</li>
+							</ul>
+						</section>
 
-						<!-- Get Started -->
-							<section id="donating" class="main special">
-								<header class="major">
-									<h2>Donate for Free</h2>
-									<h3>Current interest rate is <strong class="interest-rate">over 15%</strong></h3>
-									<h4>What will you use it for?</h4>
-								</header>
-								<div class="content ">
-									<p>
-										We believe rDAI is a great opportunity for many new DeFi use cases, but we originally came up with the idea in the context of <strong>charitable giving</strong>. We would like to give you the chance to donate to a number of crypto-native non-profit organisations directly through our platform.
-										<br><strong>Note: you are only donating the interest. Every DAI you put in will give you an rDAI of equal value!!</strong>
-									</p>
-									<ul class="features spotlight images">
-										<li>
+					<!-- Get Started -->
+						<section id="donating" class="main special">
+							<header class="major">
+								<h2>Donate for Free</h2>
+								<h3>Current interest rate is <strong class="interest-rate">over 10%</strong></h3>
+								<h4>What will you use it for?</h4>
+							</header>
+							<div class="content ">
+								<p>
+									We believe rDAI is a great opportunity for many new DeFi use cases, but we originally came up with the idea in the context of <strong>charitable giving</strong>. We would like to give you the chance to donate to a number of crypto-native non-profit organisations directly through our platform.
+									<br><strong>Note: you are only donating the interest. Every DAI you put in will give you an rDAI of equal value!!</strong>
+								</p>
+								<ul class="features spotlight images">
+									<li>
+										<a href="https://EthHub.io/" target="_blank" alt="ethhub.io">
 											<span class="image">
-												<img src="images/ethhub.png" alt="EthHub.io is an invaluable resource for all things ethereum" />
+												<img src="images/ethhub.png" style="background: #0f0036" alt="EthHub.io is an invaluable resource for all things ethereum" />
 											</span>
 											<h3>MolochDAO community fund</h3>
-											<p>EthHub.io is an invaluable resource for all things ethereum. <a href="https://EthHub.io/"><span class="icon solid fa-link"></span></a></p>
-										</li>
-										<li>
+											<p>EthHub.io is an invaluable resource for all things ethereum.</p>
+										</a>
+									</li>
+									<li>
+										<a href="https://ethberlinzwei.com/" target="_blank" alt="EthBerlinZwei.com">
 											<span class="image">
 												<img src="images/ethberlinzwei.svg" alt="ETHBerlinZwei hackathon fund" />
 											</span>
 											<h3>EthBerlinZwei Hacker Scholarships</h3>
-											<p>All funds are sent to ETHBerlin to fund Scholarships for the EthBerlinZwei hackathon <a href="https://ethberlinzwei.com/"><span class="icon solid fa-link"></span></a></p>
-										</li>
-										<li>
+											<p>All funds are sent to ETHBerlin to fund Scholarships for the EthBerlinZwei hackathon</p>
+										</a>
+									</li>
+									<li>
+										<a href="https://giveth.io/" target="_blank" alt="giveth.io">
 											<span class="image">
 												<img src="images/giveth.png" alt="Giveth Community Fund" />
 											</span>
 											<h3>Giveth community fund</h3>
-											<p>Giveth is a community built around the ideas of altruism and giving <a href="https://giveth.io/"><span class="icon solid fa-link"></span></a></p>
-										</li>
-									</ul>
-								</div>
-								<footer class="major">
-									<ul class="actions special">
-										<li><a href="http://localhost:8080/" class="button primary">Start Donating</a></li>
-									</ul>
-								</footer>
-							</section>
-					</div>
+											<p>Giveth is a community built around the ideas of altruism and giving </p>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<ul class="actions special my-3">
+								<li><a href="http://localhost:8080/" class="button primary">Start Donating</a></li>
+							</ul>
+						</section>
 
 				<!-- Footer -->
-					<footer id="footer">
-						<section id="partnerships" class="main">
+					<section id="footer" class="main spotlight">
+						<div id="partnerships" class="content">
 							<h2><strong>Partnerships</strong></h2>
 							<p><strong>
 								We are actively looking for new partnerships to expand the use of rDAI project across the ethereum universe. If you have any ideas or would like to integrate rDAI in your project, get in contact with us!
 							</strong></p>
-						</section>
-						<section id="contacts">
+						</div>
+						<div id="contacts">
 							<h2><strong>Contact Us</strong></h2>
 							<strong><a href="mailto:info@decentral.ee">info@decentral.ee</a></strong>
 							<div class="">
@@ -178,7 +198,10 @@
 								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
 								<li><a href="http://decentral.ee" class="icon solid fa-globe-europe alt"><span class="label">decentral.ee</span></a></li>
 							</ul>
-						</section>
+						</div>
+					</section>
+				</div>
+					<footer>
 						<p class="copyright">&copy; rDAI, project of: <a href="https://decentral.ee">DECENTRAL.EE</a>.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;website template <a href="html5up.net">html5up</a></p>
 					</footer>
 			</div>

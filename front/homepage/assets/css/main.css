@@ -10,6 +10,7 @@
 :root{
 	--primary: #6644ff;
 	--primary-hover: #5533ee;
+	--background: #222;
 }
 /*
 	Stellar by HTML5 UP
@@ -95,7 +96,6 @@ input, select, textarea {
 	@media screen and (max-width: 480px) {
 
 		html, body {
-			min-width: 320px;
 		}
 
 	}
@@ -109,11 +109,20 @@ input, select, textarea {
 	}
 
 	body {
-		background-color: #ff7c00c7;
+		/**
 		background-image: url("images/overlay.png"), -moz-linear-gradient(89deg, #ff7c00c7 15%, #291a53 85%);
 		background-image: url("images/overlay.png"), -webkit-linear-gradient(89deg, #ff7c00c7 15%, #291a53 85%);
 		background-image: url("images/overlay.png"), -ms-linear-gradient(89deg, #ff7c00c7 15%, #291a53 85%);
 		background-image: url("images/overlay.png"), linear-gradient(89deg, #ff7c00c7 15%, #291a53 85%);
+		**/
+
+	}
+	.fixed-blue-bg, .icon.major{
+		background: url(../../images/background.png);
+		background-repeat: repeat;
+		background-size: 66px;
+		background-color: #2a2a2a;
+		background-attachment: fixed;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -131,12 +140,12 @@ input, select, textarea {
 
 	body {
 		/*! background-color: #050462 !important; */
-		color: rgba(255, 255, 255, 0.65);
+		color: rgba(255, 255, 255, 0.8);
 	}
 
 	body, input, select, textarea {
 		font-family: "Pt Sans Caption", sans-serif;
-		font-size: 21pt;
+		font-size: 15pt;
 		font-weight: 300;
 		line-height: 1.65;
 	}
@@ -144,7 +153,7 @@ input, select, textarea {
 		@media screen and (max-width: 1680px) {
 
 			body, input, select, textarea {
-				font-size: 14pt;
+				font-size: 13pt;
 			}
 
 		}
@@ -152,7 +161,7 @@ input, select, textarea {
 		@media screen and (max-width: 1280px) {
 
 			body, input, select, textarea {
-				font-size: 12pt;
+				font-size: 11pt;
 			}
 
 		}
@@ -160,7 +169,7 @@ input, select, textarea {
 		@media screen and (max-width: 360px) {
 
 			body, input, select, textarea {
-				font-size: 11pt;
+				font-size: 10pt;
 			}
 
 		}
@@ -2249,6 +2258,16 @@ input, select, textarea {
 		padding: 0.5em ;
 		font-size: 3em;
 	}
+	@media screen and (max-width: 736px) {
+		img.medium-icon{
+			width: 3.0em;
+		}
+		i.medium-icon{
+			padding: 0.5em ;
+			font-size: 2em;
+		}
+	}
+
 	.hat-box {
 		display: flex;
 		flex-direction: column;
@@ -2270,6 +2289,7 @@ input, select, textarea {
 	}
 	.hat-box > div > i, .hat-box > div > div > *{
 		align-self: center;
+		text-align: center;
 	}
 	.icon {
 		text-decoration: none;
@@ -2311,22 +2331,22 @@ input, select, textarea {
 		}
 
 		.icon.major {
-			border: solid 1px;
+			/*! border: solid 1px; */
 			display: inline-block;
 			border-radius: 100%;
-			padding: 0.65em;
+			padding: 1em;
 			margin: 0 0 2em 0;
 			cursor: default;
 		}
 
 			.icon.major:before {
 				display: inline-block;
-				font-size: 6.25rem;
-				width: 2.25em;
-				height: 2.25em;
-				line-height: 2.2em;
+				font-size: 3.5em;
+				width: 2em;
+				height: 2em;
+				line-height: 2em;
 				border-radius: 100%;
-				border: solid 1px;
+				/*! border: solid 1px; */
 				text-align: center;
 			}
 
@@ -2368,7 +2388,7 @@ input, select, textarea {
 		@media screen and (max-width: 1680px) {
 
 			.icon.major:before {
-				font-size: 5.5rem;
+				font-size: 3em;
 			}
 
 		}
@@ -2376,7 +2396,7 @@ input, select, textarea {
 		@media screen and (max-width: 1280px) {
 
 			.icon.major:before {
-				font-size: 4.75rem;
+				font-size: 2.5em;
 			}
 
 		}
@@ -2389,7 +2409,7 @@ input, select, textarea {
 			}
 
 				.icon.major:before {
-					font-size: 3.5rem;
+					font-size: 2.5rem;
 				}
 
 		}
@@ -2400,6 +2420,7 @@ input, select, textarea {
 
 		.icon.major:before {
 			border-color: rgba(255, 255, 255, 0.35);
+			/*! background: white; */
 		}
 
 	.icon.alt {
@@ -2834,6 +2855,7 @@ input, select, textarea {
 	 font-size: 0.9em;
 	 line-height: 1.75;
 	 text-align: left;
+	 overflow: scroll;
  }
  .code .content{
 	 color: #eee !important;
@@ -2898,6 +2920,10 @@ input, select, textarea {
 			border-radius: 100%;
 			border: solid 1px;
 		}
+		.spotlight.images a{
+			text-decoration: none !important;
+			border: none !important;
+		}
 		.spotlight.images .image {
 			margin-left: 0em;
 		}
@@ -2906,15 +2932,22 @@ input, select, textarea {
 			flex-direction: row;
 			margin: 0 0 3em -2em;
 		}
+		@media screen and (max-width: 736px){
+			.spotlight.images{
+				margin: 0 !important;
+			}
+		}
 
 			.spotlight .image img {
 				display: block;
 				border-radius: 100%;
-				width: 16em;
+				width: 22em;
 			}
 			.spotlight.images .image img{
-				height: 12em;
+				height: 10em;
 				width: unset;
+				background: white;
+				margin: 0.2em;
 			}
 
 		@media screen and (max-width: 980px) {
@@ -2966,7 +2999,7 @@ input, select, textarea {
 			}
 
 				.spotlight .image img {
-					width: 12em;
+					width: 15em;
 				}
 
 		}
@@ -3000,6 +3033,7 @@ input, select, textarea {
 			#header.alt h1 {
 				font-size: 3.25em;
 				font-family: 'Knewave', cursive;
+				margin-bottom: 0.4em;
 			}
 
 			#header.alt > * {
@@ -3024,7 +3058,7 @@ input, select, textarea {
 				-ms-transition-delay: 0s;
 				transition-delay: 0s;
 				display: block;
-				margin: 0 0 1.5em 0;
+				margin: 0 0 4.5em 0;
 			}
 
 				#header.alt .logo img {
@@ -3174,6 +3208,8 @@ input, select, textarea {
 			margin: 0;
 			padding: 0;
 			list-style: none;
+			display: flex;
+			justify-content: space-evenly;
 		}
 
 			#nav ul li {
@@ -3193,11 +3229,11 @@ input, select, textarea {
 					-ms-transition: font-size 0.2s ease;
 					transition: font-size 0.2s ease;
 					display: inline-block;
-					padding: 0.5em 1.25em;
+					padding: 0.5em 0.25em;
 					border: 0;
 					box-shadow: inset 0 0 0 1px transparent;
 					font-weight: 400;
-					font-size:1.1em;
+					font-size:1.0em;
 				}
 
 					#nav ul li a:hover {
@@ -3229,18 +3265,24 @@ input, select, textarea {
 					font-size: 0.9em;
 				}
 
-		@media screen and (max-width: 736px) {
+			@media screen and (max-width: 736px) {
 
-			#nav {
-				display: none;
-			}
-
-				#nav + #main {
-					padding-top: 0;
+				#nav li:not(.show){
+					display: none;
 				}
-
 		}
-
+		@media screen and (max-width: 480px) {
+			#nav{
+				max-width: calc(100% - 2em);
+			}
+		}
+		@media screen and (max-width: 360px) {
+			#nav{
+				max-width: 100%;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+			}
+		}
 /* Main */
 
 	#main {
@@ -3426,12 +3468,8 @@ input, select, textarea {
 			color: rgba(99, 99, 99, 0.25) !important;
 		}
 
-		#main .icon.major {
-			border-color: #dddddd;
-		}
-
 			#main .icon.major:before {
-				border-color: #dddddd;
+				/*! border-color: #dddddd; */
 			}
 
 		#main .icon.alt {
@@ -3488,7 +3526,6 @@ input, select, textarea {
 		}
 
 		#main .spotlight .image {
-			border-color: #dddddd;
 		}
 
 		#main > .main {
@@ -3590,91 +3627,42 @@ input, select, textarea {
 
 		}
 
-/* Footer */
+/* Contacts */
 
-	#footer {
-		display: -moz-flex;
-		display: -webkit-flex;
-		display: -ms-flex;
-		display: flex;
-		-moz-flex-wrap: wrap;
-		-webkit-flex-wrap: wrap;
-		-ms-flex-wrap: wrap;
-		flex-wrap: wrap;
-		padding: 5em 5em 3em 5em ;
-		width: calc(100% + 2em);
-		margin: 0 0 3em -2em;
-	}
-
-		#partnerships {
-			width: calc(70% - 2em);
-			margin-left: 2em;
-		}
 		#contacts {
-			width: calc(30% -2em);
+			display: inline-block;
 			margin-left: 4em;
+			padding: 0.65em;
 		}
-
-		#footer .copyright {
-			width: 100%;
-			margin: 2.5em 0 2em 0;
-			font-size: 0.8em;
-			text-align: center;
-		}
-
-		@media screen and (max-width: 1280px) {
-
-			#footer {
-				padding: 4em 4em 2em 4em ;
-			}
-
-		}
-
 		@media screen and (max-width: 980px) {
-
 			#footer {
-				padding: 4em 3em 2em 3em ;
-				display: block;
-				margin: 0 0 3em 0;
-				width: 100%;
+				flex-direction: column;
 			}
 
-				#footer > * {
-					width: 100%;
-					margin-left: 0;
-					margin-bottom: 3em;
-				}
-
-				#footer .copyright {
-					text-align: left;
-				}
+			#contacts {
+				-moz-flex: 0 1 auto;
+				-webkit-flex: 0 1 auto;
+				-ms-flex: 0 1 auto;
+				flex: 0 1 auto;
+				margin-top: 1em;
+				margin-left: 0;
+			}
 
 		}
 
 		@media screen and (max-width: 736px) {
-
-			#footer {
-				padding: 3em 2em 1em 2em ;
+			#contacts {
+				padding: 0.35em;
 			}
-
 		}
 
-		@media screen and (max-width: 480px) {
+/* copyright */
 
-			#footer {
-				padding: 3em 1.5em 1em 1.5em ;
-			}
-
+		.copyright {
+			width: 100%;
+			font-size: 0.8em;
+			text-align: center;
 		}
-
-		@media screen and (max-width: 480px) {
-
-			#footer {
-				padding: 2.5em 1em 0.5em 1em ;
-			}
-
-		}
-
 /* Wrapper */
 
 	#wrapper {

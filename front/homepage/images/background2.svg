@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg936"
+   version="1.1"
+   viewBox="0 0 331.46997 331.46997"
+   height="331.46997mm"
+   width="331.46997mm">
+  <defs
+     id="defs930">
+    <clipPath
+       id="clip0-3-5">
+      <rect
+         width="121"
+         height="27"
+         id="rect109-6-0"
+         x="0"
+         y="0"
+         style="fill:#ffffff" />
+    </clipPath>
+  </defs>
+  <metadata
+     id="metadata933">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(106.95808,133.46474)"
+     id="layer1">
+    <rect
+       ry="10.034893"
+       y="-133.46474"
+       x="-106.95808"
+       height="331.46997"
+       width="331.46997"
+       id="rect985"
+       style="opacity:1;fill:#000080;fill-opacity:1;stroke-width:2.865973" />
+    <g
+       style="fill:none;fill-rule:evenodd;stroke:none;stroke-width:1"
+       transform="matrix(0.25555303,0,0,0.25555303,44.299133,17.303935)"
+       id="Page-1-3-1-4-9-3">
+      <g
+         transform="translate(-743,-300)"
+         id="DCS-v5.0.0-5-0-3-1-9">
+        <g
+           transform="translate(742,300)"
+           id="logo-gray_head-6-6-1-7-4">
+          <g
+             id="Group-6-Copy-4-2-3-4-7-8">
+            <g
+               style="mix-blend-mode:luminosity"
+               id="Group-4-9-2-9-1-1">
+              <rect
+                 style="fill:#fbba00"
+                 height="80.546715"
+                 width="80.171547"
+                 y="18.158464"
+                 x="17.699594"
+                 transform="rotate(45,57.785367,58.43182)"
+                 id="Rectangle-20-1-0-2-1-2" />
+              <polygon
+                 style="fill:#f7a600"
+                 points="97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 17.699594,18.158464 "
+                 transform="rotate(45,57.785367,58.43182)"
+                 id="Rectangle-20-Copy-2-6-0-5-9" />
+              <path
+                 style="fill:#fefffe"
+                 id="Path-1-7-1-6-9-3"
+                 d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z" />
+              <polygon
+                 points="59.553612,114.75159 57.31377,0.53887012 115.16304,56.650632 "
+                 transform="rotate(1,86.238406,57.645231)"
+                 style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a"
+                 id="Rectangle-1-Copy-2-0-5-8-7-9" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

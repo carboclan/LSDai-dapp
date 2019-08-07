@@ -5,14 +5,15 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
-	<head>
-		<title>Generic - Stellar by HTML5 UP</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<head>
+	<title>rDAI, unlock your capital's potential</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	<script>const HARDCODED_APP = "http://localhost:8080/"</script>
+</head>
+	<body class="is-preload fixed-blue-bg">
 
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -20,18 +21,17 @@
 				<!-- Header -->
 				<header id="header" class="alt">
 					<span class="logo"><img src="images/logo.svg" alt=""/></span>  <!-- R font is "padmaa bold"  -->
-					<h1>DAI = rDAI + Interest</h1>
 					<p>Unlock your DAI's true potential<br />
 				</header>
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
-							<li><a href="index.html"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;TO HOMEPAGE</a></li>
+							<li class="show"><a href="index.html"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp;TO HOMEPAGE</a></li>
 							<li><a href="#deposit">Get it</a></li>
 							<li><a href="#transfer">Transfer it</a></li>
 							<li><a href="#redeem">Redeem it</a></li>
 							<li><a href="#footer">Contact us!</a></li>
-							<li><a href="app.html" class="primary">dApp&nbsp;&nbsp;<span class="icon solid fa-external-link-alt"></span></a></li>
+							<li class="show"><a href="app.html" class="primary">dApp&nbsp;&nbsp;<span class="icon solid fa-external-link-alt"></span></a></li>
 						</ul>
 					</nav>
 				<!-- Main -->
@@ -50,7 +50,7 @@
 											<br>You will only need to interact with our dApp (or the contracts) for specific actions
 										</p>
 										<p>
-											this explanation covers most of the functionality of rTokens and rDAI. Some complications caused by compounding are glossed over.
+											This explanation covers most of the functionality of rTokens and rDAI. Some complications caused by compounding are glossed over.
 											<br>Want to discuss? <a href="#footer">Contact us!</contact>
 										</p>
 									</div>
@@ -69,9 +69,11 @@
 													Bob opens the rDAI app. He transfers 100DAI to the contract.
 													<br>
 													100 rDAI are minted and credited to Bob's account.
+													<br>
+													The 100DAI are invested at the best rate on selected DeFi lending protocols.
 												</strong>
 											</code>
-											<div>
+											<div style="margin-bottom: 0px; padding-bottom: 0px;">
 												<div>
 													<h3>BOB</h3>
 													<img src="./images/bob.svg" class="medium-icon"/>
@@ -81,7 +83,7 @@
 												<div>
 													<h3>rDAI app</h3>
 													<img src="./images/logo.svg" class="medium-icon"/>
-													<h4><br><br></h4>
+													<i class="fas fa-arrow-down large medium-icon" style="padding-bottom: 0; padding-top:0"></i>
 												</div>
 												<i class="fas fa-arrow-right large medium-icon"></i>
 												<div>
@@ -90,13 +92,18 @@
 													<h4><br>100 rDAI</h4>
 												</div>
 											</div>
+											<div style="padding-top: 0">
+												<div>
+													<img src="./images/money-protocols.svg" class="medium-icon" style="padding-top: 0"/>
+													<h4>100 DAI</h4>
+												</div>
+											</div>
 										</div>
 										<div class="hat-box">
 											<code class="header">
 												<strong>
 													Bob chooses to donate his interest to UNICEF
-													<br>This means he switches to the UNICEF hat
-													<br>Unicef will get all interest generated, but can't touch the 100DAI
+													<br>Now, Unicef will get all generated interest, but can't touch the 100DAI
 												</strong>
 											</code>
 											<div>
@@ -235,7 +242,7 @@
 												Alice wants her 100DAI back. She opens the rDAI app, and clicks the redeem button.
 											</strong>
 										</code>
-										<div>
+										<div style="margin-bottom: 0px; padding-bottom: 0px;">
 											<div>
 												<h3>ALICE</h3>
 												<img src="./images/bob-with-unicef-hat.svg" class="medium-icon"/>
@@ -245,7 +252,7 @@
 											<div>
 												<h3>rDAI app</h3>
 												<img src="./images/logo.svg" class="medium-icon"/>
-												<h4><br><br></h4>
+												<i class="fas fa-arrow-up large medium-icon" style="padding-bottom: 0; padding-top:0"></i>
 											</div>
 											<i class="fas fa-arrow-right large medium-icon"></i>
 											<div>
@@ -254,14 +261,20 @@
 												<h4><br>100 DAI</h4>
 											</div>
 										</div>
+										<div style="padding-top: 0">
+											<div>
+												<img src="./images/money-protocols.svg" class="medium-icon" style="padding-top: 0"/>
+												<h4>-100 DAI</h4>
+											</div>
+										</div>
 									</div>
 
 									<div class="hat-box">
 										<code class="header">
 											<strong>
 												UNICEF wants to withdraw their accrued interest
-												<br>Interest payout can be triggered by anyone, and are paid out in rDAI.
-												<br>If they want, UNICEF can then redeem their rDAI to DAI
+												<br>Interest payout can be triggered by anyone, immediately crediting rDAI to UNICEF.
+												<br>If they want, UNICEF can redeem their rDAI to DAI at any time.
 											</strong>
 										</code>
 										<div>
@@ -290,44 +303,44 @@
 								</div>
 							</div>
 						</section>
+
+			<!-- Footer -->
+				<section id="footer" class="main spotlight">
+					<div id="partnerships" class="content">
+						<h2><strong>Partnerships</strong></h2>
+						<p><strong>
+							We are actively looking for new partnerships to expand the use of rDAI project across the ethereum universe. If you have any ideas or would like to integrate rDAI in your project, get in contact with us!
+						</strong></p>
 					</div>
+					<div id="contacts">
+						<h2><strong>Contact Us</strong></h2>
+						<strong><a href="mailto:info@decentral.ee">info@decentral.ee</a></strong>
+						<div class="">
+							&nbsp;
+						</div>
+						<ul class="icons">
+							<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
+							<li><a href="http://decentral.ee" class="icon solid fa-globe-europe alt"><span class="label">decentral.ee</span></a></li>
+						</ul>
+					</div>
+				</section>
 			</div>
+				<footer>
+					<p class="copyright">
+						rDAI, project of: <a href="https://decentral.ee">DECENTRAL.EE</a> - website template <a href="html5up.net">html5up</a>
+					</p>
+				</footer>
+		</div>
 
+	<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrollex.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
 
-				<!-- Footer -->
-				<!-- Footer -->
-					<footer id="footer">
-						<section id="partnerships" class="main">
-							<h2><strong>Partnerships</strong></h2>
-							<p><strong>
-								We are actively looking for new partnerships to expand the use of rDAI project across the ethereum universe. If you have any ideas or would like to integrate rDAI in your project, get in contact with us!
-							</strong></p>
-						</section>
-						<section id="contacts">
-							<h2><strong>Contact Us</strong></h2>
-							<strong><a href="mailto:info@decentral.ee">info@decentral.ee</a></strong>
-							<div class="">
-								&nbsp;
-							</div>
-							<ul class="icons">
-								<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
-								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
-								<li><a href="http://decentral.ee" class="icon solid fa-globe-europe alt"><span class="label">decentral.ee</span></a></li>
-							</ul>
-						</section>
-						<p class="copyright">&copy; rDAI, project of: <a href="https://decentral.ee">DECENTRAL.EE</a>.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;website template <a href="html5up.net">html5up</a></p>
-					</footer>
-
-			</div>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-	</body>
+</body>
 </html>
