@@ -47,7 +47,7 @@
             <v-list-item-subtitle>Current Pool:</v-list-item-subtitle>
             <v-list-item-title>Pool #{{ userHat.hatID }}</v-list-item-title>
           </v-list-item-content>
-          <v-list-item-action>
+          <v-list-item-action v-if="!donations">
             <router-link :to="{ path: '/' }">
               <v-btn icon>
                 <v-icon>fas fa-exchange-alt</v-icon>
@@ -66,7 +66,7 @@
             <v-list-item-subtitle>Current Pool:</v-list-item-subtitle>
             <v-list-item-title>{{ userHat.shortTitle }}</v-list-item-title>
           </v-list-item-content>
-          <v-list-item-action>
+          <v-list-item-action v-if="!donations">
             <router-link :to="{ path: '/' }">
               <v-btn icon>
                 <v-icon>fas fa-exchange-alt</v-icon>
@@ -75,7 +75,7 @@
           </v-list-item-action>
         </v-list-item>
         <v-divider/>
-        <v-flex grow>smth</v-flex>
+        <v-flex grow></v-flex>
         <v-list-item>
           <v-avatar>
             <token-svg symbol="cdai" :size="30"/>
@@ -111,6 +111,10 @@
     computed: {
       ...mapState(['account']),
       ...mapGetters(['userHat', 'rate']),
+      donations(){
+        console.log("this route name: ", this.$route.name);
+        return this.$route.name === 'donation'
+      },
       fullItems(){
         return this.items.map(i=>{
           const bal = this.account.balances[i.symbol];

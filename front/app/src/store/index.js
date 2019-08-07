@@ -160,7 +160,12 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async activateWeb3({ commit, dispatch }) {
+        async onPageLoad({ commit, dispatch }) {
+            await dispatch("getExchangeRate").catch(e =>
+                dispatch("getExchangeRate")
+            );
+        },
+        async activateWeb3({ state, commit, dispatch }) {
             try {
                 if (window.ethereum) {
                     window.web3 = new Web3(ethereum);
@@ -203,7 +208,11 @@ export default new Vuex.Store({
                     "SETUSERADDRESS",
                     (await web3.eth.getAccounts())[0].toString().toLowerCase()
                 );
-                dispatch("getExchangeRate");
+                if (state.exchangeRate <= 0) {
+                    await dispatch("getExchangeRate").catch(e =>
+                        dispatch("getExchangeRate")
+                    );
+                }
                 dispatch("setupWeb3Listeners");
                 await dispatch("getBalances");
                 await dispatch("getAllowances");
@@ -265,13 +274,13 @@ export default new Vuex.Store({
             }
             commit("SETALLHATS", allHats);
         },
-        async getExchangeRate({ commit, dispatch }) {
+        async getExchangeRate({ commit }) {
             const rate = await (await fetch(
                 "https://api.compound.finance/api/v2/ctoken?addresses[]=0xf5dce57282a584d2746faf1593d3121fcac444dc"
             )).json();
             commit(
                 "SETEXCHANGERATE",
-                parseFloat(rate.cToken[0].borrow_rate.value)
+                parseFloat(rate.cToken[0].supply_rate.value)
             );
         },
         setupWeb3Listeners({ commit, dispatch }) {

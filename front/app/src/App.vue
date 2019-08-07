@@ -84,6 +84,9 @@
     },
     methods: {
       ...mapActions(['activateWeb3'])
+    },
+    mounted(){
+      this.$store.dispatch("onPageLoad");
     }
   }
 </script>
