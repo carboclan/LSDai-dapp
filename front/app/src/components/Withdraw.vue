@@ -20,7 +20,7 @@
     <v-flex xs12 mb-4  text-center  shrink text-center
       v-if="totalAvailable === 0 && noInterest"
       >
-        No interest has been accrued by this userAddress
+        No interest has been accrued by this address
     </v-flex>
     <v-flex xs12 mb-4  text-center  shrink text-center
       v-else-if="totalAvailable === 0"

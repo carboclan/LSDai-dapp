@@ -34,7 +34,7 @@ export default {
       this.snackbar = newVal;
       if(newVal && this.timeout > 0){
         setTimeout(()=> {
-          this.$store.commit("SHOWSNACKBAR", false);
+          this.$store.commit("HIDEERROR");
         }, this.timeout);
       }
     }

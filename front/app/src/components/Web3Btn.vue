@@ -42,6 +42,10 @@ export default {
       icon: {
         type: Boolean,
         default: false
+      },
+      activateButton: {
+        type: Boolean,
+        default: false
       }
   },
   data: () => {
@@ -56,7 +60,8 @@ export default {
         web3: 'hasWeb3'
       }),
       mergedDisable(){
-         return this.disabled || !this.hasWeb3
+          if(this.activateButton) return false;
+          return this.disabled || !this.hasWeb3
       }
   },
   watch: {

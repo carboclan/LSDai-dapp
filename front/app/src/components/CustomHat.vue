@@ -18,7 +18,15 @@
             <v-layout nowrap>
               <v-flex grow nowrap text-left
                 >
-                  {{ customHat.featured[i] || customHat.recipients[i] }}
+                  <template v-if="customHat.featured[i]">
+                    {{ customHat.featured[i] }}
+                  </template>
+                  <template v-else-if="$vuetify.breakpoint.smAndDown">
+                    {{ customHat.recipients[i] | formatAddress }}
+                  </template>
+                  <template v-else>
+                    {{ customHat.recipients[i] }}
+                  </template>
               </v-flex>
               <v-flex text-right>
                 {{ (customHat.proportions[i]/customHat.totalProportions*100).toFixed(2) }}%
@@ -76,6 +84,10 @@ export default {
     ...mapState(['allHats']),
     customHat(){
       const p = this.allHats.filter(i => parseInt(i.hatID) === parseInt(this.hat.hatID))[0];
+      if(typeof p === 'undefined'){
+        this.$router.push("/create");
+        return this.hat;
+      }
       p.featured = p.recipients.map(i => {
         const f = (featured.filter(b => b.address === i))[0];
         return typeof f !== 'undefined' ? f.title : false;

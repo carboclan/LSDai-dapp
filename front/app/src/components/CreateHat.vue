@@ -42,6 +42,19 @@
               </v-flex>
             </v-layout>
           </v-flex>
+          <v-flex mb-3 xs12 row text-center class="caption error--text" v-if="localAlerts[i] === true">
+            <v-layout nowrap class="minus-top-8" mb-4>
+              <v-flex xs1 d-inline mr-2>
+                <v-icon color="error">fas fa-exclamation</v-icon>
+              </v-flex>
+              <v-flex grow nowrap>
+                This account is a contract. Make sure it can handle arbitrary ERC20 tokens
+              </v-flex>
+              <v-flex xs1>
+                <v-icon small @click="alertToFalse(i)">far fa-times-circle</v-icon>
+              </v-flex>
+            </v-layout>
+          </v-flex>
           <v-divider hidden-md-and-up />
         </template>
         <v-flex sm1 xs1 nowrap mr-auto class="minus-top">
@@ -111,7 +124,8 @@ export default {
     additions: [],
     length: 1900,
     switchToThisHat: true,
-    localProportions: []
+    localProportions: [],
+    localAlerts: []
   }),
   computed: {
     ...mapGetters(['userAddress', 'hasWeb3']),
@@ -126,10 +140,21 @@ export default {
       this.localProportions = hat.proportions;
       this.$store.commit("SETINTERFACEHAT",hat);
     },
-    addRecipient(address){
+    alertToFalse(index){
+      const newArray = [];
+      for(var i=0; i<this.localAlerts.length;i++){
+        if(i===index) newArray.push(false);
+        else newArray.push(this.localAlerts[i]);
+      }
+      this.localAlerts = newArray;
+    },
+    async addRecipient(address){
       const hat = this.hatInCreation;
+      console.log(hat);
       hat.proportions.push(1900);
       hat.recipients.push(address);
+      if((await web3.eth.getCode(address))==='0x') this.localAlerts.push(false);
+      else this.localAlerts.push(true);
       hat.length = hat.proportions.length;
       hat.totalProportions = hat.proportions.reduce((a,b)=>a+b, 0);
       const hasColor = featured.filter(i=> i.address === address)[0];
@@ -148,6 +173,12 @@ export default {
     }
   },
   watch: {
+    newAddress(newVal, oldVal){
+      if(newVal.length === 42 && oldVal < newVal){
+        this.addRecipient(newVal);
+        this.newAddress = '';
+      }
+    },
     hatInCreation:{
       handler: function( newVal ){
         const hat = newVal;
@@ -177,6 +208,7 @@ export default {
       colors: [featured[0].color],
       totalProportions: 100,
     });
+    this.localAlerts = [false]
   }
 }
 </script>

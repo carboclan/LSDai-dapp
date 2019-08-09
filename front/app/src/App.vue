@@ -12,16 +12,17 @@
       contain
       max-width="50"
       max-height="50"
+      @click.stop="$router.push('/')"
       ></v-img>
       <v-spacer></v-spacer>
       <span class="subtitle">Unlock your DAI<span class="hidden-sm-and-down">'s true potential</span></span>
       <v-spacer></v-spacer>
       <v-flex text-sm-right class="cursor">
-        <template @click.stop="drawer = !drawer" v-if="userAddress.length>0" >
+        <div @click="drawer = !drawer" v-if="hasWeb3" >
           <v-icon color="green" small class="mr-2">fas fa-circle</v-icon><span :class="{'caption': $vuetify.breakpoint.xs}">{{userAddress | formatAddress}}</span>
-        </template>
+        </div>
         <template v-else>
-          <v-btn @click="activateWeb3" color="primary">ENABLE WEB3</v-btn>
+          <web3-btn activateButton action="activateWeb3" color="primary">ENABLE WEB3</web3-btn>
         </template>
       </v-flex>
     </v-app-bar>

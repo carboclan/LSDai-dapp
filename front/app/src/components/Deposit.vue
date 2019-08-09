@@ -11,7 +11,7 @@
           label="deposit DAI"
         >
           <template slot="append">
-            <div @click="amount = userBalances.dai" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
+            <div @click.stop="amount = userBalances.dai" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
             <token-svg symbol="dai" :size="24"></token-svg>
           </template>
         </v-text-field>

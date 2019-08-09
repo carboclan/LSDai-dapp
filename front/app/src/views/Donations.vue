@@ -24,8 +24,8 @@
               <v-flex px-5 py-0>
                 <v-img
                   class="round my-2 mx-auto my-round-image"
-                  :max-width="180"
-                  :max-height="180"
+                  :max-width="140"
+                  :max-height="140"
                   :src="i.image"
                   contain
                   :alt="i.title"
@@ -42,8 +42,9 @@
                 :disabled="!i.hasOwnProperty('hatID')"
                 >
                 <span v-if="!hasWeb3">Enable Web3</span>
-                <span v-else-if="i.hatID === userHat.hatID ">Donate more!</span>
-                <span v-else-if="userHat">Switch pool!</span>
+                <span v-if="i.shortTitle && i.shortTitle === 'custom'">Build your own</span>
+                <span v-else-if="userHat.hatID && i.hatID === userHat.hatID ">Donate more!</span>
+                <span v-else-if="userHat.hatID">Switch pool!</span>
                 <span v-else>Donate now!</span>
               </v-btn>
             </v-card>
@@ -110,16 +111,19 @@ export default {
       if(shortTitle==="custom") return this.openCreate();
       this.$router.push({ path: `donate/${shortTitle}` })
       // gotta change the logic here. When they open, they are opening a hat, not choosing an address
+    },
+    loadAll(){
+        const fullList = [...featured, ...this.allHats];
+        const uniqueHats = Array.from(new Set(fullList.map(a => a.hatID)))
+         .map(id => {
+           return fullList.find(a => a.hatID === id)
+         });
+        this.listOfHats = uniqueHats;
     }
   },
   watch:{
-    allHatsLength(){
-      const fullList = [...featured, ...this.allHats];
-      const uniqueHats = Array.from(new Set(fullList.map(a => a.hatID)))
-       .map(id => {
-         return fullList.find(a => a.hatID === id)
-       });
-      this.listOfHats = uniqueHats;
+    allHatsLength(newV, oldV){
+      this.loadAll();
     },
     listOfHatsLength(){
       this.columns = [[],[],[],[]];
@@ -134,7 +138,7 @@ export default {
     if(this.$vuetify.breakpoint.smOnly) this.numberOfColumns = 2;
     if(this.$vuetify.breakpoint.mdOnly) this.numberOfColumns = 3;
     if(this.$vuetify.breakpoint.lgOnly) this.numberOfColumns = 4;
-    this.listOfHats = [...featured];
+    this.loadAll();
   }
 }
 </script>

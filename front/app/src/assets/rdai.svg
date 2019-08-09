@@ -16,8 +16,8 @@
    viewBox="0 0 15.564944 15.039272"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (33fec40, 2019-01-16)"
-   sodipodi:docname="logo.svg">
+   inkscape:version="0.92.4 (f8dce91, 2019-08-02)"
+   sodipodi:docname="rdai.svg">
   <style
      id="style2848">
 .background {
@@ -141,6 +141,14 @@
        y2="85.500046"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(-3.4745035,15.702075)" />
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Fade to Black or White"
+       id="filter3778">
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"
+         id="feColorMatrix3776" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -150,16 +158,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="30.203887"
-     inkscape:cy="28.62623"
+     inkscape:cx="24.522289"
+     inkscape:cy="19.997133"
      inkscape:document-units="mm"
      inkscape:current-layer="g2898"
      showgrid="false"
-     inkscape:window-width="724"
-     inkscape:window-height="422"
-     inkscape:window-x="496"
-     inkscape:window-y="148"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1366"
+     inkscape:window-height="713"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true" />
   <metadata
@@ -214,6 +222,52 @@
          id="path2879"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccssscccccscscscsccscccccc" />
+      <g
+         id="Page-1"
+         transform="matrix(0.34402666,0,0,0.34402666,37.118811,74.347489)"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+        <g
+           transform="matrix(0.18527867,0,0,0.18527867,-38.295731,10.450524)"
+           id="DCS-v5.0.0"
+           style="stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3778)">
+          <g
+             transform="translate(742,300)"
+             id="logo-gray_head"
+             style="stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+            <g
+               id="Group-6-Copy-4"
+               style="stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+              <g
+                 style="mix-blend-mode:luminosity;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 id="Group-4">
+                <rect
+                   height="80.546715"
+                   width="80.171547"
+                   y="18.158464"
+                   x="17.699594"
+                   transform="rotate(45,57.785367,58.43182)"
+                   id="Rectangle-20"
+                   style="fill:#fbba00;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                <polygon
+                   points="17.699594,18.158464 97.87114,18.158464 72.589721,73.305453 17.699594,98.705177 "
+                   transform="rotate(45,57.785367,58.43182)"
+                   id="Rectangle-20-Copy"
+                   style="fill:#f7a600;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                <path
+                   id="Path-1"
+                   d="m 18.642789,53.461993 h 26.275745 l 12.906382,-12.91988 12.795813,12.809195 c 0,0 27.538175,0.812201 25.924579,0 -1.613597,-0.8122 -39.242067,-39.283107 -39.242067,-39.283107 z"
+                   inkscape:connector-curvature="0"
+                   style="fill:#fefffe;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                <polygon
+                   points="59.553612,114.75159 57.31377,0.53887012 115.16304,56.650632 "
+                   transform="rotate(1,86.238406,57.645231)"
+                   style="opacity:0.28633399;mix-blend-mode:multiply;fill:#0a122a;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                   id="Rectangle-1-Copy-2" />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
     </g>
   </g>
 </svg>

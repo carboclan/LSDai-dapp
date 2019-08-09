@@ -6,7 +6,7 @@
 
 const featured = [
     {
-        image: require("./assets/rdai.svg"),
+        image: require("./assets/logo.svg"),
         title: "rToken DEV fund",
         shortTitle: "rDAI devs",
         description:

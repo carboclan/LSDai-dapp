@@ -88,11 +88,13 @@ export default new Vuex.Store({
             totalProportions: undefined,
             recipients: [],
             proportions: [],
+            alert: [],
             colors: [],
             length: 0
         },
         allHats: [],
-        exchangeRate: 0
+        exchangeRate: 0,
+        finishedLoading: false
     },
     mutations: {
         SHOWSNACKBAR: state => {
@@ -119,13 +121,15 @@ export default new Vuex.Store({
         SETEXCHANGERATE: (state, rate) => {
             state.exchangeRate = rate;
         },
+        SETFINISHEDLOADING: state => (state.finishedLoading = true),
+        HIDEERROR: state => (state.snackbar.show = false),
         ERROR: (state, payload) => {
             const { type, text, icon, timeout } = payload;
             switch (type) {
                 case "connection": {
                     setError(
                         "Connection error. Please make sure you are connected to the internet",
-                        "mdi-signal-off"
+                        "fas fa-signal"
                     );
                     break;
                 }
@@ -136,7 +140,7 @@ export default new Vuex.Store({
                                 ? "rinkeby network"
                                 : "mainnet"
                         }`,
-                        "mdi-currency-usd-off",
+                        "fas fa-unlink",
                         12000
                     );
                     break;
@@ -144,7 +148,7 @@ export default new Vuex.Store({
                 default:
                     setError(
                         text || "there was an error",
-                        icon || "mdi-alert-octagon",
+                        icon || "fas fa-exclamation-triangle",
                         timeout || 6000
                     );
             }
@@ -166,65 +170,74 @@ export default new Vuex.Store({
             );
         },
         async activateWeb3({ state, commit, dispatch }) {
-            try {
-                if (window.ethereum) {
-                    window.web3 = new Web3(ethereum);
-                    try {
-                        // Request account access if needed
-                        await ethereum.enable();
-                    } catch (error) {
-                        console.log("error here 1, ", error);
-                        return error;
-                        // User denied account access...
+            return new Promise(async resolve => {
+                try {
+                    if (window.ethereum) {
+                        window.web3 = new Web3(ethereum);
+                        try {
+                            // Request account access if needed
+                            await ethereum.enable();
+                        } catch (error) {
+                            console.log("error here 1, ", error);
+                            return error;
+                            // User denied account access...
+                        }
+                    } else if (window.web3) {
+                        // Legacy dapp browsers...
+                        window.web3 = new Web3(web3.currentProvider);
+                    } else {
+                        // Non-dapp browsers...
+                        commit("ERROR", {
+                            text:
+                                "To use this app, you will need a web3 enabled browser"
+                        });
+                        console.log("error here");
+                        return false;
                     }
-                } else if (window.web3) {
-                    // Legacy dapp browsers...
-                    window.web3 = new Web3(web3.currentProvider);
-                } else {
-                    // Non-dapp browsers...
+                    console.log("web3: ", web3);
+                    const p = await web3.currentProvider.enable();
+                    console.log("enabled? ", p);
+                    try {
+                        await contracts.init(
+                            window.web3,
+                            TOKENS[HARDCODED_CHAIN]
+                        );
+                    } catch (e) {
+                        console.log("error is on contract.init", e);
+                    }
+                    const chainId = await web3.eth.net.getId();
+                    if (chainId !== HARDCODED_CHAIN) {
+                        commit("ERROR", {
+                            type: "chain"
+                        });
+                        return false;
+                    }
+                    commit(
+                        "SETUSERADDRESS",
+                        (await web3.eth.getAccounts())[0]
+                            .toString()
+                            .toLowerCase()
+                    );
+                    if (state.exchangeRate <= 0) {
+                        await dispatch("getExchangeRate").catch(e =>
+                            dispatch("getExchangeRate")
+                        );
+                    }
+                    dispatch("setupWeb3Listeners");
+                    await dispatch("getBalances");
+                    await dispatch("getAllowances");
+                    await dispatch("getUserHat");
+                    dispatch("getAllHats");
+                    commit("SETFINISHEDLOADING");
+                    resolve(true);
+                } catch (err) {
+                    console.log("error in activateWeb3:", err);
                     commit("ERROR", {
                         text:
-                            "To use this app, you will need a web3 enabled browser"
+                            "Please allow access to our app: " + err.toString()
                     });
-                    console.log("error here");
-                    return false;
                 }
-                console.log("web3: ", web3);
-                const p = await web3.currentProvider.enable();
-                console.log("enabled? ", p);
-                try {
-                    await contracts.init(window.web3, TOKENS[HARDCODED_CHAIN]);
-                } catch (e) {
-                    console.log("error is on contract.init", e);
-                }
-                const chainId = await web3.eth.net.getId();
-                if (chainId !== HARDCODED_CHAIN) {
-                    commit("ERROR", {
-                        type: "chain"
-                    });
-                    return false;
-                }
-                commit(
-                    "SETUSERADDRESS",
-                    (await web3.eth.getAccounts())[0].toString().toLowerCase()
-                );
-                if (state.exchangeRate <= 0) {
-                    await dispatch("getExchangeRate").catch(e =>
-                        dispatch("getExchangeRate")
-                    );
-                }
-                dispatch("setupWeb3Listeners");
-                await dispatch("getBalances");
-                await dispatch("getAllowances");
-                dispatch("getUserHat");
-                dispatch("getAllHats");
-                return true;
-            } catch (err) {
-                console.log("error in activateWeb3:", err);
-                commit("ERROR", {
-                    text: "Please allow access to our app: " + err.toString()
-                });
-            }
+            });
         },
         getBalances({ dispatch }) {
             return new Promise(resolve => {
@@ -342,17 +355,20 @@ export default new Vuex.Store({
             });
         },
         getUserHat({ commit, dispatch, state }) {
-            console.log("in getUserHat. user address: ", state.account.address);
-            dispatch("getHatByAddress", { address: state.account.address })
-                .then(r => {
-                    commit("SETUSERHAT", {
-                        ...r,
-                        ...featured.filter(i => i.hatID === r.hatID)[0]
+            return new Promise((resolve, reject) => {
+                dispatch("getHatByAddress", { address: state.account.address })
+                    .then(r => {
+                        commit("SETUSERHAT", {
+                            ...r,
+                            ...featured.filter(i => i.hatID === r.hatID)[0]
+                        });
+                        resolve(true);
+                    })
+                    .catch(e => {
+                        console.log("error in getUserHat, e:", e);
+                        reject();
                     });
-                })
-                .catch(e => {
-                    console.log("error in getUserHat, e:", e);
-                });
+            });
         },
         getHatByAddress({}, { address }) {
             return new Promise(resolve => {
@@ -392,6 +408,7 @@ export default new Vuex.Store({
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         if (switchToThisHat) dispatch("getUserHat");
+                        dispatch("getAllHats");
                         resolve(true);
                     });
             });
@@ -603,7 +620,10 @@ export default new Vuex.Store({
         }
     },
     getters: {
-        hasWeb3: state => state.account.address.length === 42,
+        hasWeb3: state =>
+            state.account.address.length === 42 && state.finishedLoading,
+        isNewUser: state =>
+            typeof state.userBalances.rdai === "undefined" && !this.userHat,
         userAddress: state => state.account.address,
         userBalances: state => state.account.balances,
         userAllowances: state => state.account.allowances,
