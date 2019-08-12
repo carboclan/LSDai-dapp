@@ -2,6 +2,9 @@
   <v-layout center wrap mt-5
     :class="{'wrap': $vuetify.breakpoint.smAndDown, 'nowrap': $vuetify.breakpoint.mdAndUp}"
     >
+    <v-flex xs12 mb-5 py-5>
+      Exchange your rDAI back to DAI<br>Withdrawn rDAI will immediately stop accruing interest
+    </v-flex>
     <v-flex xs12 sm5 shrink ml-auto>
       <v-text-field
         v-model="amount"

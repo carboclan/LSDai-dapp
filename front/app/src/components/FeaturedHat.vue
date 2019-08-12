@@ -14,25 +14,27 @@
           <v-icon @click="showCustom = !showCustom">fas fa-sliders-h</v-icon>
         </v-flex-->
         <v-flex class="text-sm-center sm8">
-          <h3> Donating interest to: <br>
-            {{ recipient.title }}
+          <h3>
+            <span v-if="isMyHat">Currently Donating to:</span>
+            <span v-else>Start Donating to:</span>
+            <br>{{ interfaceHat.title }}
           </h3>
-            {{recipient.description}}
+            {{interfaceHat.description}}
         </v-flex>
         <v-flex sm4>
           <v-img
             class="round my-2 mx-auto"
             :max-width="100"
             :max-height="100"
-            :src="recipient.image"
+            :src="interfaceHat.image"
             contain
-            :alt="recipient.title"
+            :alt="interfaceHat.title"
             />
         </v-flex>
       </v-layout>
-      <bar-chart :hat="recipient" showCommission/>
-      <v-flex xs12 v-if="recipient.hatID !== userHat.hatID">
-        <web3-btn action="changeHat" :params="{hatID: recipient.hatID}">
+      <bar-chart :hat="interfaceHat" showCommission/>
+      <v-flex xs12 my-5 v-if="interfaceHat.hatID !== userHat.hatID">
+        <web3-btn action="changeHat" color="secondary" :params="{hatID: interfaceHat.hatID}">
           Switch to this pool
         </web3-btn>
       </v-flex>
@@ -61,18 +63,12 @@ import {mapState, mapGetters} from "vuex";
 
 export default {
   name: 'app-featured-hat',
-  props: {
-    hat: Object
-  },
   computed: {
-    ...mapState(['allHats']),
+    ...mapState(['allHats', 'interfaceHat']),
     ...mapGetters(['userHat']),
-    recipient(){
-      return this.allHats.filter( i => i.hasOwnProperty("shortTitle") && i.shortTitle === this.hat.shortTitle)[0];
+    isMyHat(){
+      return this.userHat.hatID === this.interfaceHat.hatID
     }
-  },
-  mounted(){
-    this.$store.commit("SETINTERFACEHAT", this.recipient);
   }
 }
 </script>

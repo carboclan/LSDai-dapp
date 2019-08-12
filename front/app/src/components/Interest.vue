@@ -1,26 +1,28 @@
 <template>
-  <v-layout align-center wrap mt-5>
+  <v-layout align-center wrap mt-5 pt-5>
     <v-flex sm8 shrink mx-auto text-xs-center>
       <v-text-field
         label="Beneficiary"
         single-line
         v-model="beneficiary"
         :counter="42"
-      >
-      <template slot="append">
-        <div v-if="beneficiary.length===0 && hasWeb3"
-          @click="beneficiary=userAddress"
-          class="pointer align-center mt-1 mr-3 grey--text"
-          >
-          {{userAddress | formatAddress}}
-        </div>
-      </template>
-    </v-text-field>
+        :disabled="disableInput"
+        >
+        <template slot="append">
+          <div v-if="beneficiary.length===0 && hasWeb3"
+            @click="beneficiary=userAddress"
+            class="pointer align-center mt-1 mr-3 grey--text"
+            >
+            {{userAddress | formatAddress}}
+          </div>
+        </template>
+      </v-text-field>
     </v-flex>
     <v-flex xs12 mb-4  text-center  shrink text-center
       v-if="totalAvailable === 0 && noInterest"
       >
-        No interest has been accrued by this address
+        <span v-if="receivedLoanOf > 0">You have some interest, but not sure how much.</span>
+        <span v-else>You haven't accrued any interest</span>
     </v-flex>
     <v-flex xs12 mb-4  text-center  shrink text-center
       v-else-if="totalAvailable === 0"
@@ -30,6 +32,7 @@
         outlined
         :disabled="beneficiary.length !== 42"
         action="interestPayableOf"
+        @btn-clicked="interestPayableOfClicked"
         @then="interestPayableOfThen"
         @catch="interestPayableOfCatch"
         :params="{ address: beneficiary }"
@@ -38,22 +41,11 @@
       </web3-btn>
     </v-flex>
     <v-flex v-else xs12 mb-4  text-center  shrink text-center>
-      You have <strong>{{totalAvailable}}</strong> DAI to withdraw
+      There are <strong>{{totalAvailable}}</strong> rDAI to withdraw
     </v-flex>
-    <!--v-flex sm8 shrink  text-center mx-auto>
-      <v-text-field
-        v-model="amount"
-        placeholder="Quantity to redeem"
-        outlined
-        label="interest to withdraw"
-         :disabled="!found"
-      >
-        <template slot="append">
-          <div @click="amount=totalAvailable" class="pointer align-center mt-1 mr-3 grey--text">MAX</div>
-          <token-svg symbol="dai" :size="24"></token-svg>
-        </template>
-      </v-text-field>
-    </v-flex-->
+    <v-flex v-if="receivedLoanOf > 0" xs12 mb-4  text-center  shrink text-center>
+      There are currently <strong>{{receivedLoanOf}}</strong> DAI underlying
+    </v-flex>
     <v-flex xs12 mx-xs-auto text-center >
       <span class="caption">rDAI is transferred to the beneficiary address</span>
     </v-flex>
@@ -65,12 +57,12 @@
         action="payInterest"
         :params="{ address: beneficiary }"
         color="primary"
-        :disabled="noInterest"
+        :disabled="receivedLoanOf < 1"
         @then="payInterestThen"
         @catch=""
         symbolAppend="rdai"
         >
-        Withdraw rDAI
+        Withdraw interest
       </web3-btn>
     </v-flex>
     <v-flex v-if="justWithdrew>0">
@@ -103,6 +95,8 @@ export default {
       noInterest: false,
       withdrawn: [],
       justWithdrew: 0,
+      receivedLoanOf: 0,
+      disableInput: false
   }),
   computed: {
       ...mapGetters(['userAddress', 'hasWeb3']),
@@ -114,13 +108,23 @@ export default {
   },
   watch: {
       beneficiary(newVal, oldVal){
-        if(newVal!==oldVal) this.noInterest = false
+          if(newVal!==oldVal){
+              this.noInterest = false;
+              this.totalAvailable = 0;
+              this.receivedLoanOf = 0;
+          }
       }
   },
   methods: {
+      async interestPayableOfClicked(){
+          this.disableInput = true
+          this.receivedLoanOf = await this.$store.dispatch("receivedLoanOf", this.beneficiary);
+          this.disableInput = false;
+      },
       interestPayableOfThen(value){
           this.totalAvailable = value;
           this.noInterest = false;
+          this.disableInput = false;
       },
       interestPayableOfCatch(value){
           this.totalAvailable = value;
@@ -131,6 +135,9 @@ export default {
           this.justWithdrew = this.totalAvailable;
           this.totalAvailable = 0;
       },
+      receivedLoanOfThen(value){
+          this.receivedLoanOf = value;
+      }
   },
 }
 </script>

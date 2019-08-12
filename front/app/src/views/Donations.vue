@@ -5,7 +5,16 @@
     pa-0
     >
     <v-sheet pa-3>
-      <v-flex xs12 headline text-center px-4 mt-4>Donate the interest, keep the capital</v-flex>
+      <v-flex xs12 display-1 text-center px-4 mt-2 py-5
+        v-if="$route.name!=='choose'"
+        >
+        Donate the interest, keep the capital
+      </v-flex>
+      <v-flex xs12 my-5 v-if="showLoader">
+        <v-progress-linear
+          indeterminate
+        ></v-progress-linear>
+      </v-flex>
       <v-layout wrap grid-list-sm>
         <v-flex xs12 sm6 md4 lg3 v-for="(column, index) in columns" :key="index">
           <v-flex
@@ -17,10 +26,16 @@
               color="white"
               light
               elevation="3"
-              :class="[{'my-card' : userHat.hatID && userHat.hatID === i.hatID }, 'text-sm-center ma-3 pa-4']"
-              :style="{ borderColor: i.color + '!important' }"
+              :class="[{'my-card' : userHat && userHat.hatID === i.hatID }, 'text-sm-center ma-3 pa-4']"
+              :style="{ borderColor: i.color || 'black' + '!important' }"
               >
-              <v-icon color="#FFD700" large class="tilted" absolute v-if="userHat.hatID && userHat.hatID === i.hatID">fas fa-crown</v-icon>
+              <v-icon
+                color="#FFD700" large
+                class="tilted" absolute
+                v-if="userHat && userHat.hatID === i.hatID"
+                >
+                fas fa-crown
+              </v-icon>
               <v-flex px-5 py-0>
                 <v-img
                   class="round my-2 mx-auto my-round-image"
@@ -31,10 +46,14 @@
                   :alt="i.title"
                   />
               </v-flex>
-              <h3>{{ i.title }}</h3>
-              <p>{{i.description}}</p>
-              <h3 v-if="!i.title"># {{ i.hatID }}</h3>
-              <proportions :hat="i" />
+              <template v-if="i.hasOwnProperty('title')">
+                <h3>{{ i.title }}</h3>
+                <p>{{ i.description }}</p>
+              </template>
+              <template v-else>
+                <h3># {{ i.hatID }}</h3>
+                <proportions :hat="i" />
+              </template>
               <v-btn
                 color="primary"
                 class="mb-2"
@@ -42,11 +61,19 @@
                 :disabled="!i.hasOwnProperty('hatID')"
                 >
                 <span v-if="!hasWeb3">Enable Web3</span>
-                <span v-if="i.shortTitle && i.shortTitle === 'custom'">Build your own</span>
+                <span v-else-if="i.shortTitle && i.shortTitle === 'custom'">Build your own</span>
                 <span v-else-if="userHat.hatID && i.hatID === userHat.hatID ">Donate more!</span>
-                <span v-else-if="userHat.hatID">Switch pool!</span>
+                <span v-else-if="userHat.hatID">Choose this pool</span>
                 <span v-else>Donate now!</span>
               </v-btn>
+              <v-flex v-if="i.loans && i.hatID === rDAIdevs.hatID">
+                {{ i.loans[0] | formatNumber(2) + 'DAI'}}
+                <span class="caption"> deposited so far</span>
+              </v-flex>
+              <v-flex v-else-if="i.loans && i.totalLoan > i.loans[0]">
+                {{i.totalLoan - i.loans[0] | formatNumber(2) + ' DAI'}}
+                <span class="caption"> deposited so far</span>
+              </v-flex>
             </v-card>
           </v-flex>
         </v-flex>
@@ -82,17 +109,18 @@ export default {
     columns: [
       [],[],[],[]
     ],
-    numberOfColumns: 1
+    numberOfColumns: 1,
+    showLoader: false
   }),
   computed: {
-    ...mapState(['allHats']),
-    ...mapGetters(['hasWeb3', 'userHat']),
+    ...mapState(['allHats', 'loadingWeb3']),
+    ...mapGetters(['hasWeb3', 'userHat', 'rDAIdevs']),
     allHatsLength(){
       return this.allHats.length
     },
     listOfHatsLength(){
       return this.listOfHats.length
-    }
+    },
   },
   methods: {
     ...mapActions(['activateWeb3']),
@@ -101,24 +129,31 @@ export default {
       else this.openById(value);
     },
     openCreate(){
-      this.$router.push({path: `create`})
+      this.$router.push({path: `/create`, params: {url: 'create'}})
     },
     openById(hatID){
-      this.$router.push({ path: `deposit/${hatID}` })
+      this.$store.dispatch("setInterfaceHat", {hatID})
+      this.$router.push({ path: `/deposit/${hatID}`, params: {url: 'deposit'} })
       // gotta change the logic here. When they open, they are opening a hat, not choosing an address
     },
     openByShortTitle(shortTitle){
       if(shortTitle==="custom") return this.openCreate();
-      this.$router.push({ path: `donate/${shortTitle}` })
+      this.$store.dispatch("setInterfaceHat", {shortTitle});
+      this.$router.push({ path: `/donate/${shortTitle}`, params: {url: 'donate'} })
       // gotta change the logic here. When they open, they are opening a hat, not choosing an address
     },
     loadAll(){
+      /*
         const fullList = [...featured, ...this.allHats];
         const uniqueHats = Array.from(new Set(fullList.map(a => a.hatID)))
          .map(id => {
            return fullList.find(a => a.hatID === id)
-         });
-        this.listOfHats = uniqueHats;
+         });*/
+        this.hasWeb3
+            ? this.listOfHats = this.allHats.sort((a, b) => {
+                    return b.totalLoan - a.totalLoan;
+                })
+            : this.listOfHats = featured;
     }
   },
   watch:{
@@ -131,6 +166,17 @@ export default {
         if(item.hatID === this.userHat.hatID) this.columns[index % this.numberOfColumns].unshift(item);
         else this.columns[index % this.numberOfColumns].push(item)}
       );
+    },
+    loadingWeb3(newV){
+      if(newV) this.showLoader = true;
+      else{
+        const r = setInterval(() => {
+          if(this.allHatsLength>0) {
+            clearInterval(r);
+            this.showLoader = false;
+          }
+        }, 500);
+      }
     }
   },
   mounted(){

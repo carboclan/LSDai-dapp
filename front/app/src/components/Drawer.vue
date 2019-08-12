@@ -15,51 +15,48 @@
                     </v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action v-if="item.symbol !== 'eth'">
-                    <web3-btn :icon="true" size="x-small" action="approve" :params="{symbol: item.symbol}" :disabled="item.allowance > 100" @then="unlock(symbol)">
+                    <web3-btn :icon="true" size="x-small" action="approve" :params="{symbol: item.symbol}" :disabled="item.allowance > 100">
                         <v-icon v-if="item.allowance < 100">fa fa-lock</v-icon>
                         <v-icon v-else>fa fa-unlock</v-icon>
                     </web3-btn>
                 </v-list-item-action>
             </v-list-item>
         </template>
+        <v-flex text-center mb-4>
+          <web3-btn color="primary" action="getFaucetDAI" :params="{}">
+            GET FAUCET DAI&nbsp;&nbsp;
+            <token-svg :size="24" symbol="dai"/>
+          </web3-btn>
+        </v-flex>
         <template v-if="userHat && userHat.recipients.length>0">
             <v-divider />
-            <v-list-group append-icon="">
-                <template v-slot:activator>
-                    <v-list-item class="pl-0">
-                        <v-list-item-avatar>
-                            <v-img v-if="userHat.image" :src="userHat.image" :alt="userHat.title" />
-                            <v-icon v-else>fas fa-cubes</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>Current Pool: <strong>{{ userHat.shortTitle || '#' + userHat.hatID }}</strong></v-list-item-title>
-                    </v-list-item>
-                </template>
-                <v-list-item>
-                    <v-list-item-title>
-                        Change pool
-                    </v-list-item-title>
-                    <v-list-item-action>
-                        <router-link to="/">
-                            <v-btn fab icon>
-                                <v-icon small>
-                                    fas fa-exchange-alt
-                                </v-icon>
-                            </v-btn>
-                        </router-link>
-                    </v-list-item-action>
-                </v-list-item>
-            </v-list-group>
+            <v-list-item @click.stop="showUserHat">
+                <v-list-item-avatar>
+                    <v-img v-if="userHat.image" :src="userHat.image" :alt="userHat.title" />
+                    <v-icon v-else>fas fa-cubes</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-title>Current Pool: <span class="font-weight-bold subtitle-2">{{ userHat.shortTitle || '#' + userHat.hatID }}</span></v-list-item-title>
+            </v-list-item>
             <v-divider />
             <v-flex grow></v-flex>
             <v-list-item>
-                <v-avatar>
+                <v-list-item-avatar>
                     <token-svg symbol="cdai" :size="30" />
-                </v-avatar>
-                <v-list-item-content class="pl-4">
-                    <v-list-item-subtitle>Current Interest Rate:</v-list-item-subtitle>
-                    <v-list-item-title>{{ rate }}</v-list-item-title>
-                </v-list-item-content>
+                </v-list-item-avatar>
+                <v-list-item-title>Current Interest Rate: <span class="font-weight-bold subtitle-1">{{ rate }}</span></v-list-item-title>
             </v-list-item>
+        </template>
+        <template v-if="txList">
+          <v-divider />
+          <v-list-item>
+            <v-avatar>
+              <v-icon color="success">far fa-check-circle</v-icon>
+            </v-avatar>
+            <v-list-item-content>Transaction completed</v-list-item-content>
+            <v-list-item-action>
+              <token-svg symbol="rdai" :size="24" />
+            </v-list-item-action>
+          </v-list-item>
         </template>
     </v-layout>
 </v-list>
@@ -96,9 +93,8 @@ export default {
     }),
     computed: {
         ...mapState(['account']),
-        ...mapGetters(['userHat', 'rate']),
+        ...mapGetters(['userHat', 'rate', 'txList']),
         donations() {
-            console.log("this route name: ", this.$route.name);
             return this.$route.name === 'donation'
         },
         fullItems() {
@@ -110,5 +106,12 @@ export default {
             })
         }
     },
+    methods: {
+        showUserHat(){
+            this.$store.dispatch("setInterfaceHat", {hatID: this.userHat.hatID});
+            if(this.userHat.hasOwnProperty("shortTitle")) this.$router.push(`/donate/${this.userHat.shortTitle}`);
+            else this.$router.push(`/deposit/${this.userHat.hatID}`);
+        }
+    }
 }
 </script>

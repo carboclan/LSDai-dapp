@@ -1,7 +1,7 @@
 <template>
-  <v-btn :icon="icon" @click="execute" :outlined="outlined" :color="color" :disabled="mergedDisable" :loading="loading">
+  <v-btn :block="block" :icon="icon" @click="execute" :outlined="outlined" :color="color" :disabled="mergedDisable" :loading="loading">
     <template v-if="!hasWeb3 && !icon">
-      Please Enable Web3
+      Enable Web3
     </template>
     <slot v-else>
     </slot>
@@ -46,6 +46,10 @@ export default {
       activateButton: {
         type: Boolean,
         default: false
+      },
+      block: {
+        type: Boolean,
+        default: false
       }
   },
   data: () => {
@@ -75,6 +79,7 @@ export default {
   },
   methods: {
       execute(){
+          this.$emit("btn-clicked");
           this.loading = true;
           const cleanedParams = typeof this.params === 'undefined' ? [ this.action ] : [ this.action, this.params ];
           console.log("this is getting passed to dispatch: ", ...cleanedParams);

@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import contracts from "./contracts";
 import featured from "../featured.js";
+import randomColor from "../colors.js";
 import Web3 from "web3";
 import { toWei, fromWei, toBN } from "web3-utils";
 import BN from "bn.js";
@@ -65,6 +66,7 @@ export default new Vuex.Store({
             icon: false
         },
         account: {
+            chainId: HARDCODED_CHAIN,
             address: "",
             balances: {
                 rdai: undefined,
@@ -77,24 +79,31 @@ export default new Vuex.Store({
                 cdai: "",
                 dai: ""
             },
-            hat: {
-                hatID: undefined,
-                recipients: [],
-                proportions: [],
-                totalProportions: undefined
-            }
+            hat: {}
         },
-        interfaceHat: {
-            totalProportions: undefined,
-            recipients: [],
-            proportions: [],
-            alert: [],
-            colors: [],
-            length: 0
+        interfaceHat: {},
+        hatInCreation: {
+            length: 1,
+            proportions: [100],
+            recipients: [featured[0].address],
+            colors: [featured[0].color],
+            totalProportions: 100
         },
         allHats: [],
         exchangeRate: 0,
-        finishedLoading: false
+        finishedLoading: false,
+        loadingWeb3: false,
+        transactionList: [
+            {
+                txHash: "",
+                timestamp: "",
+                type: "",
+                args: {},
+                asset: "",
+                network: 0,
+                error: ""
+            }
+        ]
     },
     mutations: {
         SHOWSNACKBAR: state => {
@@ -115,13 +124,23 @@ export default new Vuex.Store({
         SETINTERFACEHAT: (state, newHat) => {
             state.interfaceHat = newHat;
         },
+        SETHATINCREATION: (state, newHat) => {
+            state.hatInCreation = newHat;
+        },
         SETALLHATS: (state, allHats) => {
             state.allHats = allHats;
         },
         SETEXCHANGERATE: (state, rate) => {
             state.exchangeRate = rate;
         },
+        INSERTNEWTRANSACTION: (state, tx) => {
+            state.transactionList.unshift(tx);
+        },
+        EDITTRANSACTION: (state, { tx, index }) => {
+            state.transactionList.splice(index, 1, tx);
+        },
         SETFINISHEDLOADING: state => (state.finishedLoading = true),
+        SETLOADING: (state, bool) => (state.loadingWeb3 = bool),
         HIDEERROR: state => (state.snackbar.show = false),
         ERROR: (state, payload) => {
             const { type, text, icon, timeout } = payload;
@@ -170,7 +189,8 @@ export default new Vuex.Store({
             );
         },
         async activateWeb3({ state, commit, dispatch }) {
-            return new Promise(async resolve => {
+            commit("SETLOADING", true);
+            return new Promise(async (resolve, reject) => {
                 try {
                     if (window.ethereum) {
                         window.web3 = new Web3(ethereum);
@@ -178,21 +198,22 @@ export default new Vuex.Store({
                             // Request account access if needed
                             await ethereum.enable();
                         } catch (error) {
+                            commit("SETLOADING", false);
                             console.log("error here 1, ", error);
-                            return error;
+                            reject(false);
                             // User denied account access...
                         }
                     } else if (window.web3) {
                         // Legacy dapp browsers...
                         window.web3 = new Web3(web3.currentProvider);
                     } else {
-                        // Non-dapp browsers...
+                        commit("SETLOADING", false);
                         commit("ERROR", {
                             text:
                                 "To use this app, you will need a web3 enabled browser"
                         });
                         console.log("error here");
-                        return false;
+                        reject(false);
                     }
                     console.log("web3: ", web3);
                     const p = await web3.currentProvider.enable();
@@ -203,14 +224,17 @@ export default new Vuex.Store({
                             TOKENS[HARDCODED_CHAIN]
                         );
                     } catch (e) {
+                        commit("SETLOADING", false);
                         console.log("error is on contract.init", e);
+                        reject(false);
                     }
                     const chainId = await web3.eth.net.getId();
                     if (chainId !== HARDCODED_CHAIN) {
+                        commit("SETLOADING", false);
                         commit("ERROR", {
                             type: "chain"
                         });
-                        return false;
+                        reject(false);
                     }
                     commit(
                         "SETUSERADDRESS",
@@ -226,16 +250,18 @@ export default new Vuex.Store({
                     dispatch("setupWeb3Listeners");
                     await dispatch("getBalances");
                     await dispatch("getAllowances");
+                    await dispatch("getAllHats");
                     await dispatch("getUserHat");
-                    dispatch("getAllHats");
-                    commit("SETFINISHEDLOADING");
+                    commit("SETLOADING", false);
                     resolve(true);
                 } catch (err) {
                     console.log("error in activateWeb3:", err);
+                    commit("SETLOADING", false);
                     commit("ERROR", {
                         text:
                             "Please allow access to our app: " + err.toString()
                     });
+                    reject(false);
                 }
             });
         },
@@ -263,29 +289,73 @@ export default new Vuex.Store({
             } catch (e) {
                 console.log(" error trying to get max hat number", e);
             }
-            try {
-                for (var hatID = 1; hatID < maxHat + 1; hatID++) {
-                    const rawHat = await dispatch("getHatByID", { hatID });
-                    rawHat.loans = await Promise.all(
-                        rawHat.recipients.map(i =>
-                            dispatch("receivedLoanOf", i)
-                        )
-                    );
-                    rawHat.loans = rawHat.loans.map(i => fromDec(i));
-                    rawHat.totalLoan = rawHat.loans.reduce(
-                        (a, b) => parseInt(a) + parseInt(b),
-                        0
-                    );
-                    const fullHat = {
-                        ...rawHat,
-                        ...featured.filter(i => i.hatID === hatID)[0]
-                    };
-                    allHats.push(fullHat);
+            return new Promise(async resolve => {
+                try {
+                    for (var hatID = 1; hatID < maxHat + 1; hatID++) {
+                        const rawHat = await dispatch("getHatByID", { hatID });
+                        rawHat.loans = await Promise.all(
+                            rawHat.recipients.map(i =>
+                                dispatch("receivedLoanOf", { address: i })
+                            )
+                        );
+                        rawHat.totalLoan = rawHat.loans.reduce(
+                            (a, b) => parseInt(a) + parseInt(b),
+                            0
+                        );
+                        const fullHat = {
+                            ...rawHat,
+                            ...featured.filter(i => i.hatID === hatID)[0]
+                        };
+                        if (!fullHat.hasOwnProperty("colors")) {
+                            fullHat.featured = fullHat.recipients.map(i => {
+                                const f = featured.filter(
+                                    b =>
+                                        b.address.toLowerCase() ===
+                                        i.toLowerCase()
+                                );
+                                return f.length > 0 ? f[0].title : false;
+                            });
+                            const colors = [];
+                            fullHat.colors = fullHat.recipients.map(i => {
+                                const f = featured.filter(
+                                    b =>
+                                        b.address.toLowerCase() ===
+                                        i.toLowerCase()
+                                );
+                                return f.length > 0
+                                    ? f[0].color
+                                    : randomColor(colors);
+                            });
+                        }
+                        allHats.push(fullHat);
+                    }
+                } catch (e) {
+                    console.log("dispatch threw error e: ", e);
                 }
-            } catch (e) {
-                console.log("dispatch threw error e: ", e);
-            }
-            commit("SETALLHATS", allHats);
+                commit("SETFINISHEDLOADING");
+                commit("SETALLHATS", allHats);
+                resolve(true);
+            });
+        },
+        setInterfaceHat(
+            { commit, state },
+            { hatID = false, shortTitle = false }
+        ) {
+            return new Promise(resolve => {
+                var finalHat = {};
+                if (hatID) {
+                    finalHat = state.allHats.filter(
+                        i => parseInt(i.hatID) === parseInt(hatID)
+                    );
+                } else if (shortTitle) {
+                    finalHat = state.allHats.filter(
+                        i => i.shortTitle === shortTitle
+                    );
+                }
+                console.log("about to SETINTERFACEHAT", finalHat[0]);
+                commit("SETINTERFACEHAT", finalHat[0]);
+                resolve(true);
+            });
         },
         async getExchangeRate({ commit }) {
             const rate = await (await fetch(
@@ -358,10 +428,12 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 dispatch("getHatByAddress", { address: state.account.address })
                     .then(r => {
-                        commit("SETUSERHAT", {
+                        const newHat = {
                             ...r,
                             ...featured.filter(i => i.hatID === r.hatID)[0]
-                        });
+                        };
+                        commit("SETUSERHAT", newHat);
+                        commit("SETINTERFACEHAT", newHat);
                         resolve(true);
                     })
                     .catch(e => {
@@ -389,8 +461,8 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 contracts.functions
                     .createHat(
-                        state.interfaceHat.recipients,
-                        state.interfaceHat.proportions,
+                        state.hatInCreation.recipients,
+                        state.hatInCreation.proportions,
                         switchToThisHat,
                         {
                             from: state.account.address
@@ -423,10 +495,21 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "approve",
+                            arg: { symbol },
+                            asset: symbol,
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("token.approve failed", err);
                         commit("ERROR", { type: "transaction" });
+                        /*dispatch("EDITTRANSACTION", {
+                            tx: {}
+                        });*/
                         reject(err);
                     })
                     .then(receipt => {
@@ -438,8 +521,10 @@ export default new Vuex.Store({
         },
         mint({ commit, state, dispatch }, { amount }) {
             return new Promise(resolve => {
+                const params = toWei(amount.toString());
+                console.log("params: ", params);
                 contracts.functions
-                    .mint(toWei(amount.toString()), {
+                    .mint(params, {
                         from: state.account.address,
                         gasLimit: 1750000
                     })
@@ -465,8 +550,8 @@ export default new Vuex.Store({
                 contracts.functions
                     .mintWithNewHat(
                         toWei(amount.toString()),
-                        state.interfaceHat.recipients,
-                        state.interfaceHat.proportions,
+                        state.hatInCreation.recipients,
+                        state.hatInCreation.proportions,
                         {
                             from: state.account.address
                         }
@@ -489,10 +574,15 @@ export default new Vuex.Store({
                     });
             });
         },
-        mintWithSelectedHat({ commit, state, dispatch }, { amount, hatID }) {
+        mintWithSelectedHat({ commit, state, dispatch }, { amount }) {
             return new Promise(resolve => {
+                const params = [
+                    toWei(amount.toString()),
+                    toBN(state.interfaceHat.hatID.toString())
+                ];
+                console.log("params: ", params);
                 contracts.functions
-                    .mintWithNewHat(toWei(amount.toString()), toBN(hatID), {
+                    .mintWithSelectedHat(...params, {
                         from: state.account.address
                     })
                     .on("transactionHash", hash => {
@@ -573,8 +663,12 @@ export default new Vuex.Store({
                 else reject(fromDec(result, "rdai", "number"));
             });
         },
-        payInterest({ state }, { address = state.account.address }) {
+        payInterest(
+            { state, dispatch, commit },
+            { address = state.account.address }
+        ) {
             return new Promise((resolve, reject) => {
+                console.log("paying interest of this account: ", address);
                 contracts.functions
                     .payInterest(address, {
                         from: state.account.address
@@ -590,6 +684,8 @@ export default new Vuex.Store({
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
+                        dispatch("getBalance", "dai");
+                        dispatch("getBalance", "rdai");
                         resolve(true);
                     });
             });
@@ -612,18 +708,41 @@ export default new Vuex.Store({
         },
         receivedLoanOf({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.receivedLoanOf.call(
+                const result = await contracts.functions.receivedLoanOf(
                     address
                 );
-                resolve(result);
+                resolve(fromDec(result, "dai", "number"));
+            });
+        },
+        getFaucetDAI({ state, dispatch }, { address = state.account.address }) {
+            return new Promise((resolve, reject) => {
+                contracts.faucet
+                    .allocateTo(address, toWei("100", "ether"), {
+                        from: state.account.address
+                    })
+                    .on("transactionHash", hash => {
+                        console.log("hash of tx: ", hash);
+                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                    })
+                    .on("error", err => {
+                        console.warn("faucet failed", err);
+                        commit("ERROR", { type: "transaction" });
+                        reject("error");
+                    })
+                    .then(receipt => {
+                        console.log("now what? receipt: ", receipt);
+                        dispatch("getBalance", "dai");
+                        resolve(true);
+                    });
             });
         }
     },
     getters: {
         hasWeb3: state =>
             state.account.address.length === 42 && state.finishedLoading,
-        isNewUser: state =>
-            typeof state.userBalances.rdai === "undefined" && !this.userHat,
+        isNewUser: (state, getters) =>
+            typeof state.account.balances.rdai === "undefined" &&
+            !getters.userHat,
         userAddress: state => state.account.address,
         userBalances: state => state.account.balances,
         userAllowances: state => state.account.allowances,
@@ -636,6 +755,17 @@ export default new Vuex.Store({
             state.interfaceHat.hasOwnProperty("recipients") &&
             state.interfaceHat.recipients.length > 0
                 ? state.interfaceHat
-                : false
+                : false,
+        hatInCreation: state =>
+            state.hatInCreation.hasOwnProperty("recipients") &&
+            state.hatInCreation.recipients.length > 0
+                ? state.hatInCreation
+                : false,
+        txList: state =>
+            state.transactionList[0].network !== 0
+                ? state.transactionList
+                : false,
+        rDAIdevs: state =>
+            state.allHats.find(i => i.shortTitle === "rDAIdevs") || false
     }
 });

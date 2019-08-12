@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import featured from "./featured.js";
 
 Vue.use(Router);
 
@@ -13,20 +14,40 @@ export default new Router({
                 import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
         },
         {
+            path: "/choose",
+            name: "choose",
+            component: () =>
+                import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
+        },
+        {
             path: "/deposit/:hatID?",
             name: "deposit",
+            beforeEnter: (to, from, next) => {
+                var shortTitle = featured.filter(
+                    i => i.hatID === to.params.hatID
+                );
+                if (shortTitle.length > 0) {
+                    shortTitle = shortTitle[0].shortTitle;
+                    next(`/donate/${shortTitle}`);
+                } else {
+                    next();
+                }
+            },
             component: () =>
                 import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
         },
         {
             path: "/donate/:shortTitle",
             name: "donate",
+            /*beforeEnter: (to, from, next) => {
+                // ...
+            },*/
             component: () =>
                 import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
         },
         {
-            path: "/withdraw",
-            name: "withdraw",
+            path: "/interest",
+            name: "interest",
             component: () =>
                 import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
         },
@@ -35,12 +56,6 @@ export default new Router({
             name: "redeem",
             component: () =>
                 import(/* webpackChunkName: "interface" */ "./views/Interface.vue")
-        },
-        {
-            path: "/about",
-            name: "about",
-            component: () =>
-                import(/* webpackChunkName: "about" */ "./views/About.vue")
         },
         {
             path: "*",

@@ -72,19 +72,20 @@ import {mapActions, mapState, mapGetters} from 'vuex';
 export default {
   name: 'app-deposit',
   props: {
+    hat: Object
   },
   data: () => ({
     placeholder: "DAI deposit amount",
-    amount: 0  //preload with maximum balanceq
+    amount: 50  //preload with maximum balanceq
   }),
   computed:{
     ...mapState(['interfaceHat']),
     ...mapGetters(['userHat', 'userBalances','userAllowances']),
-    hatSelected() { return this.interfaceHat.proportions.length >= 2},
+    hatSelected() { return this.hat.proportions.length >= 2},
     needsUnlock() { return this.userAllowances.dai.length <= (this.amount.toString()).length},
     hatKind(){
-      if(this.interfaceHat.hasOwnProperty("shortTitle")) return "featured";
-      if(this.interfaceHat.hasOwnProperty("hatID")) return "custom";
+      if(this.hat.hasOwnProperty("shortTitle")) return "featured";
+      if(this.hat.hasOwnProperty("hatID")) return "custom";
       else return "create"
      },
     chosenHat(){
@@ -94,15 +95,15 @@ export default {
           else return `Donate more interest to Pool #${this.interfaceHat.hatID}`
           break;
         case "mintWithSelectedHat":
-          if(this.hatKind === "featured") return `Switch and Donate more interest to ${this.interfaceHat.shortTitle}`;
-          else return `Switch and Donate more interest to Pool #${this.interfaceHat.hatID}`;
+          if(this.hatKind === "featured") return `Switch to ${this.interfaceHat.shortTitle} and get more rDAI`;
+          else return `Switch Pool #${this.interfaceHat.hatID} and get more rDAI`;
         default:
           return 'Donate to NEW pool';
       }
     },
     mintOrWhat(){
-      if(this.userHat && this.interfaceHat.hasOwnProperty("hatID")){
-         if(this.userHat.hatID === this.interfaceHat.hatID) return "mint";
+      if(this.userHat && this.hat.hasOwnProperty("hatID")){
+         if(this.userHat.hatID === this.hat.hatID) return "mint";
          else return "mintWithSelectedHat";
       }
       else return "mintWithNewHat";

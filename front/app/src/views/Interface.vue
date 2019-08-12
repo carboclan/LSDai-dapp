@@ -4,45 +4,67 @@
     fill-height
     >
     <v-layout wrap grid-list-sm>
-      <v-flex sm12>
-        <v-sheet
-          color="white"
+      <v-flex sm12 text-sm-center>
+        <v-tabs
+          v-model="tab"
           light
-          elevation="4"
-          class="text-sm-center ma-3 pa-5 pb-5 pt-0"
+          centered
+          show-arrows
+        >
+          <v-tab
+            v-for="i in tabs"
+            :href="`#${i}`"
+            :key="i"
+            @click="routePush(i)"
+            :disabled="i==='deposit' && !interfaceHat"
           >
-          <v-tabs
-            v-model="tab"
-            light
-            centered
-          >
-            <v-tab
-              v-for="i in tabs"
-              :href="`#${i}`"
-              :key="i"
-            >
-              {{i}}
-            </v-tab>
+            {{i}}
+          </v-tab>
 
-            <v-tab-item
-              v-for="i in tabs"
-              :key="i"
-              :value="i"
+          <v-tab-item
+            value="choose"
             >
-              <template v-if="i==='deposit'">
-                <app-create-hat v-if="$route.name==='create'" />
-                <app-custom-hat v-else-if="$route.name==='deposit' " :hat="$route.params" />
-                <app-featured-hat v-else :hat="$route.params" />
-                <v-divider />
-                <app-deposit/>
-              </template>
-              <app-redeem v-if="i==='redeem'" />
-              <app-withdraw v-if="i==='withdraw'" />
-            </v-tab-item>
-          </v-tabs>
-        </v-sheet>
+            <app-donations />
+          </v-tab-item>
+          <v-tab-item
+            value="create"
+            >
+            <app-create-hat  />
+            <v-divider />
+            <app-deposit :hat="hatInCreation"/>
+          </v-tab-item>
+          <v-tab-item
+            value="deposit"
+            >
+            <app-custom-hat v-if="route==='deposit' "/>
+            <app-featured-hat v-else-if="route==='donate'"/>
+            <app-custom-hat v-else-if="myHat === 'custom'"/>
+            <app-featured-hat v-else-if="myHat ==='donate'"/>
+            <v-divider />
+            <app-deposit :hat="interfaceHat"/>
+          </v-tab-item>
+          <v-tab-item
+            value="redeem"
+            >
+            <app-redeem />
+          </v-tab-item>
+          <v-tab-item
+            value="interest"
+            >
+            <app-interest />
+          </v-tab-item>
+        </v-tabs>
       </v-flex>
     </v-layout>
+    <v-dialog v-model="web3modal" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline">Enable Web3</v-card-title>
+        <v-card-text>In order to access our dApp, you will need to enable web3.</v-card-text>
+        <v-card-actions>
+          <web3-btn block activateButton action="activateWeb3" color="primary">ENABLE WEB3</web3-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <style>
@@ -56,34 +78,102 @@
 <script>
 import Vue from 'vuex';
 import vuex from 'vuex';
-import {mapState} from 'vuex';
+import {mapState,mapGetters,mapActions} from 'vuex';
 import Deposit from '../components/Deposit.vue';
 import Redeem from '../components/Redeem.vue';
-import Withdraw from '../components/Withdraw.vue';
+import Interest from '../components/Interest.vue';
 import CreateHat from '../components/CreateHat.vue';
 import CustomHat from '../components/CustomHat.vue';
 import FeaturedHat from '../components/FeaturedHat.vue';
+import Donations from './Donations.vue';
 import router from "../router.js";
 
 export default {
   name: 'interface',
   components: {
-    'app-deposit': Deposit,
-    'app-redeem': Redeem,
-    'app-withdraw': Withdraw,
-    'app-featured-hat': FeaturedHat,
-    'app-create-hat': CreateHat,
-    'app-custom-hat': CustomHat
+      'app-deposit': Deposit,
+      'app-redeem': Redeem,
+      'app-interest': Interest,
+      'app-featured-hat': FeaturedHat,
+      'app-create-hat': CreateHat,
+      'app-custom-hat': CustomHat,
+      'app-donations': Donations
   },
   data: () => ({
-    tab: 'deposit',
-    tabs: ['deposit', 'redeem', 'withdraw']
+      web3modal: false,
+      tab: 'create',
+      tabs: ['choose', 'create', 'deposit', 'redeem', 'interest']
   }),
   computed: {
-    ...mapState(['allHats']),
+      ...mapState(['allHats', 'hatInCreation']),
+      ...mapGetters(['interfaceHat']),
+      allHatsLength(){
+        return this.allHats.length;
+      },
+      ...mapGetters(['userHat', 'interfaceHat', 'hasWeb3']),
+      myHat(){
+        return this.interfaceHat.hasOwnProperty("shortTitle") ? "donate" : "custom" ;
+      },
+      route(){
+        return this.$route.name
+      },
+      routeURL(){
+        return this.$route.params.hasOwnProperty("url") ? this.$route.params.url : false;
+      }
   },
-  mounted(){
-    console.log(this.$route);
+  methods: {
+      ...mapActions(['activateWeb3']),
+      backToHome(){
+          this.$router.replace("/");
+      },
+      routePush(newURL){
+          if(newURL === 'deposit'){
+              this.interfaceHat.hasOwnProperty("shortTitle")
+                  ? this.$router.replace(`/donate/${this.interfaceHat.shortTitle}`)
+                  : this.$router.replace(`/deposit/${this.interfaceHat.hatID}`)
+          }
+          else this.$router.replace(`/${newURL}`);
+      }
+  },
+  watch: {
+      route(newV){
+          if(newV === 'donate') this.tab = 'deposit';
+          else if(this.tabs.includes(newV)) this.tab = newV;
+      },
+      routeURL(newV){
+          if(newV === 'donate') this.tab = 'deposit';
+          if(newV){
+              this.tab = newV;
+          }
+      },
+      allHatsLength(newV){
+        if(newV>0){
+            if(this.web3modal){
+                if(this.$route.params.hasOwnProperty("hatID")){
+                    this.$store.dispatch("setInterfaceHat", {hatID : this.$route.params.hatID});
+                    this.tab = "deposit";
+                } else if(this.$route.params.hasOwnProperty("shortTitle")){
+                    this.$store.dispatch("setInterfaceHat", {shortTitle: this.$route.params.shortTitle});
+                    this.tab = "deposit";
+                }
+                this.web3modal = false;
+            }
+        }
+      }
+  },
+  async mounted(){
+      const route = this.$route.name;
+      const {shortTitle = false, hatID = false} = this.$route.params;
+      if(route==="donate" || route==="deposit"){
+          if(!this.hasWeb3){
+              this.tab = "create";
+              this.web3modal = true;
+          } else {
+              await this.$store.dispatch("setInterfaceHat", {shortTitle, hatID});
+              this.tab = "deposit";
+          }
+      }
+      else if(this.tabs.includes(this.$route.name)) this.tab = this.$route.name;
   }
 }
 </script>
