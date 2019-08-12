@@ -17,10 +17,9 @@
             :key="i"
             @click="routePush(i)"
             :disabled="i==='deposit' && !interfaceHat"
-          >
+            >
             {{i}}
           </v-tab>
-
           <v-tab-item
             value="choose"
             >

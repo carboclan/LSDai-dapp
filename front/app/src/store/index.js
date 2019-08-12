@@ -292,14 +292,18 @@ export default new Vuex.Store({
             return new Promise(async resolve => {
                 try {
                     for (var hatID = 1; hatID < maxHat + 1; hatID++) {
-                        const rawHat = await dispatch("getHatByID", { hatID });
+                        const rawHat = await dispatch("getHatByID", {
+                            hatID
+                        });
                         rawHat.loans = await Promise.all(
                             rawHat.recipients.map(i =>
-                                dispatch("receivedLoanOf", { address: i })
+                                dispatch("receivedLoanOf", {
+                                    address: i
+                                })
                             )
                         );
                         rawHat.totalLoan = rawHat.loans.reduce(
-                            (a, b) => parseInt(a) + parseInt(b),
+                            (a, b) => parseFloat(a) + parseFloat(b),
                             0
                         );
                         const fullHat = {
@@ -352,7 +356,6 @@ export default new Vuex.Store({
                         i => i.shortTitle === shortTitle
                     );
                 }
-                console.log("about to SETINTERFACEHAT", finalHat[0]);
                 commit("SETINTERFACEHAT", finalHat[0]);
                 resolve(true);
             });
@@ -399,7 +402,10 @@ export default new Vuex.Store({
                                 getBalance();
                             }, 1000);
                         }
-                        commit("SETBALANCE", { symbol, bal });
+                        commit("SETBALANCE", {
+                            symbol,
+                            bal
+                        });
                         return true;
                     }, 2000);
                 };
@@ -417,7 +423,10 @@ export default new Vuex.Store({
                             state.account.address,
                             TOKENS[HARDCODED_CHAIN].rdai
                         );
-                        commit("SETALLOWANCE", { symbol, all });
+                        commit("SETALLOWANCE", {
+                            symbol,
+                            all
+                        });
                         return true;
                     }, 2000);
                 };
@@ -426,7 +435,9 @@ export default new Vuex.Store({
         },
         getUserHat({ commit, dispatch, state }) {
             return new Promise((resolve, reject) => {
-                dispatch("getHatByAddress", { address: state.account.address })
+                dispatch("getHatByAddress", {
+                    address: state.account.address
+                })
                     .then(r => {
                         const newHat = {
                             ...r,
@@ -474,7 +485,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("createHat failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         reject(false);
                     })
                     .then(receipt => {
@@ -499,14 +512,18 @@ export default new Vuex.Store({
                             txHash: hash,
                             timestamp: new Date(),
                             type: "approve",
-                            arg: { symbol },
+                            arg: {
+                                symbol
+                            },
                             asset: symbol,
                             network: state.account.chainId
                         });
                     })
                     .on("error", err => {
                         console.warn("token.approve failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         /*dispatch("EDITTRANSACTION", {
                             tx: {}
                         });*/
@@ -534,7 +551,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("mint failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         return "error";
                     })
                     .then(receipt => {
@@ -562,7 +581,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("mintWithNewHat failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         return "error";
                     })
                     .then(receipt => {
@@ -591,7 +612,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("mintWithSelectedHat failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         return "error";
                     })
                     .then(receipt => {
@@ -615,7 +638,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("changeHat failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         return "error";
                     })
                     .then(receipt => {
@@ -627,12 +652,6 @@ export default new Vuex.Store({
         },
         redeem({ commit, state, dispatch }, { amount }) {
             return new Promise(resolve => {
-                console.log(
-                    "amount: ",
-                    amount,
-                    " cleaned for web3: ",
-                    toDec(amount)
-                );
                 contracts.functions
                     .redeem(toDec(amount), {
                         from: state.account.address
@@ -643,7 +662,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("redeem failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         return "error";
                     })
                     .then(receipt => {
@@ -679,7 +700,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("createHat failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         reject("error");
                     })
                     .then(receipt => {
@@ -726,7 +749,9 @@ export default new Vuex.Store({
                     })
                     .on("error", err => {
                         console.warn("faucet failed", err);
-                        commit("ERROR", { type: "transaction" });
+                        commit("ERROR", {
+                            type: "transaction"
+                        });
                         reject("error");
                     })
                     .then(receipt => {
@@ -748,7 +773,8 @@ export default new Vuex.Store({
         userAllowances: state => state.account.allowances,
         rate: state => Math.round(state.exchangeRate * 10000) / 100 + " %",
         userHat: state =>
-            typeof state.account.hat.hatID !== "undefined"
+            state.account.hat.hasOwnProperty("hatID") &&
+            state.account.hat.hatID !== 0
                 ? state.account.hat
                 : false,
         interfaceHat: state =>

@@ -14,29 +14,7 @@ const featured = [
         address: "0x08550C75707DA817c68F7e31A9659f0B3963f991",
         colors: ["#F7997C", "#F7997C"],
         color: "#F7997C",
-        hatID: 11
-    },
-    {
-        image: require("./assets/ethhub.png"),
-        title: "EthHub.io donation",
-        shortTitle: "EthHub",
-        description:
-            "EthHub.io is an invaluable resource for all things ethereum",
-        address: "0xA19FCDaD77C1F0fd184689aca88BabCF68010347",
-        colors: ["#F7997C", "#0a0036"],
-        color: "#0a0036",
-        hatID: 8 //real
-    },
-    {
-        image: require("./assets/giveth.png"),
-        title: "Giveth DAC",
-        shortTitle: "Giveth",
-        description:
-            "Giveth is an open source platform for charitable donations.",
-        address: "0x8f951903c9360345b4e1b536c7f5ae8f88a64e79",
-        colors: ["#F7997C", "#2f0340"],
-        color: "#2f0340",
-        hatID: 7 //real
+        hatID: 1
     },
     {
         image: require("./assets/building.jpg"),
@@ -48,6 +26,28 @@ const featured = [
         hatID: 0
     },
     {
+        image: require("./assets/ethhub.png"),
+        title: "EthHub.io donation",
+        shortTitle: "EthHub",
+        description:
+            "EthHub.io is an invaluable resource for all things ethereum",
+        address: "0xA19FCDaD77C1F0fd184689aca88BabCF68010347",
+        colors: ["#F7997C", "#0a0036"],
+        color: "#0a0036",
+        hatID: 2 //real
+    },
+    {
+        image: require("./assets/giveth.png"),
+        title: "Giveth DAC",
+        shortTitle: "Giveth",
+        description:
+            "Giveth is an open source platform for charitable donations.",
+        address: "0x8f951903c9360345b4e1b536c7f5ae8f88a64e79",
+        colors: ["#F7997C", "#2f0340"],
+        color: "#2f0340",
+        hatID: 3 //real
+    },
+    {
         image: require("./assets/BFVI.jpg"),
         title: "Bitcoin For Venezuela Initiative",
         shortTitle: "Bitven",
@@ -56,7 +56,7 @@ const featured = [
         address: "0x5f48465bb9a29a3904a8d320146e78640df0e96e",
         colors: ["#F7997C", "#f79430"],
         color: "#f79430",
-        hatID: 9 // real
+        hatID: 4 // real
     },
     {
         image: require("./assets/ethberlinzwei.svg"),
@@ -67,7 +67,7 @@ const featured = [
         address: "0x82338B1b27cfC0C27D79c3738B748f951Ab1a7A0",
         colors: ["#F7997C", "#ffd200"],
         color: "#ffd200",
-        hatID: 10 //real
+        hatID: 5 //real
     }
 ];
 export default featured;

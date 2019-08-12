@@ -1,5 +1,5 @@
 <template>
-<v-list dense nav>
+<v-list dense nav two-line>
     <v-layout column>
         <v-subheader>
             <strong>Your Balances</strong>
@@ -35,7 +35,10 @@
                     <v-img v-if="userHat.image" :src="userHat.image" :alt="userHat.title" />
                     <v-icon v-else>fas fa-cubes</v-icon>
                 </v-list-item-avatar>
-                <v-list-item-title>Current Pool: <span class="font-weight-bold subtitle-2">{{ userHat.shortTitle || '#' + userHat.hatID }}</span></v-list-item-title>
+                <v-list-item-content>
+                  <v-list-item-title>Current Pool:</v-list-item-title>
+                  <v-list-item-subtitle class="font-weight-bold subtitle-2">{{ userHat.shortTitle || '#' + userHat.hatID }}</v-list-item-subtitle>
+                </v-list-item-content>
             </v-list-item>
             <v-divider />
             <v-flex grow></v-flex>
@@ -43,7 +46,10 @@
                 <v-list-item-avatar>
                     <token-svg symbol="cdai" :size="30" />
                 </v-list-item-avatar>
-                <v-list-item-title>Current Interest Rate: <span class="font-weight-bold subtitle-1">{{ rate }}</span></v-list-item-title>
+                <v-list-item-content>
+                  <v-list-item-title>Current Interest Rate:</v-list-item-title>
+                  <v-list-item-subtitle class="font-weight-bold subtitle-1">{{ rate }}</v-list-item-subtitle>
+                </v-list-item-content>
             </v-list-item>
         </template>
         <template v-if="txList">

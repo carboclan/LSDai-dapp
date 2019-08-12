@@ -1,5 +1,9 @@
 <template>
-  <v-layout align-center wrap mt-5 pt-5>
+  <v-layout align-center wrap pt-5
+    fluid
+    fill-height
+    pa-0
+    >
     <v-flex sm8 shrink mx-auto text-xs-center>
       <v-text-field
         label="Beneficiary"

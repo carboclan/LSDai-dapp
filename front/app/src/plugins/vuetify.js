@@ -11,10 +11,6 @@ export default new Vuetify({
         },
         themes: {
             light: {
-                /*
-              this is the pink color from logo: "#ffa88b"
-              this is the blue color from logo: "#84b0d8"
-              */
                 primary: "#1867c0",
                 secondary: "#aa7048",
                 accent: "#82B1FF",

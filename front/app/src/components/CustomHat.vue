@@ -1,6 +1,9 @@
 <template>
   <v-container
-    class="text-sm-center my-3 mx-xs-auto mb-4"
+    text-sm-center py-5 mx-xs-auto
+    fluid
+    fill-height
+    pa-0
     >
     <v-sheet
       elevation=3

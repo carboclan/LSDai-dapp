@@ -1,5 +1,8 @@
 <template>
-  <v-layout center wrap mt-5
+  <v-layout center wrap py-5
+    fluid
+    fill-height
+    pa-0
     :class="{'wrap': $vuetify.breakpoint.smAndDown, 'nowrap': $vuetify.breakpoint.mdAndUp}"
     >
     <v-flex xs12 mb-5 py-5>

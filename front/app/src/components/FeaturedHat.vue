@@ -1,6 +1,9 @@
 <template>
   <v-container
-    class="text-sm-center my-3 mx-xs-auto mb-4"
+    text-sm-center py-5 mx-xs-auto
+      fluid
+      fill-height
+      pa-0
     >
     <v-sheet
       elevation=3
@@ -32,7 +35,7 @@
             />
         </v-flex>
       </v-layout>
-      <bar-chart :hat="interfaceHat" showCommission/>
+      <bar-chart v-if="interfaceHat.shortTitle!=='rDAIdevs'" :hat="interfaceHat" showCommission/>
       <v-flex xs12 my-5 v-if="interfaceHat.hatID !== userHat.hatID">
         <web3-btn action="changeHat" color="secondary" :params="{hatID: interfaceHat.hatID}">
           Switch to this pool

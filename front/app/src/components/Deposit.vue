@@ -48,12 +48,14 @@
           :params="{ amount }"
           color="primary"
           symbolAppend="dai"
-          :disabled="( amount <= 0 || !hatSelected)"
+          :disabled="( parseInt(amount) <= 0 || userBalances.dai < parseInt(amount) || !hatSelected)"
           >
            {{ chosenHat }}
         </web3-btn>
       </v-flex>
-      <v-flex xs12 mx-auto class="caption">You keep rDAI, interest goes to {{interfaceHat.shortTitle || 'your chosen pool'}}</v-flex>
+      <v-flex xs12 mx-auto class="caption">
+        You keep rDAI, interest goes to {{interfaceHat.shortTitle || 'your chosen pool'}}
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -89,6 +91,7 @@ export default {
       else return "create"
      },
     chosenHat(){
+      if(this.userBalances.dai < parseInt(this.amount)) return "You need more DAI"
       switch (this.mintOrWhat) {
         case "mint":
           if(this.hatKind === "featured") return `Donate more interest to ${this.interfaceHat.shortTitle}`;
