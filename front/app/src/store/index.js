@@ -22,7 +22,7 @@ const TOKENS = {
     4: {
         dai: "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
         cdai: "0x6d7f0754ffeb405d23c51ce938289d4835be3b14",
-        rdai: "0x78B6C9CD92997a0F21765053dD4EB94fA6e6CA63"
+        rdai: "0xb0C72645268E95696f5b6F40aa5b12E1eBdc8a5A"
     },
     decimals: {
         dai: 18,
