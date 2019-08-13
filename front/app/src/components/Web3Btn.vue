@@ -86,9 +86,13 @@ export default {
           this.$store.dispatch(...cleanedParams)
               .then(result => {
                   this.$emit("then", result);
+                  if(!result.hasOwnProperty("tx")) return;
+                  this.$store.commit("CONFIRMTRANSACTION", result);
               })
               .catch(error => {
                   this.$emit("catch", error);
+                  if(error.hasOwnProperty("savedTxHash"))
+                    this.$store.commit("ERRORTRANSACTION", error.savedTxHash);
               })
               .finally(()=>{
                   setTimeout( () => {

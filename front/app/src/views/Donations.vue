@@ -25,7 +25,10 @@
                             <h3># {{ i.hatID }}</h3>
                             <proportions :hat="i" />
                         </template>
-                        <v-btn color="primary" class="mb-2" @click="hasWeb3 ? open(i.shortTitle || i.hatID) : activateWeb3()" :disabled="!i.hasOwnProperty('hatID')">
+                        <a v-if="i.shortTitle && i.shortTitle === 'YourCause'" href="https://twitter.com/rDAI_dao" target="_blank" alt="contact us on twitter" style="text-decoration: none;">
+                          <v-btn color="secondary" class="mb-2"><v-icon>fab fa-twitter</v-icon>Contact Us</v-btn>
+                        </a>
+                        <v-btn v-else color="primary" class="mb-2" @click="hasWeb3 ? open(i.shortTitle || i.hatID) : activateWeb3()" :disabled="!i.hasOwnProperty('hatID')">
                             <span v-if="!hasWeb3">Enable Web3</span>
                             <span v-else-if="i.shortTitle && i.shortTitle === 'custom'">Build your own</span>
                             <span v-else-if="userHat.hatID && i.hatID === userHat.hatID ">Donate more!</span>
@@ -111,8 +114,8 @@ export default {
                 }
             })
         },
-        openById(hatID) {
-            this.$store.dispatch("setInterfaceHat", {
+        async openById(hatID) {
+            await this.$store.dispatch("setInterfaceHat", {
                 hatID
             })
             this.$router.push({
@@ -122,9 +125,9 @@ export default {
                 }
             })
         },
-        openByShortTitle(shortTitle) {
+        async openByShortTitle(shortTitle) {
             if (shortTitle === "custom") return this.openCreate();
-            this.$store.dispatch("setInterfaceHat", {
+            await this.$store.dispatch("setInterfaceHat", {
                 shortTitle
             });
             this.$router.push({
@@ -136,7 +139,7 @@ export default {
         },
         loadAll() {
             if (this.hasWeb3) {
-                const list = [...this.allHats, featured[1]];
+                const list = [...this.allHats, featured[1], featured[2]];
                 list.sort((a, b) => {
                     return b.totalLoan - a.totalLoan;
                 });

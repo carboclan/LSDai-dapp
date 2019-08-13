@@ -94,12 +94,11 @@ export default {
       if(this.userBalances.dai < parseInt(this.amount)) return "You need more DAI"
       switch (this.mintOrWhat) {
         case "mint":
-          if(this.hatKind === "featured") return `Donate more interest to ${this.interfaceHat.shortTitle}`;
-          else return `Donate more interest to Pool #${this.interfaceHat.hatID}`
+          return `Mint rDAI`
           break;
         case "mintWithSelectedHat":
-          if(this.hatKind === "featured") return `Switch to ${this.interfaceHat.shortTitle} and get more rDAI`;
-          else return `Switch Pool #${this.interfaceHat.hatID} and get more rDAI`;
+          if(this.hatKind === "featured") return `Mint more rDAI and switch to ${this.interfaceHat.shortTitle}`;
+          else return `Mint more rDAI and switch to pool #${this.interfaceHat.hatID} `;
         default:
           return 'Donate to NEW pool';
       }
@@ -117,9 +116,6 @@ export default {
       if(a % 1 >= 0 && a % 1 < 0.0001) return a.toFixed(2);
       else return a;
     }
-  },
-  methods: {
-    ...mapActions(['mint'])
   }
 }
 </script>

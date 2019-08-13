@@ -4,13 +4,11 @@ import contracts from "./contracts";
 import featured from "../featured.js";
 import randomColor from "../colors.js";
 import Web3 from "web3";
-import { toWei, fromWei, toBN } from "web3-utils";
-import BN from "bn.js";
+const { BN, toWei, toBN } = Web3.utils;
 import {
-    round,
     fromDecimals,
     toDecimals
-} from "./../../../../ethereum/contracts/lib/math-utils";
+} from "@decentral.ee/rtoken-contracts/lib/math-utils";
 
 Vue.use(Vuex);
 
@@ -93,16 +91,7 @@ export default new Vuex.Store({
         exchangeRate: 0,
         finishedLoading: false,
         loadingWeb3: false,
-        transactionList: [
-            {
-                txHash: "",
-                timestamp: "",
-                type: "",
-                args: {},
-                network: 0,
-                error: ""
-            }
-        ]
+        transactionList: []
     },
     mutations: {
         SHOWSNACKBAR: state => {
@@ -135,10 +124,25 @@ export default new Vuex.Store({
         INSERTNEWTRANSACTION: (state, tx) => {
             state.transactionList.unshift(tx);
         },
-        EDITTRANSACTION: (state, tx) => {
+        CONFIRMTRANSACTION: (state, tx) => {
             //first I have to find it, then I have to splice it!
-            const index = 1;
-            state.transactionList.splice(index, 1, tx);
+            const index = state.transactionList.findIndex(
+                i => i.txHash === tx.tx
+            );
+            //create new element to put in:
+            const newValue = state.transactionList[index];
+            newValue.confirmed = true;
+            state.transactionList.splice(index, 1, newValue);
+        },
+        ERRORTRANSACTION: (state, errorTxHash) => {
+            //first I have to find it, then I have to splice it!
+            const index = state.transactionList.findIndex(
+                i => i.txHash === errorTxHash
+            );
+            //create new element to put in:
+            const newValue = state.transactionList[index];
+            newValue.error = true;
+            state.transactionList.splice(index, 1, newValue);
         },
         SETFINISHEDLOADING: state => (state.finishedLoading = true),
         SETLOADING: (state, bool) => (state.loadingWeb3 = bool),
@@ -184,8 +188,8 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async onPageLoad({ commit, dispatch }) {
-            await dispatch("getExchangeRate").catch(e =>
+        async onPageLoad({ dispatch }) {
+            await dispatch("getExchangeRate").catch(() =>
                 dispatch("getExchangeRate")
             );
         },
@@ -244,7 +248,7 @@ export default new Vuex.Store({
                             .toLowerCase()
                     );
                     if (state.exchangeRate <= 0) {
-                        await dispatch("getExchangeRate").catch(e =>
+                        await dispatch("getExchangeRate").catch(() =>
                             dispatch("getExchangeRate")
                         );
                     }
@@ -286,79 +290,79 @@ export default new Vuex.Store({
             const allHats = [];
             var maxHat = 20;
             try {
-                maxHat = await contracts.functions.getMaximumHatID();
+                maxHat =
+                    parseInt(await contracts.functions.getMaximumHatID.call()) +
+                    1;
+                console.debug("maxHat", maxHat.toString());
             } catch (e) {
                 console.log(" error trying to get max hat number", e);
             }
-            return new Promise(async resolve => {
-                try {
-                    for (var hatID = 1; hatID < maxHat + 1; hatID++) {
-                        const rawHat = await dispatch("getHatByID", {
-                            hatID
+            try {
+                for (var hatID = 1; hatID < maxHat; hatID++) {
+                    const rawHat = await dispatch("getHatByID", {
+                        hatID
+                    });
+                    rawHat.loans = await Promise.all(
+                        rawHat.recipients.map(i =>
+                            dispatch("receivedLoanOf", {
+                                address: i
+                            })
+                        )
+                    );
+                    rawHat.totalLoan = rawHat.loans.reduce(
+                        (a, b) => parseFloat(a) + parseFloat(b),
+                        0
+                    );
+                    const fullHat = {
+                        ...rawHat,
+                        ...featured.filter(i => i.hatID === hatID)[0]
+                    };
+                    fullHat.hatID = hatID;
+                    if (!fullHat.hasOwnProperty("colors")) {
+                        fullHat.featured = fullHat.recipients.map(i => {
+                            const f = featured.filter(
+                                b => b.address.toLowerCase() === i.toLowerCase()
+                            );
+                            return f.length > 0 ? f[0].title : false;
                         });
-                        rawHat.loans = await Promise.all(
-                            rawHat.recipients.map(i =>
-                                dispatch("receivedLoanOf", {
-                                    address: i
-                                })
-                            )
-                        );
-                        rawHat.totalLoan = rawHat.loans.reduce(
-                            (a, b) => parseFloat(a) + parseFloat(b),
-                            0
-                        );
-                        const fullHat = {
-                            ...rawHat,
-                            ...featured.filter(i => i.hatID === hatID)[0]
-                        };
-                        if (!fullHat.hasOwnProperty("colors")) {
-                            fullHat.featured = fullHat.recipients.map(i => {
-                                const f = featured.filter(
-                                    b =>
-                                        b.address.toLowerCase() ===
-                                        i.toLowerCase()
-                                );
-                                return f.length > 0 ? f[0].title : false;
-                            });
-                            const colors = [];
-                            fullHat.colors = fullHat.recipients.map(i => {
-                                const f = featured.filter(
-                                    b =>
-                                        b.address.toLowerCase() ===
-                                        i.toLowerCase()
-                                );
-                                return f.length > 0
-                                    ? f[0].color
-                                    : randomColor(colors);
-                            });
-                        }
-                        allHats.push(fullHat);
+                        const colors = [];
+                        fullHat.colors = fullHat.recipients.map(i => {
+                            const f = featured.filter(
+                                b => b.address.toLowerCase() === i.toLowerCase()
+                            );
+                            return f.length > 0
+                                ? f[0].color
+                                : randomColor(colors);
+                        });
                     }
-                } catch (e) {
-                    console.log("dispatch threw error e: ", e);
+                    allHats.push(fullHat);
                 }
-                commit("SETFINISHEDLOADING");
-                commit("SETALLHATS", allHats);
-                resolve(true);
-            });
+            } catch (e) {
+                console.error("dispatch threw error e: ", e);
+            }
+            commit("SETFINISHEDLOADING");
+            commit("SETALLHATS", allHats);
         },
         setInterfaceHat(
             { commit, state },
             { hatID = false, shortTitle = false }
         ) {
             return new Promise(resolve => {
-                var finalHat = {};
                 if (hatID) {
-                    finalHat = state.allHats.filter(
-                        i => parseInt(i.hatID) === parseInt(hatID)
+                    commit(
+                        "SETINTERFACEHAT",
+                        state.allHats.find(
+                            i => parseInt(i.hatID) === parseInt(hatID)
+                        )
                     );
+                    resolve(true);
                 } else if (shortTitle) {
-                    finalHat = state.allHats.filter(
-                        i => i.shortTitle === shortTitle
+                    commit(
+                        "SETINTERFACEHAT",
+                        state.allHats.find(i => i.shortTitle === shortTitle)
                     );
+                    resolve(true);
                 }
-                commit("SETINTERFACEHAT", finalHat[0]);
-                resolve(true);
             });
         },
         async getExchangeRate({ commit }) {
@@ -373,7 +377,7 @@ export default new Vuex.Store({
         setupWeb3Listeners({ commit, dispatch }) {
             const ethereum = window.ethereum;
             if (typeof ethereum.on === "function") {
-                ethereum.on("accountsChanged", e => {
+                ethereum.on("accountsChanged", () => {
                     dispatch("activateWeb3");
                 });
                 ethereum.on("networkChanged", e => {
@@ -394,7 +398,7 @@ export default new Vuex.Store({
                     const myTokens = contracts.tokens;
                     setTimeout(async () => {
                         const myToken = myTokens[symbol];
-                        const rawBal = await myToken.balanceOf(
+                        const rawBal = await myToken.balanceOf.call(
                             state.account.address
                         );
                         const bal = fromDec(rawBal, symbol);
@@ -420,7 +424,7 @@ export default new Vuex.Store({
                     const myTokens = contracts.tokens;
                     setTimeout(async () => {
                         const myToken = myTokens[symbol];
-                        const all = await myToken.allowance(
+                        const all = await myToken.allowance.call(
                             state.account.address,
                             TOKENS[HARDCODED_CHAIN].rdai
                         );
@@ -448,30 +452,32 @@ export default new Vuex.Store({
                         commit("SETINTERFACEHAT", newHat);
                         resolve(true);
                     })
-                    .catch(e => {
+                    .catch(err => {
                         console.log("error in getUserHat, e:", e);
-                        reject();
+                        reject(err);
                     });
             });
         },
-        getHatByAddress({ state }, { address }) {
+        getHatByAddress(v, { address }) {
             return new Promise(resolve => {
-                contracts.functions.getHatByAddress(address).then(result => {
-                    resolve(fillHat(result));
-                });
+                contracts.functions.getHatByAddress
+                    .call(address)
+                    .then(result => {
+                        resolve(fillHat(result));
+                    });
             });
         },
-        getHatByID({ state }, { hatID }) {
+        getHatByID(v, { hatID }) {
             return new Promise(async (resolve, reject) => {
-                console.log("hatID inside getHatByID: ", hatID);
-                contracts.functions
-                    .getHatByID(toBN(hatID.toString()))
+                contracts.functions.getHatByID
+                    .call(toBN(hatID.toString()))
                     .then(result => resolve(fillHat(result, hatID)))
                     .catch(e => reject(e));
             });
         },
         createHat({ commit, dispatch, state }, { switchToThisHat = true }) {
             return new Promise((resolve, reject) => {
+                var savedTxHash;
                 contracts.functions
                     .createHat(
                         state.hatInCreation.recipients,
@@ -482,8 +488,7 @@ export default new Vuex.Store({
                         }
                     )
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -497,30 +502,29 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("createHat failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        reject(false);
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         if (switchToThisHat) dispatch("getUserHat");
                         dispatch("getAllHats");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         approve({ commit, state, dispatch }, { symbol }) {
             return new Promise((resolve, reject) => {
                 const maximum = SELF_HAT_ID;
+                var savedTxHash;
                 contracts.tokens[symbol]
                     .approve(TOKENS[HARDCODED_CHAIN].rdai, maximum, {
                         from: state.account.address
                     })
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -538,30 +542,26 @@ export default new Vuex.Store({
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        /*dispatch("EDITTRANSACTION", {
-                            tx: {}
-                        });*/
-                        reject(err);
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getAllowance", symbol);
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         mint({ commit, state, dispatch }, { amount }) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 const params = toWei(amount.toString());
-                console.log("params: ", params);
+                var savedTxHash;
                 contracts.functions
                     .mint(params, {
                         from: state.account.address,
                         gasLimit: 1750000
                     })
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -573,22 +573,22 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("mint failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        return "error";
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getBalance", "dai");
                         dispatch("getBalance", "rdai");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         mintWithNewHat({ commit, state, dispatch }, { amount }) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
+                var savedTxHash;
                 contracts.functions
                     .mintWithNewHat(
                         toWei(amount.toString()),
@@ -599,8 +599,7 @@ export default new Vuex.Store({
                         }
                     )
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -614,35 +613,33 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("mintWithNewHat failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        return "error";
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getBalance", "dai");
                         dispatch("getBalance", "rdai");
                         dispatch("getUserHat");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         mintWithSelectedHat({ commit, state, dispatch }, { amount }) {
-            return new Promise(resolve => {
-                const params = [
-                    toWei(amount.toString()),
-                    toBN(state.interfaceHat.hatID.toString())
-                ];
-                console.log("params: ", params);
+            return new Promise((resolve, reject) => {
+                var savedTxHash;
                 contracts.functions
-                    .mintWithSelectedHat(...params, {
-                        from: state.account.address
-                    })
+                    .mintWithSelectedHat(
+                        toWei(amount.toString()),
+                        toBN(state.interfaceHat.hatID.toString()),
+                        {
+                            from: state.account.address
+                        }
+                    )
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -655,30 +652,29 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("mintWithSelectedHat failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        return "error";
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getBalance", "dai");
                         dispatch("getBalance", "rdai");
                         dispatch("getUserHat");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         changeHat({ commit, state, dispatch }, { hatID }) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
+                var savedTxHash;
                 contracts.functions
-                    .changeHat(toBN(hatID), {
+                    .changeHat(toBN(hatID.toString()), {
                         from: state.account.address
                     })
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -690,28 +686,27 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("changeHat failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        return "error";
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getUserHat");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         redeem({ commit, state, dispatch }, { amount }) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
+                var savedTxHash;
                 contracts.functions
-                    .redeem(toDec(amount), {
+                    .redeem(toWei(amount.toString()), {
                         from: state.account.address
                     })
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -723,23 +718,22 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("redeem failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        return "error";
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getBalance", "dai");
                         dispatch("getBalance", "rdai");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         interestPayableOf({ state }, { address = state.account.address }) {
             return new Promise(async (resolve, reject) => {
-                const result = await contracts.functions.interestPayableOf(
+                const result = await contracts.functions.interestPayableOf.call(
                     address
                 );
                 if (result > 0) resolve(fromDec(result, "rdai", "number"));
@@ -751,14 +745,14 @@ export default new Vuex.Store({
             { address = state.account.address }
         ) {
             return new Promise((resolve, reject) => {
+                var savedTxHash;
                 console.log("paying interest of this account: ", address);
                 contracts.functions
                     .payInterest(address, {
                         from: state.account.address
                     })
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -770,23 +764,22 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("createHat failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        reject("error");
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getBalance", "dai");
                         dispatch("getBalance", "rdai");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         },
         getAccountStats({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.getAccountStats(
+                const result = await contracts.functions.getAccountStats.call(
                     address
                 );
                 resolve(result);
@@ -802,21 +795,24 @@ export default new Vuex.Store({
         },
         receivedLoanOf({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.receivedLoanOf(
+                const result = await contracts.functions.receivedLoanOf.call(
                     address
                 );
                 resolve(fromDec(result, "dai", "number"));
             });
         },
-        getFaucetDAI({ state, dispatch }, { address = state.account.address }) {
+        getFaucetDAI(
+            { commit, state, dispatch },
+            { address = state.account.address }
+        ) {
             return new Promise((resolve, reject) => {
+                var savedTxHash;
                 contracts.faucet
                     .allocateTo(address, toWei("100", "ether"), {
                         from: state.account.address
                     })
                     .on("transactionHash", hash => {
-                        console.log("hash of tx: ", hash);
-                        console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        savedTxHash = hash;
                         commit("INSERTNEWTRANSACTION", {
                             txHash: hash,
                             timestamp: new Date(),
@@ -829,16 +825,15 @@ export default new Vuex.Store({
                         });
                     })
                     .on("error", err => {
-                        console.warn("faucet failed", err);
                         commit("ERROR", {
                             type: "transaction"
                         });
-                        reject("error");
+                        reject({ savedTxHash });
                     })
                     .then(receipt => {
                         console.log("now what? receipt: ", receipt);
                         dispatch("getBalance", "dai");
-                        resolve(true);
+                        resolve(receipt);
                     });
             });
         }
@@ -869,9 +864,7 @@ export default new Vuex.Store({
                 ? state.hatInCreation
                 : false,
         txList: state =>
-            state.transactionList[0].network !== 0
-                ? state.transactionList
-                : false,
+            state.transactionList.length > 0 ? state.transactionList : false,
         rDAIdevs: state =>
             state.allHats.find(i => i.shortTitle === "rDAIdevs") || false
     }

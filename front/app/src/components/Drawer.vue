@@ -54,15 +54,26 @@
         </template>
         <template v-if="txList">
           <v-divider />
-          <v-list-item>
-            <v-avatar>
-              <v-icon color="success">far fa-check-circle</v-icon>
-            </v-avatar>
-            <v-list-item-content>Transaction completed</v-list-item-content>
-            <v-list-item-action>
-              <token-svg symbol="rdai" :size="24" />
-            </v-list-item-action>
-          </v-list-item>
+            <template v-for="item in editedTxList">
+            <a :href="item.link" target="_blank" alt="etherscan link" style="text-decoration:none">
+              <v-list-item>
+                <v-avatar>
+                  <v-icon color="success" v-if="item.conf">far fa-check-circle</v-icon>
+                  <v-icon color="error" v-else-if="item.err">far fa-times-circle</v-icon>
+                  <v-btn :loading="true" icon color="primary" v-else x-small></v-btn>
+                </v-avatar>
+                <v-list-item-content :class="{
+                  'caption' : true,
+                  'font-weight-bold': true,
+                  'success--text' : item.conf,
+                  'error--text' : item.err && !item.conf,
+                  'primary--text' : !item.err&& !item.conf
+                }">
+                  {{item.text}}
+                </v-list-item-content>
+              </v-list-item>
+            </a>
+          </template>
         </template>
     </v-layout>
 </v-list>
@@ -98,7 +109,7 @@ export default {
         ]
     }),
     computed: {
-        ...mapState(['account']),
+        ...mapState(['account', 'allHats' ]),
         ...mapGetters(['userHat', 'rate', 'txList']),
         donations() {
             return this.$route.name === 'donation'
@@ -110,7 +121,50 @@ export default {
                 i.allowance = this.account.allowances[i.symbol] || 0;
                 return i;
             })
-        }
+        },
+        editedTxList() {
+            if(!this.txList) return [];
+            return this.txList.map( i => {
+                i.conf = i.hasOwnProperty("confirmed") ? true : false;
+                i.err = i.hasOwnProperty("error") ? true : false;
+                i.link = `https://rinkeby.etherscan.io/tx/${i.txHash}`;
+                const found = this.allHats.find( b => b.hatID === i.arg.hatID);
+                switch (i.type) {
+                    case "getFaucetDAI":
+                        i.text = "Get 100DAI from faucet";
+                    break;
+                    case "mint":
+                        i.text = `Minting ${i.arg.amount}rDAI`;
+                    break;
+                    case "mintWithNewHat":
+                        i.text = `Mint ${i.arg.amount}rDAI and create new pool`;
+                    break;
+                    case "mintWithSelectedHat":
+                        if(found.hasOwnProperty("shortTitle")) i.text =  `Mint ${i.arg.amount}rDAI and switch to ${found.shortTitle}`;
+                        else i.text = `Mint ${i.arg.amount}rDAI and switch to pool #${i.arg.hatID}`;
+                    break;
+                    case "redeem":
+                        i.text = `Redeem ${i.arg.amount}rDAI for ${i.arg.amount}DAI`;
+                    break;
+                    case "payInterest":
+                        i.text = `Withdraw rDAI interest`;
+                    break;
+                    case "approve":
+                        i.text = `Approve contract to use DAI`;
+                    break;
+                    case "createHat":
+                        i.text = `Create new pool`;
+                    break;
+                    case "changeHat":
+                        if(found.hasOwnProperty("shortTitle")) i.text =  `Switch to ${found.shortTitle} pool`;
+                        i.text = `Switch to pool #${i.arg.hatID}`;
+                    break;
+                    default:
+                        i.text = "Executed Transaction"
+                }
+                return i;
+          });
+      }
     },
     methods: {
         showUserHat(){

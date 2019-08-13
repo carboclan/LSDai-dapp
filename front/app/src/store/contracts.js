@@ -15,10 +15,15 @@ const contracts = {
         this.faucet = await contracts.RinkebyTestDAI.at(
             "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa"
         );
+        // load all tokens and await all to be done
         var tokensTemp = {};
-        Object.keys(tokens).forEach(async token => {
-            tokensTemp[token] = await this.IERC20.at(tokens[token]);
-        });
+        await Promise.all(
+            Object.keys(tokens).map(async token => {
+                console.log(`Loading token ${token} at ${tokens[token]}`);
+                tokensTemp[token] = await this.IERC20.at(tokens[token]);
+                console.log(`Token ${token} loaded`);
+            })
+        );
         this.tokens = tokensTemp;
     }
 };

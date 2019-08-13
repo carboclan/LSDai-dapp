@@ -61,7 +61,7 @@
         action="payInterest"
         :params="{ address: beneficiary }"
         color="primary"
-        :disabled="receivedLoanOf < 1"
+        :disabled="receivedLoanOf <= 0 && totalAvailable <= 0"
         @then="payInterestThen"
         @catch=""
         symbolAppend="rdai"
@@ -70,7 +70,7 @@
       </web3-btn>
     </v-flex>
     <v-flex v-if="justWithdrew>0">
-      <span class="caption">SUCCESS! {{ justWithdrew }} rDAI withdrawn to {{ withdrawn[0]| formatuserAddress }}</span>
+      <span class="caption">SUCCESS! {{ justWithdrew }} rDAI withdrawn to {{ withdrawn[0]| formatAddress }}</span>
     </v-flex>
   </v-layout>
 </template>
@@ -87,7 +87,7 @@ import vuex from 'vuex';
 import {mapActions, mapGetters, mapState} from 'vuex';
 
 export default {
-  name: 'app-withdraw',
+  name: 'app-interest',
   props: {
   },
   data: () => ({

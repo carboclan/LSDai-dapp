@@ -12,7 +12,7 @@
       contain
       max-width="50"
       max-height="50"
-      @click.stop="$router.push('/')"
+      @click.stop="backToHome"
       ></v-img>
       <v-layout column ml-2><v-flex class="font-weight-thin font-italic">Alpha</v-flex><v-flex class="font-weight-bold caption">Rinkeby</v-flex></v-layout>
       <v-spacer></v-spacer>
@@ -41,13 +41,13 @@
       color="white"
       :mobile-break-point="640"
       class="elevation-3"
-      
+      width="350"
       >
       <app-drawer />
     </v-navigation-drawer>
     <app-snackbar />
     <v-footer fixed ma-2 app>
-      <a href="https://twitter.com/rdai_dao" target="_blank" style="text-decoration: none;color:rgb(29, 161, 242)"><v-icon style="color:rgb(29, 161, 242)">fab fa-twitter</v-icon>@rdai_DAO</a>
+      <a href="https://twitter.com/rDAI_dao" target="_blank" style="text-decoration: none;color:rgb(29, 161, 242)"><v-icon style="color:rgb(29, 161, 242)">fab fa-twitter</v-icon>@rDAI_dao</a>
       <v-spacer />
       <span class="text-sm-right grey--text">
         {{ new Date().getFullYear() }} - <a href="http://decentral.ee" class="grey--text" style="text-decoration:none;">Decentral.ee</a>
@@ -89,7 +89,11 @@
       },
     },
     methods: {
-      ...mapActions(['activateWeb3'])
+      ...mapActions(['activateWeb3']),
+      backToHome(){
+        if( this.$route.name ==='donation' ) return ;
+        else this.$router.push('/choose');
+      }
     },
     mounted(){
       this.$store.dispatch("onPageLoad");

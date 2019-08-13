@@ -26,6 +26,15 @@ const featured = [
         hatID: 0
     },
     {
+        image: require("./assets/charity.svg"),
+        title: "Your Cause",
+        shortTitle: "YourCause",
+        description:
+            "Do you know of any social causes or community projects that would accept crypto donations? Get in touch with us",
+        address: "0x0",
+        hatID: -1
+    },
+    {
         image: require("./assets/ethhub.png"),
         title: "EthHub.io donation",
         shortTitle: "EthHub",
@@ -68,6 +77,17 @@ const featured = [
         colors: ["#F7997C", "#ffd200"],
         color: "#ffd200",
         hatID: 5 //real
+    },
+    {
+        image: require("./assets/marmaj.png"),
+        title: "MarmaJ Foundation",
+        shortTitle: "MarmaJ",
+        description:
+            "The Marma J Foundation is an organization that strives to better the lives of people in Antigua, with a focus on youth and women",
+        address: "0x71610bC1aCF75d39fCf962076D97bE17cd7105Ac",
+        colors: ["#F7997C", "#28689e"],
+        color: "#28689e",
+        hatID: 7
     }
 ];
 export default featured;

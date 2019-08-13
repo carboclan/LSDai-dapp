@@ -56,9 +56,9 @@
       </v-flex>
     </v-layout>
     <v-dialog v-model="web3modal" persistent max-width="290">
-      <v-card>
+      <v-card class="pa-4">
         <v-card-title class="headline">Enable Web3</v-card-title>
-        <v-card-text>In order to access our dApp, you will need to enable web3.</v-card-text>
+        <v-card-text class="my-4">In order to access our dApp, you will need to enable web3.</v-card-text>
         <v-card-actions>
           <web3-btn block activateButton action="activateWeb3" color="primary">ENABLE WEB3</web3-btn>
         </v-card-actions>
@@ -105,7 +105,7 @@ export default {
   }),
   computed: {
       ...mapState(['allHats', 'hatInCreation']),
-      ...mapGetters(['interfaceHat']),
+      ...mapGetters(['interfaceHat', 'userHat']),
       allHatsLength(){
         return this.allHats.length;
       },
@@ -126,6 +126,9 @@ export default {
           this.$router.replace("/");
       },
       routePush(newURL){
+          if(newURL === this.$route.name) return;
+          if(newURL === 'donate' && this.$route.name === 'deposit') return;
+          if(newURL === 'deposit' && this.$route.name === 'donate') return;
           if(newURL === 'deposit'){
               this.interfaceHat.hasOwnProperty("shortTitle")
                   ? this.$router.replace(`/donate/${this.interfaceHat.shortTitle}`)
@@ -145,8 +148,8 @@ export default {
               this.tab = newV;
           }
       },
-      allHatsLength(newV){
-        if(newV>0){
+      userHat(newV){
+        if(newV){
             if(this.web3modal){
                 if(this.$route.params.hasOwnProperty("hatID")){
                     this.$store.dispatch("setInterfaceHat", {hatID : this.$route.params.hatID});
@@ -167,7 +170,7 @@ export default {
           if(!this.hasWeb3){
               this.tab = "create";
               this.web3modal = true;
-          } else {
+          } else if(!this.web3modal) {
               await this.$store.dispatch("setInterfaceHat", {shortTitle, hatID});
               this.tab = "deposit";
           }

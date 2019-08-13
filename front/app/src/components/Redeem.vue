@@ -41,8 +41,6 @@
         action="redeem"
         :params="{amount}"
         :disabled="amount===0"
-        @then=""
-        @catch=""
         symbolAppend="dai"
         >
         Redeem rDAI
