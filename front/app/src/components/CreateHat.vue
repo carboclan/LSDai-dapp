@@ -180,7 +180,7 @@ export default {
       this.setHat(hat);
     },
     goToCustom(ok){
-      this.$router.replace("/");
+      this.$router.replace("/deposit");
     }
   },
   watch: {

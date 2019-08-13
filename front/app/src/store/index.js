@@ -99,7 +99,6 @@ export default new Vuex.Store({
                 timestamp: "",
                 type: "",
                 args: {},
-                asset: "",
                 network: 0,
                 error: ""
             }
@@ -136,7 +135,9 @@ export default new Vuex.Store({
         INSERTNEWTRANSACTION: (state, tx) => {
             state.transactionList.unshift(tx);
         },
-        EDITTRANSACTION: (state, { tx, index }) => {
+        EDITTRANSACTION: (state, tx) => {
+            //first I have to find it, then I have to splice it!
+            const index = 1;
             state.transactionList.splice(index, 1, tx);
         },
         SETFINISHEDLOADING: state => (state.finishedLoading = true),
@@ -453,17 +454,18 @@ export default new Vuex.Store({
                     });
             });
         },
-        getHatByAddress({}, { address }) {
+        getHatByAddress({ state }, { address }) {
             return new Promise(resolve => {
                 contracts.functions.getHatByAddress(address).then(result => {
                     resolve(fillHat(result));
                 });
             });
         },
-        getHatByID({}, { hatID }) {
+        getHatByID({ state }, { hatID }) {
             return new Promise(async (resolve, reject) => {
+                console.log("hatID inside getHatByID: ", hatID);
                 contracts.functions
-                    .getHatByID(toBN(hatID))
+                    .getHatByID(toBN(hatID.toString()))
                     .then(result => resolve(fillHat(result, hatID)))
                     .catch(e => reject(e));
             });
@@ -482,6 +484,17 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "createHat",
+                            arg: {
+                                recipients: state.hatInCreation.recipients,
+                                proportions: state.hatInCreation.proportions,
+                                switchToThisHat
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("createHat failed", err);
@@ -513,9 +526,10 @@ export default new Vuex.Store({
                             timestamp: new Date(),
                             type: "approve",
                             arg: {
+                                spender: TOKENS[HARDCODED_CHAIN].rdai,
+                                maximum,
                                 symbol
                             },
-                            asset: symbol,
                             network: state.account.chainId
                         });
                     })
@@ -548,6 +562,15 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "mint",
+                            arg: {
+                                amount
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("mint failed", err);
@@ -578,6 +601,17 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "mintWithNewHat",
+                            arg: {
+                                amount,
+                                recipients: state.hatInCreation.recipients,
+                                proportion: state.hatInCreation.proportions
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("mintWithNewHat failed", err);
@@ -609,6 +643,16 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "mintWithSelectedHat",
+                            arg: {
+                                amount,
+                                hatID: state.interfaceHat.hatID
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("mintWithSelectedHat failed", err);
@@ -635,6 +679,15 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "changeHat",
+                            arg: {
+                                hatID
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("changeHat failed", err);
@@ -659,6 +712,15 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "redeem",
+                            arg: {
+                                amount
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("redeem failed", err);
@@ -697,6 +759,15 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "payInterest",
+                            arg: {
+                                address
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("createHat failed", err);
@@ -746,6 +817,16 @@ export default new Vuex.Store({
                     .on("transactionHash", hash => {
                         console.log("hash of tx: ", hash);
                         console.log(`https://rinkeby.etherscan.io/tx/${hash}`);
+                        commit("INSERTNEWTRANSACTION", {
+                            txHash: hash,
+                            timestamp: new Date(),
+                            type: "getFaucetDAI",
+                            arg: {
+                                address,
+                                amount: 100
+                            },
+                            network: state.account.chainId
+                        });
                     })
                     .on("error", err => {
                         console.warn("faucet failed", err);

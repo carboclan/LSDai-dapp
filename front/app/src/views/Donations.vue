@@ -32,11 +32,11 @@
                             <span v-else-if="userHat.hatID">Choose this pool</span>
                             <span v-else>Donate now!</span>
                         </v-btn>
-                        <v-flex v-if="i.loans && i.hatID === rDAIdevs.hatID">
+                        <v-flex v-if="i.hasOwnProperty('loans') && i.hatID === rDAIdevs.hatID">
                             {{ i.loans[0] | formatNumber(2) + 'DAI'}}
                             <span class="caption"> deposited so far</span>
                         </v-flex>
-                        <v-flex v-else-if="i.loans && i.totalLoan > i.loans[0]">
+                        <v-flex v-else-if="i.hasOwnProperty('loans') && i.totalLoan > i.loans[0]">
                             {{i.totalLoan - i.loans[0] | formatNumber(2) + ' DAI'}}
                             <span class="caption"> deposited so far</span>
                         </v-flex>
@@ -121,7 +121,6 @@ export default {
                     url: 'deposit'
                 }
             })
-            // gotta change the logic here. When they open, they are opening a hat, not choosing an address
         },
         openByShortTitle(shortTitle) {
             if (shortTitle === "custom") return this.openCreate();
@@ -134,13 +133,14 @@ export default {
                     url: 'donate'
                 }
             })
-            // gotta change the logic here. When they open, they are opening a hat, not choosing an address
         },
         loadAll() {
             if (this.hasWeb3) {
-                [this.allHats, featured[1]].sort((a, b) => {
+                const list = [...this.allHats, featured[1]];
+                list.sort((a, b) => {
                     return b.totalLoan - a.totalLoan;
-                })
+                });
+                this.listOfHats = list;
             } else this.listOfHats = featured;
         }
     },
