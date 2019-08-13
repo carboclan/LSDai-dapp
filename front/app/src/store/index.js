@@ -4,13 +4,12 @@ import contracts from "./contracts";
 import featured from "../featured.js";
 import randomColor from "../colors.js";
 import Web3 from "web3";
-import { toWei, fromWei, toBN } from "web3-utils";
+import { toWei, /* fromWei, */ toBN } from "web3-utils";
 import BN from "bn.js";
 import {
-    round,
     fromDecimals,
     toDecimals
-} from "./../../../../ethereum/contracts/lib/math-utils";
+} from "@decentral.ee/rtoken-contracts/lib/math-utils";
 
 Vue.use(Vuex);
 
@@ -183,8 +182,8 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async onPageLoad({ commit, dispatch }) {
-            await dispatch("getExchangeRate").catch(e =>
+        async onPageLoad({ dispatch }) {
+            await dispatch("getExchangeRate").catch(() =>
                 dispatch("getExchangeRate")
             );
         },
@@ -243,7 +242,7 @@ export default new Vuex.Store({
                             .toLowerCase()
                     );
                     if (state.exchangeRate <= 0) {
-                        await dispatch("getExchangeRate").catch(e =>
+                        await dispatch("getExchangeRate").catch(() =>
                             dispatch("getExchangeRate")
                         );
                     }
@@ -285,61 +284,59 @@ export default new Vuex.Store({
             const allHats = [];
             var maxHat = 20;
             try {
-                maxHat = await contracts.functions.getMaximumHatID();
+                maxHat = await contracts.functions.getMaximumHatID.call();
+                console.debug("maxHat", maxHat.toString());
             } catch (e) {
                 console.log(" error trying to get max hat number", e);
             }
-            return new Promise(async resolve => {
-                try {
-                    for (var hatID = 1; hatID < maxHat + 1; hatID++) {
-                        const rawHat = await dispatch("getHatByID", {
-                            hatID
+            try {
+                for (var hatID = 1; hatID < maxHat; hatID++) {
+                    console.debug("hat hatID", hatID);
+                    const rawHat = await dispatch("getHatByID", {
+                        hatID
+                    });
+                    console.debug("hat rawHat", hatID, rawHat);
+                    rawHat.loans = await Promise.all(
+                        rawHat.recipients.map(i =>
+                            dispatch("receivedLoanOf", {
+                                address: i
+                            })
+                        )
+                    );
+                    console.debug("hat loans", hatID, rawHat.loans);
+                    rawHat.totalLoan = rawHat.loans.reduce(
+                        (a, b) => parseFloat(a) + parseFloat(b),
+                        0
+                    );
+                    console.debug("hat totalLoan", hatID, rawHat.totalLoan);
+                    const fullHat = {
+                        ...rawHat,
+                        ...featured.filter(i => i.hatID === hatID)[0]
+                    };
+                    if (!fullHat.hasOwnProperty("colors")) {
+                        fullHat.featured = fullHat.recipients.map(i => {
+                            const f = featured.filter(
+                                b => b.address.toLowerCase() === i.toLowerCase()
+                            );
+                            return f.length > 0 ? f[0].title : false;
                         });
-                        rawHat.loans = await Promise.all(
-                            rawHat.recipients.map(i =>
-                                dispatch("receivedLoanOf", {
-                                    address: i
-                                })
-                            )
-                        );
-                        rawHat.totalLoan = rawHat.loans.reduce(
-                            (a, b) => parseFloat(a) + parseFloat(b),
-                            0
-                        );
-                        const fullHat = {
-                            ...rawHat,
-                            ...featured.filter(i => i.hatID === hatID)[0]
-                        };
-                        if (!fullHat.hasOwnProperty("colors")) {
-                            fullHat.featured = fullHat.recipients.map(i => {
-                                const f = featured.filter(
-                                    b =>
-                                        b.address.toLowerCase() ===
-                                        i.toLowerCase()
-                                );
-                                return f.length > 0 ? f[0].title : false;
-                            });
-                            const colors = [];
-                            fullHat.colors = fullHat.recipients.map(i => {
-                                const f = featured.filter(
-                                    b =>
-                                        b.address.toLowerCase() ===
-                                        i.toLowerCase()
-                                );
-                                return f.length > 0
-                                    ? f[0].color
-                                    : randomColor(colors);
-                            });
-                        }
-                        allHats.push(fullHat);
+                        const colors = [];
+                        fullHat.colors = fullHat.recipients.map(i => {
+                            const f = featured.filter(
+                                b => b.address.toLowerCase() === i.toLowerCase()
+                            );
+                            return f.length > 0
+                                ? f[0].color
+                                : randomColor(colors);
+                        });
                     }
-                } catch (e) {
-                    console.log("dispatch threw error e: ", e);
+                    allHats.push(fullHat);
                 }
-                commit("SETFINISHEDLOADING");
-                commit("SETALLHATS", allHats);
-                resolve(true);
-            });
+            } catch (e) {
+                console.error("dispatch threw error e: ", e);
+            }
+            commit("SETFINISHEDLOADING");
+            commit("SETALLHATS", allHats);
         },
         setInterfaceHat(
             { commit, state },
@@ -372,7 +369,7 @@ export default new Vuex.Store({
         setupWeb3Listeners({ commit, dispatch }) {
             const ethereum = window.ethereum;
             if (typeof ethereum.on === "function") {
-                ethereum.on("accountsChanged", e => {
+                ethereum.on("accountsChanged", () => {
                     dispatch("activateWeb3");
                 });
                 ethereum.on("networkChanged", e => {
@@ -393,7 +390,7 @@ export default new Vuex.Store({
                     const myTokens = contracts.tokens;
                     setTimeout(async () => {
                         const myToken = myTokens[symbol];
-                        const rawBal = await myToken.balanceOf(
+                        const rawBal = await myToken.balanceOf.call(
                             state.account.address
                         );
                         const bal = fromDec(rawBal, symbol);
@@ -419,7 +416,7 @@ export default new Vuex.Store({
                     const myTokens = contracts.tokens;
                     setTimeout(async () => {
                         const myToken = myTokens[symbol];
-                        const all = await myToken.allowance(
+                        const all = await myToken.allowance.call(
                             state.account.address,
                             TOKENS[HARDCODED_CHAIN].rdai
                         );
@@ -453,17 +450,19 @@ export default new Vuex.Store({
                     });
             });
         },
-        getHatByAddress({}, { address }) {
+        getHatByAddress(v, { address }) {
             return new Promise(resolve => {
-                contracts.functions.getHatByAddress(address).then(result => {
-                    resolve(fillHat(result));
-                });
+                contracts.functions.getHatByAddress
+                    .call(address)
+                    .then(result => {
+                        resolve(fillHat(result));
+                    });
             });
         },
-        getHatByID({}, { hatID }) {
+        getHatByID(v, { hatID }) {
             return new Promise(async (resolve, reject) => {
-                contracts.functions
-                    .getHatByID(toBN(hatID))
+                contracts.functions.getHatByID
+                    .call(toBN(hatID))
                     .then(result => resolve(fillHat(result, hatID)))
                     .catch(e => reject(e));
             });
@@ -677,7 +676,7 @@ export default new Vuex.Store({
         },
         interestPayableOf({ state }, { address = state.account.address }) {
             return new Promise(async (resolve, reject) => {
-                const result = await contracts.functions.interestPayableOf(
+                const result = await contracts.functions.interestPayableOf.call(
                     address
                 );
                 if (result > 0) resolve(fromDec(result, "rdai", "number"));
@@ -715,7 +714,7 @@ export default new Vuex.Store({
         },
         getAccountStats({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.getAccountStats(
+                const result = await contracts.functions.getAccountStats.call(
                     address
                 );
                 resolve(result);
@@ -731,13 +730,16 @@ export default new Vuex.Store({
         },
         receivedLoanOf({ state }, { address = state.account.address }) {
             return new Promise(async resolve => {
-                const result = await contracts.functions.receivedLoanOf(
+                const result = await contracts.functions.receivedLoanOf.call(
                     address
                 );
                 resolve(fromDec(result, "dai", "number"));
             });
         },
-        getFaucetDAI({ state, dispatch }, { address = state.account.address }) {
+        getFaucetDAI(
+            { commit, state, dispatch },
+            { address = state.account.address }
+        ) {
             return new Promise((resolve, reject) => {
                 contracts.faucet
                     .allocateTo(address, toWei("100", "ether"), {
