@@ -4,8 +4,7 @@ import contracts from "./contracts";
 import featured from "../featured.js";
 import randomColor from "../colors.js";
 import Web3 from "web3";
-import { toWei, /* fromWei, */ toBN } from "web3-utils";
-import BN from "bn.js";
+const { BN, toWei, toBN } = Web3.utils;
 import {
     fromDecimals,
     toDecimals
