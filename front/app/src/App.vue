@@ -3,54 +3,108 @@
     <v-app-bar
       app
       clipped-right
+      flat
+      prominent
+      class="pa-8"
     >
-    <v-img
-      src="./assets/logo.svg"
-      lazy-src="./assets/logo.svg"
-      aspect-ratio="1"
-      class="pa-2"
-      contain
-      max-width="50"
-      max-height="50"
-      @click.stop="backToHome"
-      ></v-img>
-      <v-layout column ml-2><v-flex class="font-weight-thin font-italic">Alpha</v-flex><v-flex class="font-weight-bold caption">Rinkeby</v-flex></v-layout>
-      <v-spacer></v-spacer>
-      <span class="subtitle hidden-xs-only">Unlock your DAI<span class="hidden-sm-and-down">'s true potential</span></span>
+      <v-layout column ml-2>
+        <v-flex class="font-weight-bold display-1">
+          {{ rate }} <span style="color:green" class="title">+0.33%</span>
+        </v-flex>
+        <v-flex class="font-weight-thin subtitle">DAI Lending Rate</v-flex>
+        <v-flex class="font-weight-thin subtitle">Compound.finance</v-flex>
+      </v-layout>
       <v-spacer></v-spacer>
       <v-flex text-sm-right class="cursor">
-        <div @click="drawer = !drawer" v-if="hasWeb3" >
-          <v-icon color="green" small class="mr-2">fas fa-circle</v-icon><span :class="{'caption': $vuetify.breakpoint.xs}">{{userAddress | formatAddress}}</span>
-        </div>
-        <template v-else>
-          <web3-btn activateButton action="activateWeb3" color="primary">ENABLE WEB3</web3-btn>
+        <template v-if="!hasWeb3">
+          <web3-btn activateButton action="activateWeb3" color="primary">My Balance</web3-btn>
         </template>
       </v-flex>
     </v-app-bar>
 
     <v-content>
-      <router-view />
+      <v-container fluid
+        class="mt-12 pl-8"
+        >
+        <v-row>
+          <v-col sm="6" full-height cols="12"
+          >
+            <v-row
+              align="center"
+              justify="center"
+              >
+              <v-img
+                class="my-12 mx-auto"
+                src="./assets/historical.png"
+                contain
+                alt="compound rate historical"
+                />
+              <v-col align="center" class="headline">
+                Contract expiry: September 21st
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col sm="16">
+            <v-row
+              align="center"
+              justify="start"
+              class="ma-6"
+              >
+              <v-col class="display-1" sm="12">Hedge <v-btn @click="selection==='hedge' ? selection=null : selection='hedge'" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col>
+              <v-col class="subtitle-1" v-if="selection!=='hedge'">Hedge my DAI lending position on Compound by fixing the DAI lending rate</v-col>
+              <v-col class="subtitle-1" v-else>I want to fix the rate on my
+                <input
+                  name="name"
+                  placeholder="0.44444"
+                  single-line
+                  style="width:140px; display: inline; border-bottom: 1px solid black; border-bottom-style: dotted; text-align:center"
+                  v-model="cDaiPosition"
+                >
+                cDAI position.
+                <v-row class="ma-1 mt-4">
+                  <v-btn color="primary" @click="showAirSwap(cDaiPosition)">Get my rate</v-btn>
+                </v-row>
+              </v-col>
+
+              <v-col class="display-1 mt-10" sm="12">Bet <v-btn @click="selection==='bet' ? selection=null : selection='bet'" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col>
+              <v-col class="subtitle-1" v-if="selection!=='bet'">Make leveraged bet on future DAI lending rate without borrowing</v-col>
+              <v-col class="subtitle-1" v-else>I think the Compound Rate is going
+                <v-btn @click="goLong = true" icon color="green"><v-icon>fas fa-arrow-up</v-icon></v-btn>
+                <v-btn @click="goLong = false" icon color="red"><v-icon>fas fa-arrow-down</v-icon></v-btn>
+                <v-row>If the rate goes to {{ rate  }}</v-row>
+                <v-btn :color="goLong ? 'green' : 'red'" @click="">Go {{ goLong ? 'long' : 'short' }}</v-btn>
+              </v-col>
+
+              <v-col class="display-1 mt-10" sm="12">Make Market &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="grey--text headline">Coming soon</span></v-col>
+              <v-col class="subtitle-1">Earn interest while providing liquidity for the market</v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-row justify="center">
+       <v-dialog v-model="airSwapModal" persistent>
+         <div id="modal"></div>
+       </v-dialog>
+     </v-row>
     </v-content>
 
     <v-navigation-drawer
       v-model="drawer"
-      v-if="hasWeb3 && !donations"
+      v-if="hasWeb3"
       app
       right
-      clipped
       color="white"
       :mobile-break-point="640"
-      class="elevation-3"
-      width="350"
+      flat
       >
       <app-drawer />
     </v-navigation-drawer>
     <app-snackbar />
-    <v-footer fixed ma-2 app>
-      <a href="https://twitter.com/rDAI_dao" target="_blank" style="text-decoration: none;color:rgb(29, 161, 242)"><v-icon style="color:rgb(29, 161, 242)">fab fa-twitter</v-icon>@rDAI_dao</a>
+    <v-footer fixed class="pa-8" app>
+      <span>Some parts of this contract have not been audited. Please use at your discretion</span>
       <v-spacer />
       <span class="text-sm-right grey--text">
-        {{ new Date().getFullYear() }} - <a href="http://decentral.ee" class="grey--text" style="text-decoration:none;">Decentral.ee</a>
+        {{ new Date().getFullYear() }} - <a href="http://decentral.ee" class="grey--text" style="text-decoration:none;">Yellow Hat DAO</a>
       </span>
     </v-footer>
   </v-app>
@@ -70,6 +124,7 @@
   import Snackbar from './components/Snackbar.vue';
   import Vuex from 'vuex';
   import {mapState, mapActions, mapGetters} from 'vuex';
+  //import AirSwap from 'airswap.js';
   export default {
     props: {
       source: String,
@@ -80,25 +135,54 @@
     },
     data: () => ({
       drawer: true,
-      ...mapState(['account'])
+      selection: null,
+      ...mapState(['account']),
+      cDaiPosition: null,
+      goLong : true,
+      airSwapModal: false,
     }),
     computed: {
-      ...mapGetters(['userAddress', 'hasWeb3']),
-      donations() {
-          return this.$route.name === 'donation'
-      },
+      ...mapGetters(['userAddress', 'hasWeb3', 'rate', 'userBalances', 'tokens']),
+      cDaiBalance(){ return this.userBalances.cdai },
     },
     methods: {
       ...mapActions(['activateWeb3']),
-      backToHome(){
-        if( this.$route.name ==='donation' ) return ;
-        else this.$router.push('/choose');
+      showAirSwap(totalAmount){
+        this.airSwapModal = true;
+        console.log(this.tokens.dai);
+        const amount = Number(totalAmount) * (10 ** 18);
+        console.log(amount);
+        setTimeout( () => {
+          AirSwap.Trader.render({
+            env: 'production',
+            mode: 'buy',
+            //baseToken: 'DAI',
+            token: this.tokens.dai ,
+            amount,
+            onCancel: () => {
+                this.airSwapModal = false;
+                console.info('Trade was canceled.');
+            },
+            onComplete: transactionId => {
+                this.airSwapModal = false;
+                console.info('Trade complete.', transactionId);
+            }
+          },  '#modal');
+        }, 1000);
+      }
+    },
+    watch:{
+      cDaiBalance(newVal){
+        if(newVal) {
+          this.cDaiPosition = this.cDaiBalance || '';
+        }
       }
     },
     mounted(){
       this.$store.dispatch("onPageLoad");
     }
   }
+
 </script>
 
 <style>

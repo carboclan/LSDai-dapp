@@ -1,54 +1,28 @@
 <template>
-<v-list dense nav two-line>
+  <v-list dense nav two-line class="mt-4">
     <v-layout column>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-list-item-avatar>
+                <v-icon color="green" small class="mr-2">fas fa-circle</v-icon>
+              </v-list-item-avatar>
+              <span :class="{'caption': $vuetify.breakpoint.xs}">{{userAddress | formatAddress}}</span>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-subheader>
             <strong>Your Balances</strong>
         </v-subheader>
         <template v-for="(item, i) in fullItems">
             <v-list-item :key="i" @click="" :ripple="false">
                 <v-list-item-avatar>
-                    <token-svg :symbol="item.symbol" :size="30" />
+                    <token-svg :symbol="item.symbol" :size="50" />
                 </v-list-item-avatar>
                 <v-list-item-content>
                     <v-list-item-title class="text-xs-justify">
-                        {{ item.text }}<strong> {{ item.balance }}</strong>
+                        <v-col>{{ item.text }}<v-spacer /><strong> {{ item.balance | formatNumber(5)}}</strong></v-col>
                     </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action v-if="item.symbol !== 'eth'">
-                    <web3-btn :icon="true" size="x-small" action="approve" :params="{symbol: item.symbol}" :disabled="item.allowance > 100">
-                        <v-icon v-if="item.allowance < 100">fa fa-lock</v-icon>
-                        <v-icon v-else>fa fa-unlock</v-icon>
-                    </web3-btn>
-                </v-list-item-action>
-            </v-list-item>
-        </template>
-        <v-flex text-center mb-4>
-          <web3-btn color="primary" action="getFaucetDAI" :params="{}">
-            GET FAUCET DAI&nbsp;&nbsp;
-            <token-svg :size="24" symbol="dai"/>
-          </web3-btn>
-        </v-flex>
-        <template v-if="userHat && userHat.recipients.length>0">
-            <v-divider />
-            <v-list-item @click.stop="showUserHat">
-                <v-list-item-avatar>
-                    <v-img v-if="userHat.image" :src="userHat.image" :alt="userHat.title" />
-                    <v-icon v-else>fas fa-cubes</v-icon>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>Current Pool:</v-list-item-title>
-                  <v-list-item-subtitle class="font-weight-bold subtitle-2">{{ userHat.shortTitle || '#' + userHat.hatID }}</v-list-item-subtitle>
-                </v-list-item-content>
-            </v-list-item>
-            <v-divider />
-            <v-flex grow></v-flex>
-            <v-list-item>
-                <v-list-item-avatar>
-                    <token-svg symbol="cdai" :size="30" />
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>Current Interest Rate:</v-list-item-title>
-                  <v-list-item-subtitle class="font-weight-bold subtitle-1">{{ rate }}</v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
         </template>
@@ -94,14 +68,22 @@ import {
 export default {
     name: 'app-drawer',
     data: () => ({
-        items: [{
-                symbol: 'rdai',
-                text: 'rDAI',
-                loading: false
-            },
+        items: [
             {
                 symbol: 'dai',
                 text: ' DAI',
+                loading: false
+            },{
+                symbol: 'cdai',
+                text: 'cDAI',
+                loading: false
+            },{
+                symbol: 'long',
+                text: 'longD',
+                loading: false
+            },{
+                symbol: 'short',
+                text: 'shortD',
                 loading: false
             },
             //{ symbol: 'cdai', text: 'cDAI', loading: false},
@@ -109,16 +91,12 @@ export default {
         ]
     }),
     computed: {
-        ...mapState(['account', 'allHats' ]),
-        ...mapGetters(['userHat', 'rate', 'txList']),
-        donations() {
-            return this.$route.name === 'donation'
-        },
+        ...mapState(['account', ]),
+        ...mapGetters(['rate', 'txList','userAddress']),
         fullItems() {
             return this.items.map(i => {
                 const bal = this.account.balances[i.symbol];
                 i.balance = bal > 0 ? bal : "";
-                i.allowance = this.account.allowances[i.symbol] || 0;
                 return i;
             })
         },
@@ -130,35 +108,6 @@ export default {
                 i.link = `https://rinkeby.etherscan.io/tx/${i.txHash}`;
                 const found = this.allHats.find( b => b.hatID === i.arg.hatID);
                 switch (i.type) {
-                    case "getFaucetDAI":
-                        i.text = "Get 100DAI from faucet";
-                    break;
-                    case "mint":
-                        i.text = `Minting ${i.arg.amount}rDAI`;
-                    break;
-                    case "mintWithNewHat":
-                        i.text = `Mint ${i.arg.amount}rDAI and create new pool`;
-                    break;
-                    case "mintWithSelectedHat":
-                        if(found.hasOwnProperty("shortTitle")) i.text =  `Mint ${i.arg.amount}rDAI and switch to ${found.shortTitle}`;
-                        else i.text = `Mint ${i.arg.amount}rDAI and switch to pool #${i.arg.hatID}`;
-                    break;
-                    case "redeem":
-                        i.text = `Redeem ${i.arg.amount}rDAI for ${i.arg.amount}DAI`;
-                    break;
-                    case "payInterest":
-                        i.text = `Withdraw rDAI interest`;
-                    break;
-                    case "approve":
-                        i.text = `Approve contract to use DAI`;
-                    break;
-                    case "createHat":
-                        i.text = `Create new pool`;
-                    break;
-                    case "changeHat":
-                        if(found.hasOwnProperty("shortTitle")) i.text =  `Switch to ${found.shortTitle} pool`;
-                        i.text = `Switch to pool #${i.arg.hatID}`;
-                    break;
                     default:
                         i.text = "Executed Transaction"
                 }
@@ -166,12 +115,5 @@ export default {
           });
       }
     },
-    methods: {
-        showUserHat(){
-            this.$store.dispatch("setInterfaceHat", {hatID: this.userHat.hatID});
-            if(this.userHat.hasOwnProperty("shortTitle")) this.$router.push(`/donate/${this.userHat.shortTitle}`);
-            else this.$router.push(`/deposit/${this.userHat.hatID}`);
-        }
-    }
 }
 </script>

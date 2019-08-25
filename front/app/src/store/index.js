@@ -1,8 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import contracts from "./contracts";
-import featured from "../featured.js";
-import randomColor from "../colors.js";
 import Web3 from "web3";
 const { BN, toWei, toBN } = Web3.utils;
 import {
@@ -16,17 +14,29 @@ const SELF_HAT_ID = new BN("10", 2)
     .pow(new BN("100", 16))
     .sub(new BN("1", 2))
     .toString();
-const HARDCODED_CHAIN = 4; //rinkeby
+const HARDCODED_CHAIN = 1; //rinkeby
 const TOKENS = {
     4: {
         dai: "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
         cdai: "0x6d7f0754ffeb405d23c51ce938289d4835be3b14",
-        rdai: "0xb0C72645268E95696f5b6F40aa5b12E1eBdc8a5A"
+        long: "",
+        short: ""
+    },
+    1: {
+        dai: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+        cdai: "0xf5dce57282a584d2746faf1593d3121fcac444dc",
+    },
+    4: {
+        dai: "0xbf7a7169562078c96f0ec1a8afd6ae50f12e5a99",
+        cdai: "0x0a1e4d0b5c71b955c0a5993023fc48ba6e380496",
+        long: "",
+        short: ""
     },
     decimals: {
         dai: 18,
-        rdai: 18,
-        cdai: 8
+        cdai: 8,
+        long: 5,
+        short: 5,
     }
 };
 const toDec = function(num, symbol = "dai", format = "string") {
@@ -40,21 +50,6 @@ const fromDec = function(num, symbol = "dai", format = "string") {
     const fixed = fromDecimals(number, TOKENS.decimals[symbol]);
     if (format === "number") return parseFloat(fixed);
     else return fixed;
-};
-const fillHat = function(hat, hatID) {
-    const id = hatID || hat.hatID.toNumber();
-    const { recipients, proportions } = hat;
-    const cleanedResult = {
-        hatID: id,
-        length: recipients.length,
-        recipients,
-        proportions: proportions.map(i => i.toNumber())
-    };
-    cleanedResult.totalProportions = cleanedResult.proportions.reduce(
-        (a, b) => parseInt(a) + parseInt(b),
-        0
-    );
-    return cleanedResult;
 };
 export default new Vuex.Store({
     state: {
@@ -72,22 +67,8 @@ export default new Vuex.Store({
                 dai: undefined,
                 eth: undefined
             },
-            allowances: {
-                rdai: 1000000000000000000,
-                cdai: "",
-                dai: ""
-            },
-            hat: {}
         },
-        interfaceHat: {},
-        hatInCreation: {
-            length: 1,
-            proportions: [100],
-            recipients: [featured[0].address],
-            colors: [featured[0].color],
-            totalProportions: 100
-        },
-        allHats: [],
+        tokens: {},
         exchangeRate: 0,
         finishedLoading: false,
         loadingWeb3: false,
@@ -103,20 +84,11 @@ export default new Vuex.Store({
         SETBALANCE: (state, { symbol, bal }) => {
             Vue.set(state.account.balances, symbol, bal);
         },
-        SETALLOWANCE: (state, { symbol, all }) => {
-            Vue.set(state.account.allowances, symbol, fromDec(all, symbol));
-        },
-        SETUSERHAT: (state, hat) => {
-            Vue.set(state.account, "hat", hat);
-        },
         SETINTERFACEHAT: (state, newHat) => {
             state.interfaceHat = newHat;
         },
-        SETHATINCREATION: (state, newHat) => {
-            state.hatInCreation = newHat;
-        },
-        SETALLHATS: (state, allHats) => {
-            state.allHats = allHats;
+        SETTOKENS: (state, tokenObject) => {
+            state.tokens = { ...tokenObject };
         },
         SETEXCHANGERATE: (state, rate) => {
             state.exchangeRate = rate;
@@ -254,10 +226,9 @@ export default new Vuex.Store({
                     }
                     dispatch("setupWeb3Listeners");
                     await dispatch("getBalances");
-                    await dispatch("getAllowances");
-                    await dispatch("getAllHats");
-                    await dispatch("getUserHat");
+                    commit("SETTOKENS", TOKENS[HARDCODED_CHAIN]);
                     commit("SETLOADING", false);
+                    commit("SETFINISHEDLOADING");
                     resolve(true);
                 } catch (err) {
                     console.log("error in activateWeb3:", err);
@@ -276,93 +247,6 @@ export default new Vuex.Store({
                     await dispatch("getBalance", key);
                 });
                 resolve(true);
-            });
-        },
-        getAllowances({ dispatch }) {
-            return new Promise(resolve => {
-                Object.keys(TOKENS[HARDCODED_CHAIN]).forEach(async key => {
-                    await dispatch("getAllowance", key);
-                });
-                resolve(true);
-            });
-        },
-        async getAllHats({ dispatch, commit }) {
-            const allHats = [];
-            var maxHat = 20;
-            try {
-                maxHat =
-                    parseInt(await contracts.functions.getMaximumHatID.call()) +
-                    1;
-                console.debug("maxHat", maxHat.toString());
-            } catch (e) {
-                console.log(" error trying to get max hat number", e);
-            }
-            try {
-                for (var hatID = 1; hatID < maxHat; hatID++) {
-                    const rawHat = await dispatch("getHatByID", {
-                        hatID
-                    });
-                    rawHat.loans = await Promise.all(
-                        rawHat.recipients.map(i =>
-                            dispatch("receivedLoanOf", {
-                                address: i
-                            })
-                        )
-                    );
-                    rawHat.totalLoan = rawHat.loans.reduce(
-                        (a, b) => parseFloat(a) + parseFloat(b),
-                        0
-                    );
-                    const fullHat = {
-                        ...rawHat,
-                        ...featured.filter(i => i.hatID === hatID)[0]
-                    };
-                    fullHat.hatID = hatID;
-                    if (!fullHat.hasOwnProperty("colors")) {
-                        fullHat.featured = fullHat.recipients.map(i => {
-                            const f = featured.filter(
-                                b => b.address.toLowerCase() === i.toLowerCase()
-                            );
-                            return f.length > 0 ? f[0].title : false;
-                        });
-                        const colors = [];
-                        fullHat.colors = fullHat.recipients.map(i => {
-                            const f = featured.filter(
-                                b => b.address.toLowerCase() === i.toLowerCase()
-                            );
-                            return f.length > 0
-                                ? f[0].color
-                                : randomColor(colors);
-                        });
-                    }
-                    allHats.push(fullHat);
-                }
-            } catch (e) {
-                console.error("dispatch threw error e: ", e);
-            }
-            commit("SETFINISHEDLOADING");
-            commit("SETALLHATS", allHats);
-        },
-        setInterfaceHat(
-            { commit, state },
-            { hatID = false, shortTitle = false }
-        ) {
-            return new Promise(resolve => {
-                if (hatID) {
-                    commit(
-                        "SETINTERFACEHAT",
-                        state.allHats.find(
-                            i => parseInt(i.hatID) === parseInt(hatID)
-                        )
-                    );
-                    resolve(true);
-                } else if (shortTitle) {
-                    commit(
-                        "SETINTERFACEHAT",
-                        state.allHats.find(i => i.shortTitle === shortTitle)
-                    );
-                    resolve(true);
-                }
             });
         },
         async getExchangeRate({ commit }) {
@@ -416,456 +300,16 @@ export default new Vuex.Store({
                 };
                 resolve(getBalance());
             });
-        },
-        getAllowance({ commit, state }, symbol) {
-            if (symbol === "eth" || symbol === "rdai") return;
-            new Promise(resolve => {
-                const getAllowance = async () => {
-                    const myTokens = contracts.tokens;
-                    setTimeout(async () => {
-                        const myToken = myTokens[symbol];
-                        const all = await myToken.allowance.call(
-                            state.account.address,
-                            TOKENS[HARDCODED_CHAIN].rdai
-                        );
-                        commit("SETALLOWANCE", {
-                            symbol,
-                            all
-                        });
-                        return true;
-                    }, 2000);
-                };
-                resolve(getAllowance());
-            });
-        },
-        getUserHat({ commit, dispatch, state }) {
-            return new Promise((resolve, reject) => {
-                dispatch("getHatByAddress", {
-                    address: state.account.address
-                })
-                    .then(r => {
-                        const newHat = {
-                            ...r,
-                            ...featured.filter(i => i.hatID === r.hatID)[0]
-                        };
-                        commit("SETUSERHAT", newHat);
-                        commit("SETINTERFACEHAT", newHat);
-                        resolve(true);
-                    })
-                    .catch(err => {
-                        console.log("error in getUserHat, e:", e);
-                        reject(err);
-                    });
-            });
-        },
-        getHatByAddress(v, { address }) {
-            return new Promise(resolve => {
-                contracts.functions.getHatByAddress
-                    .call(address)
-                    .then(result => {
-                        resolve(fillHat(result));
-                    });
-            });
-        },
-        getHatByID(v, { hatID }) {
-            return new Promise(async (resolve, reject) => {
-                contracts.functions.getHatByID
-                    .call(toBN(hatID.toString()))
-                    .then(result => resolve(fillHat(result, hatID)))
-                    .catch(e => reject(e));
-            });
-        },
-        createHat({ commit, dispatch, state }, { switchToThisHat = true }) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                contracts.functions
-                    .createHat(
-                        state.hatInCreation.recipients,
-                        state.hatInCreation.proportions,
-                        switchToThisHat,
-                        {
-                            from: state.account.address
-                        }
-                    )
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "createHat",
-                            arg: {
-                                recipients: state.hatInCreation.recipients,
-                                proportions: state.hatInCreation.proportions,
-                                switchToThisHat
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        if (switchToThisHat) dispatch("getUserHat");
-                        dispatch("getAllHats");
-                        resolve(receipt);
-                    });
-            });
-        },
-        approve({ commit, state, dispatch }, { symbol }) {
-            return new Promise((resolve, reject) => {
-                const maximum = SELF_HAT_ID;
-                var savedTxHash;
-                contracts.tokens[symbol]
-                    .approve(TOKENS[HARDCODED_CHAIN].rdai, maximum, {
-                        from: state.account.address
-                    })
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "approve",
-                            arg: {
-                                spender: TOKENS[HARDCODED_CHAIN].rdai,
-                                maximum,
-                                symbol
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        console.warn("token.approve failed", err);
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getAllowance", symbol);
-                        resolve(receipt);
-                    });
-            });
-        },
-        mint({ commit, state, dispatch }, { amount }) {
-            return new Promise((resolve, reject) => {
-                const params = toWei(amount.toString());
-                var savedTxHash;
-                contracts.functions
-                    .mint(params, {
-                        from: state.account.address,
-                        gasLimit: 1750000
-                    })
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "mint",
-                            arg: {
-                                amount
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getBalance", "dai");
-                        dispatch("getBalance", "rdai");
-                        resolve(receipt);
-                    });
-            });
-        },
-        mintWithNewHat({ commit, state, dispatch }, { amount }) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                contracts.functions
-                    .mintWithNewHat(
-                        toWei(amount.toString()),
-                        state.hatInCreation.recipients,
-                        state.hatInCreation.proportions,
-                        {
-                            from: state.account.address
-                        }
-                    )
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "mintWithNewHat",
-                            arg: {
-                                amount,
-                                recipients: state.hatInCreation.recipients,
-                                proportion: state.hatInCreation.proportions
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getBalance", "dai");
-                        dispatch("getBalance", "rdai");
-                        dispatch("getUserHat");
-                        resolve(receipt);
-                    });
-            });
-        },
-        mintWithSelectedHat({ commit, state, dispatch }, { amount }) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                contracts.functions
-                    .mintWithSelectedHat(
-                        toWei(amount.toString()),
-                        toBN(state.interfaceHat.hatID.toString()),
-                        {
-                            from: state.account.address
-                        }
-                    )
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "mintWithSelectedHat",
-                            arg: {
-                                amount,
-                                hatID: state.interfaceHat.hatID
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getBalance", "dai");
-                        dispatch("getBalance", "rdai");
-                        dispatch("getUserHat");
-                        resolve(receipt);
-                    });
-            });
-        },
-        changeHat({ commit, state, dispatch }, { hatID }) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                contracts.functions
-                    .changeHat(toBN(hatID.toString()), {
-                        from: state.account.address
-                    })
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "changeHat",
-                            arg: {
-                                hatID
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getUserHat");
-                        resolve(receipt);
-                    });
-            });
-        },
-        redeem({ commit, state, dispatch }, { amount }) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                contracts.functions
-                    .redeem(toWei(amount.toString()), {
-                        from: state.account.address
-                    })
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "redeem",
-                            arg: {
-                                amount
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getBalance", "dai");
-                        dispatch("getBalance", "rdai");
-                        resolve(receipt);
-                    });
-            });
-        },
-        interestPayableOf({ state }, { address = state.account.address }) {
-            return new Promise(async (resolve, reject) => {
-                const result = await contracts.functions.interestPayableOf.call(
-                    address
-                );
-                if (result > 0) resolve(fromDec(result, "rdai", "number"));
-                else reject(fromDec(result, "rdai", "number"));
-            });
-        },
-        payInterest(
-            { state, dispatch, commit },
-            { address = state.account.address }
-        ) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                console.log("paying interest of this account: ", address);
-                contracts.functions
-                    .payInterest(address, {
-                        from: state.account.address
-                    })
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "payInterest",
-                            arg: {
-                                address
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getBalance", "dai");
-                        dispatch("getBalance", "rdai");
-                        resolve(receipt);
-                    });
-            });
-        },
-        getAccountStats({ state }, { address = state.account.address }) {
-            return new Promise(async resolve => {
-                const result = await contracts.functions.getAccountStats.call(
-                    address
-                );
-                resolve(result);
-            });
-        },
-        receivedSavingsOf({ state }, { address = state.account.address }) {
-            return new Promise(async resolve => {
-                const result = await contracts.functions.receivedSavingsOf.call(
-                    address
-                );
-                resolve(result);
-            });
-        },
-        receivedLoanOf({ state }, { address = state.account.address }) {
-            return new Promise(async resolve => {
-                const result = await contracts.functions.receivedLoanOf.call(
-                    address
-                );
-                resolve(fromDec(result, "dai", "number"));
-            });
-        },
-        getFaucetDAI(
-            { commit, state, dispatch },
-            { address = state.account.address }
-        ) {
-            return new Promise((resolve, reject) => {
-                var savedTxHash;
-                contracts.faucet
-                    .allocateTo(address, toWei("100", "ether"), {
-                        from: state.account.address
-                    })
-                    .on("transactionHash", hash => {
-                        savedTxHash = hash;
-                        commit("INSERTNEWTRANSACTION", {
-                            txHash: hash,
-                            timestamp: new Date(),
-                            type: "getFaucetDAI",
-                            arg: {
-                                address,
-                                amount: 100
-                            },
-                            network: state.account.chainId
-                        });
-                    })
-                    .on("error", err => {
-                        commit("ERROR", {
-                            type: "transaction"
-                        });
-                        reject({ savedTxHash });
-                    })
-                    .then(receipt => {
-                        console.log("now what? receipt: ", receipt);
-                        dispatch("getBalance", "dai");
-                        resolve(receipt);
-                    });
-            });
         }
     },
     getters: {
         hasWeb3: state =>
             state.account.address.length === 42 && state.finishedLoading,
-        isNewUser: (state, getters) =>
-            typeof state.account.balances.rdai === "undefined" &&
-            !getters.userHat,
         userAddress: state => state.account.address,
         userBalances: state => state.account.balances,
-        userAllowances: state => state.account.allowances,
-        rate: state => Math.round(state.exchangeRate * 10000) / 100 + " %",
-        userHat: state =>
-            state.account.hat.hasOwnProperty("hatID") &&
-            state.account.hat.hatID !== 0
-                ? state.account.hat
-                : false,
-        interfaceHat: state =>
-            state.interfaceHat.hasOwnProperty("recipients") &&
-            state.interfaceHat.recipients.length > 0
-                ? state.interfaceHat
-                : false,
-        hatInCreation: state =>
-            state.hatInCreation.hasOwnProperty("recipients") &&
-            state.hatInCreation.recipients.length > 0
-                ? state.hatInCreation
-                : false,
+        tokens: state => state.tokens,
+        rate: state => (Math.round(state.exchangeRate * 10000) / 100 || 11.21) + " %",
         txList: state =>
             state.transactionList.length > 0 ? state.transactionList : false,
-        rDAIdevs: state =>
-            state.allHats.find(i => i.shortTitle === "rDAIdevs") || false
     }
 });

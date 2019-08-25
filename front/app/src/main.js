@@ -1,13 +1,10 @@
 import Vue from "vue";
 import App from "./App.vue";
-import router from "./router";
 import store from "./store/index.js";
 import vuetify from "./plugins/vuetify";
 import "@babel/polyfill";
 import TokenSvg from "./components/TokenSvg";
-import BarChart from "./components/BarChart";
 import Web3Btn from "./components/Web3Btn";
-import Proportions from "./components/proportions";
 import Cryptoicon from "vue-cryptoicon";
 import { Eth, Dai } from "vue-cryptoicon/src/icons";
 Cryptoicon.add([Eth, Dai]);
@@ -15,9 +12,7 @@ Vue.use(Cryptoicon);
 Vue.config.productionTip = false;
 
 Vue.component("token-svg", TokenSvg);
-Vue.component("bar-chart", BarChart);
 Vue.component("web3-btn", Web3Btn);
-Vue.component("proportions", Proportions);
 
 Vue.filter("formatAddress", function(value) {
     if (!value) return "";
@@ -31,7 +26,6 @@ Vue.filter("formatNumber", function(value, decimals) {
 });
 
 new Vue({
-    router,
     store,
     vuetify,
     render: h => h(App)
