@@ -40,7 +40,7 @@
                 alt="compound rate historical"
                 />
               <v-col align="center" class="headline">
-                Contract expiry: September 21st
+                Contract expires at September 21st
               </v-col>
             </v-row>
           </v-col>
@@ -62,17 +62,28 @@
                 >
                 cDAI position.
                 <v-row class="ma-1 mt-4">
-                  <v-btn color="primary" @click="showAirSwap(cDaiPosition)">Get my rate</v-btn>
+                  <v-btn color="primary" @click="buyLong(cDaiPosition)">Get my rate</v-btn>
                 </v-row>
               </v-col>
 
               <v-col class="display-1 mt-10" sm="12">Bet <v-btn @click="selection==='bet' ? selection=null : selection='bet'" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col>
               <v-col class="subtitle-1" v-if="selection!=='bet'">Make leveraged bet on future DAI lending rate without borrowing</v-col>
-              <v-col class="subtitle-1" v-else>I think the Compound Rate is going
-                <v-btn @click="goLong = true" icon color="green"><v-icon>fas fa-arrow-up</v-icon></v-btn>
-                <v-btn @click="goLong = false" icon color="red"><v-icon>fas fa-arrow-down</v-icon></v-btn>
-                <v-row>If the rate goes to {{ rate  }}</v-row>
-                <v-btn :color="goLong ? 'green' : 'red'" @click="">Go {{ goLong ? 'long' : 'short' }}</v-btn>
+              <v-col class="subtitle-1" v-else>
+                <v-row>
+                    <p>
+                        <span>
+                          I think the DAI lending rate on Compound is going
+                          <v-btn icon color="green"><v-icon>fas fa-arrow-up</v-icon></v-btn>
+                          <v-btn icon color="red" disabled><v-icon>fas fa-arrow-down</v-icon>(TBD)</v-btn>
+                        </span>
+                    </p>
+                </v-row>
+                <v-row>
+                    <p><span>If the the DAI lending rate on Compound is going goes to <input v-model="bet_rate" placeholder="12" size=6>% 21/09/2019,
+                        your expected return on the bet will be approximately "<span style="color:green">{{ roi }}%</span>".
+                    </span></p>
+                </v-row>
+                <v-btn :color="goLong ? 'green' : 'red'" @click="buyLong()">Go {{ goLong ? 'long' : 'short' }}</v-btn>
               </v-col>
 
               <v-col class="display-1 mt-10" sm="12">Make Market &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="grey--text headline">Coming soon</span></v-col>
@@ -128,6 +139,7 @@
   export default {
     props: {
       source: String,
+      bet_rate: "12",
     },
     components: {
       'app-drawer': Drawer,
@@ -144,20 +156,22 @@
     computed: {
       ...mapGetters(['userAddress', 'hasWeb3', 'rate', 'userBalances', 'tokens']),
       cDaiBalance(){ return this.userBalances.cdai },
+      roi() { return 1; }
     },
     methods: {
       ...mapActions(['activateWeb3']),
-      showAirSwap(totalAmount){
+      buyLong(totalAmount){
         this.airSwapModal = true;
         console.log(this.tokens.dai);
-        const amount = Number(totalAmount) * (10 ** 18);
+        const amount = Number(totalAmount) * (10 ** 5);
         console.log(amount);
         setTimeout( () => {
           AirSwap.Trader.render({
             env: 'production',
             mode: 'buy',
-            //baseToken: 'DAI',
-            token: this.tokens.dai ,
+            baseToken: "DAI",
+            //token: this.tokens.dai ,
+            token: "0xd825f6c6984dfaea18aa14b49f22c3c2cbb97e36",
             amount,
             onCancel: () => {
                 this.airSwapModal = false;
@@ -169,7 +183,31 @@
             }
           },  '#modal');
         }, 1000);
-      }
+    },
+    buyShort(totalAmount) {
+      this.airSwapModal = true;
+      console.log(this.tokens.dai);
+      const amount = Number(totalAmount) * (10 ** 5);
+      console.log(amount);
+      setTimeout( () => {
+        AirSwap.Trader.render({
+          env: 'production',
+          mode: 'buy',
+          baseToken: "DAI",
+          //token: this.tokens.dai ,
+          token: "0x226f832765ba08dfcf07cae15338a461dd1a426f",
+          amount,
+          onCancel: () => {
+              this.airSwapModal = false;
+              console.info('Trade was canceled.');
+          },
+          onComplete: transactionId => {
+              this.airSwapModal = false;
+              console.info('Trade complete.', transactionId);
+          }
+        },  '#modal');
+      }, 1000);
+    }
     },
     watch:{
       cDaiBalance(newVal){

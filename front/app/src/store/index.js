@@ -24,9 +24,9 @@ const TOKENS = {
     },
     1: {
         dai: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
-        cdai: "0xf5dce57282a584d2746faf1593d3121fcac444dc",
+        cdai: "0xf5dce57282a584d2746faf1593d3121fcac444dc"
     },
-    4: {
+    42: {
         dai: "0xbf7a7169562078c96f0ec1a8afd6ae50f12e5a99",
         cdai: "0x0a1e4d0b5c71b955c0a5993023fc48ba6e380496",
         long: "",
@@ -36,7 +36,7 @@ const TOKENS = {
         dai: 18,
         cdai: 8,
         long: 5,
-        short: 5,
+        short: 5
     }
 };
 const toDec = function(num, symbol = "dai", format = "string") {
@@ -66,7 +66,7 @@ export default new Vuex.Store({
                 cdai: undefined,
                 dai: undefined,
                 eth: undefined
-            },
+            }
         },
         tokens: {},
         exchangeRate: 0,
@@ -308,8 +308,8 @@ export default new Vuex.Store({
         userAddress: state => state.account.address,
         userBalances: state => state.account.balances,
         tokens: state => state.tokens,
-        rate: state => (Math.round(state.exchangeRate * 10000) / 100 || 11.21) + " %",
+        rate: state => Math.round(state.exchangeRate * 10000) / 100 || 11.21,
         txList: state =>
-            state.transactionList.length > 0 ? state.transactionList : false,
+            state.transactionList.length > 0 ? state.transactionList : false
     }
 });
