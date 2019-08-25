@@ -1,2 +1,4 @@
-# rDai
-Discover your DAI's true potential
+# LSDai Market
+
+
+http://lsdai.market/
