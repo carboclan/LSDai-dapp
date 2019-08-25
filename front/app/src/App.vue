@@ -62,7 +62,7 @@
                 >
                 cDAI position.
                 <v-row class="ma-1 mt-4">
-                  <v-btn color="primary" @click="buyLong(cDaiPosition)">Get my rate</v-btn>
+                  <v-btn color="primary" @click="buyShort(cDaiPosition)">Get my rate</v-btn>
                 </v-row>
               </v-col>
 
@@ -83,7 +83,9 @@
                         your expected return on the bet will be approximately "<span style="color:green">{{ roi }}%</span>".
                     </span></p>
                 </v-row>
-                <v-btn :color="goLong ? 'green' : 'red'" @click="buyLong()">Go {{ goLong ? 'long' : 'short' }}</v-btn>
+                <v-btn :color="'green'" @click="buyLong(cDaiPosition)" disabled>Go long</v-btn>
+                &nbsp;
+                <v-btn :color="'red'" @click="buyShort(cDaiPosition)" disabled>Go short</v-btn>
               </v-col>
 
               <v-col class="display-1 mt-10" sm="12">Make Market &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="grey--text headline">Coming soon</span></v-col>
@@ -150,7 +152,6 @@
       selection: null,
       ...mapState(['account']),
       cDaiPosition: null,
-      goLong : true,
       airSwapModal: false,
     }),
     computed: {
@@ -164,7 +165,7 @@
         this.airSwapModal = true;
         console.log(this.tokens.dai);
         const amount = Number(totalAmount) * (10 ** 5);
-        console.log(amount);
+        console.log("!! amount", amount);
         setTimeout( () => {
           AirSwap.Trader.render({
             env: 'production',
@@ -172,7 +173,8 @@
             baseToken: "DAI",
             //token: this.tokens.dai ,
             token: "0xd825f6c6984dfaea18aa14b49f22c3c2cbb97e36",
-            amount,
+            //token: "0x00000000000000000000000000000000",
+            //amount,
             onCancel: () => {
                 this.airSwapModal = false;
                 console.info('Trade was canceled.');
