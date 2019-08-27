@@ -50,8 +50,8 @@
               justify="start"
               class="ma-6"
               >
-              <v-col class="display-1" sm="12">Hedge <v-btn @click="selection==='hedge' ? selection=null : selection='hedge'" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col>
-              <v-col class="subtitle-1" v-if="selection!=='hedge'">Hedge my DAI lending position on Compound by fixing the DAI lending rate</v-col>
+              <v-col class="display-1" sm="12">Hedge <v-btn @click="buyShort(0.1)" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col>
+              <v-col class="subtitle-1" v-if="selection!=='hedge'">Hedge my DAI lending position on Compound by shorting the DAI lending rate</v-col>
               <v-col class="subtitle-1" v-else>I want to fix the rate on my
                 <input
                   name="name"
@@ -62,11 +62,12 @@
                 >
                 cDAI position.
                 <v-row class="ma-1 mt-4">
-                  <v-btn color="primary" @click="buyShort(cDaiPosition)">Get my rate</v-btn>
+                  <v-btn color="primary" @click="buyShort(0.1)">Get my rate</v-btn>
                 </v-row>
               </v-col>
 
-              <v-col class="display-1 mt-10" sm="12">Bet <v-btn @click="selection==='bet' ? selection=null : selection='bet'" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col>
+              <v-col class="display-1 mt-10" sm="12">Bet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="grey--text headline">Coming soon</span></v-col>
+              <!-- <v-col class="display-1 mt-10" sm="12">Bet <v-btn @click="selection==='bet' ? selection=null : selection='bet'" icon text><v-icon>fas fa-arrow-right</v-icon></v-btn></v-col> -->
               <v-col class="subtitle-1" v-if="selection!=='bet'">Make leveraged bet on future DAI lending rate without borrowing</v-col>
               <v-col class="subtitle-1" v-else>
                 <v-row>
